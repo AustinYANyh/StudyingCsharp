@@ -30,6 +30,7 @@ namespace ORAPS.Fabric
         private Telerik.WinControls.UI.RadLabel LAB_ID;
         private Telerik.WinControls.UI.RadTextBox TXT_ID;
         ORAPS.Helpers.Action ACT_StudentEditor_Student = null;
+        ORAPS.Fabric.StudentEditCtr AddCtr = new StudentEditCtr();
 
         private void StudentEditor_Load(object sender, EventArgs e)
         {
@@ -41,8 +42,16 @@ namespace ORAPS.Fabric
             if (ACT_StudentEditor_Student == null) return;
 
             RGV_Student.SetupView(Client, ThisGUI.Name, ACT_StudentEditor_Student.Name);
+            RGV_Student.AddCtr = AddCtr;
+            RGV_Student.BeforeAdd += RGV_Student_BeforeAdd;
 
             setColName();
+        }
+
+        private void RGV_Student_BeforeAdd(object o)
+        {
+            //获取ID
+            ((ORAPS.Fabric.Data.Student)o).ID = Client.GetIdentifier(100, "OAS_Student", 1, true);
         }
 
         public void setColName()
@@ -52,11 +61,34 @@ namespace ORAPS.Fabric
             BTN_Search.Text = ORAPS.Helpers.HelperStrs._Search;
             BTN_Clear.Text = ORAPS.Helpers.HelperStrs._Clear;
         }
+        private void BTN_Search_Click(object sender, EventArgs e)
+        {
+            string setWhere = "1 = 1";
+
+            if(TXT_ID.Text.Trim()!="")
+            {
+                setWhere += "And ID = " + TXT_ID.Text;
+            }
+
+            if(TXT_Name.Text.Trim()!="")
+            {
+                setWhere += "And Name like '%" + TXT_Name.Text + "%'";
+            }
+
+            RGV_Student.SetFilter(setWhere);
+        }
+        private void BTN_Clear_Click(object sender, EventArgs e)
+        {
+            TXT_ID.Text = ORAPS.Helpers.HelperStrs._Empty;
+            TXT_Name.Text = ORAPS.Helpers.HelperStrs._Empty;
+
+            RGV_Student.CurrentData = null;
+        }
+
         #region 自动生成
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.RGV_Student = new ORAPS.GUILib.OAS_GridView();
             this.RGB_Search = new Telerik.WinControls.UI.RadGroupBox();
             this.BTN_Search = new Telerik.WinControls.UI.RadButton();
             this.BTN_Clear = new Telerik.WinControls.UI.RadButton();
@@ -64,6 +96,7 @@ namespace ORAPS.Fabric
             this.TXT_Name = new Telerik.WinControls.UI.RadTextBox();
             this.LAB_ID = new Telerik.WinControls.UI.RadLabel();
             this.TXT_ID = new Telerik.WinControls.UI.RadTextBox();
+            this.RGV_Student = new ORAPS.GUILib.OAS_GridView();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -95,6 +128,72 @@ namespace ORAPS.Fabric
             this.splitContainer1.Size = new System.Drawing.Size(589, 407);
             this.splitContainer1.SplitterDistance = 141;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // RGB_Search
+            // 
+            this.RGB_Search.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
+            this.RGB_Search.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(234)))), ((int)(((byte)(240)))));
+            this.RGB_Search.Controls.Add(this.BTN_Search);
+            this.RGB_Search.Controls.Add(this.BTN_Clear);
+            this.RGB_Search.Controls.Add(this.LAB_Name);
+            this.RGB_Search.Controls.Add(this.TXT_Name);
+            this.RGB_Search.Controls.Add(this.LAB_ID);
+            this.RGB_Search.Controls.Add(this.TXT_ID);
+            this.RGB_Search.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.RGB_Search.HeaderText = "Search";
+            this.RGB_Search.Location = new System.Drawing.Point(0, 0);
+            this.RGB_Search.Name = "RGB_Search";
+            this.RGB_Search.Size = new System.Drawing.Size(589, 141);
+            this.RGB_Search.TabIndex = 1;
+            this.RGB_Search.Text = "Search";
+            // 
+            // BTN_Search
+            // 
+            this.BTN_Search.Location = new System.Drawing.Point(111, 95);
+            this.BTN_Search.Name = "BTN_Search";
+            this.BTN_Search.Size = new System.Drawing.Size(122, 24);
+            this.BTN_Search.TabIndex = 2;
+            this.BTN_Search.Text = "Search";
+            this.BTN_Search.Click += new System.EventHandler(this.BTN_Search_Click);
+            // 
+            // BTN_Clear
+            // 
+            this.BTN_Clear.Location = new System.Drawing.Point(330, 95);
+            this.BTN_Clear.Name = "BTN_Clear";
+            this.BTN_Clear.Size = new System.Drawing.Size(122, 24);
+            this.BTN_Clear.TabIndex = 2;
+            this.BTN_Clear.Text = "Clear";
+            this.BTN_Clear.Click += new System.EventHandler(this.BTN_Clear_Click);
+            // 
+            // LAB_Name
+            // 
+            this.LAB_Name.Location = new System.Drawing.Point(273, 34);
+            this.LAB_Name.Name = "LAB_Name";
+            this.LAB_Name.Size = new System.Drawing.Size(36, 18);
+            this.LAB_Name.TabIndex = 0;
+            this.LAB_Name.Text = "Name";
+            // 
+            // TXT_Name
+            // 
+            this.TXT_Name.Location = new System.Drawing.Point(330, 34);
+            this.TXT_Name.Name = "TXT_Name";
+            this.TXT_Name.Size = new System.Drawing.Size(122, 20);
+            this.TXT_Name.TabIndex = 1;
+            // 
+            // LAB_ID
+            // 
+            this.LAB_ID.Location = new System.Drawing.Point(42, 34);
+            this.LAB_ID.Name = "LAB_ID";
+            this.LAB_ID.Size = new System.Drawing.Size(17, 18);
+            this.LAB_ID.TabIndex = 0;
+            this.LAB_ID.Text = "ID";
+            // 
+            // TXT_ID
+            // 
+            this.TXT_ID.Location = new System.Drawing.Point(111, 34);
+            this.TXT_ID.Name = "TXT_ID";
+            this.TXT_ID.Size = new System.Drawing.Size(122, 20);
+            this.TXT_ID.TabIndex = 1;
             // 
             // RGV_Student
             // 
@@ -147,70 +246,6 @@ namespace ORAPS.Fabric
             this.RGV_Student.TotalPages = 1;
             this.RGV_Student.TotalRecords = 0;
             // 
-            // RGB_Search
-            // 
-            this.RGB_Search.AccessibleRole = System.Windows.Forms.AccessibleRole.Grouping;
-            this.RGB_Search.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(227)))), ((int)(((byte)(234)))), ((int)(((byte)(240)))));
-            this.RGB_Search.Controls.Add(this.BTN_Search);
-            this.RGB_Search.Controls.Add(this.BTN_Clear);
-            this.RGB_Search.Controls.Add(this.LAB_Name);
-            this.RGB_Search.Controls.Add(this.TXT_Name);
-            this.RGB_Search.Controls.Add(this.LAB_ID);
-            this.RGB_Search.Controls.Add(this.TXT_ID);
-            this.RGB_Search.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RGB_Search.HeaderText = "Search";
-            this.RGB_Search.Location = new System.Drawing.Point(0, 0);
-            this.RGB_Search.Name = "RGB_Search";
-            this.RGB_Search.Size = new System.Drawing.Size(589, 141);
-            this.RGB_Search.TabIndex = 1;
-            this.RGB_Search.Text = "Search";
-            // 
-            // BTN_Search
-            // 
-            this.BTN_Search.Location = new System.Drawing.Point(111, 95);
-            this.BTN_Search.Name = "BTN_Search";
-            this.BTN_Search.Size = new System.Drawing.Size(122, 24);
-            this.BTN_Search.TabIndex = 2;
-            this.BTN_Search.Text = "Search";
-            // 
-            // BTN_Clear
-            // 
-            this.BTN_Clear.Location = new System.Drawing.Point(330, 95);
-            this.BTN_Clear.Name = "BTN_Clear";
-            this.BTN_Clear.Size = new System.Drawing.Size(122, 24);
-            this.BTN_Clear.TabIndex = 2;
-            this.BTN_Clear.Text = "Clear";
-            // 
-            // LAB_Name
-            // 
-            this.LAB_Name.Location = new System.Drawing.Point(273, 34);
-            this.LAB_Name.Name = "LAB_Name";
-            this.LAB_Name.Size = new System.Drawing.Size(36, 18);
-            this.LAB_Name.TabIndex = 0;
-            this.LAB_Name.Text = "Name";
-            // 
-            // TXT_Name
-            // 
-            this.TXT_Name.Location = new System.Drawing.Point(330, 34);
-            this.TXT_Name.Name = "TXT_Name";
-            this.TXT_Name.Size = new System.Drawing.Size(122, 20);
-            this.TXT_Name.TabIndex = 1;
-            // 
-            // LAB_ID
-            // 
-            this.LAB_ID.Location = new System.Drawing.Point(42, 34);
-            this.LAB_ID.Name = "LAB_ID";
-            this.LAB_ID.Size = new System.Drawing.Size(17, 18);
-            this.LAB_ID.TabIndex = 0;
-            this.LAB_ID.Text = "ID";
-            // 
-            // TXT_ID
-            // 
-            this.TXT_ID.Location = new System.Drawing.Point(111, 34);
-            this.TXT_ID.Name = "TXT_ID";
-            this.TXT_ID.Size = new System.Drawing.Size(122, 20);
-            this.TXT_ID.TabIndex = 1;
-            // 
             // StudentEditor
             // 
             this.Controls.Add(this.splitContainer1);
@@ -232,6 +267,8 @@ namespace ORAPS.Fabric
             this.ResumeLayout(false);
 
         }
+
         #endregion
+
     }
 }
