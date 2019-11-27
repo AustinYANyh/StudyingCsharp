@@ -1,6 +1,6 @@
 function studentEditor_loadData(data, thisDom)
 {
-    thisDom._pg_studentEditor_eb_studentTest3.loadData(data);
+    thisDom._pg_studentEditor_eb_studentTest5.loadData(data);
 }
 
 function studentEditor_cancel(thisDom)
@@ -17,23 +17,10 @@ function studentEditor_beforeCancel(thisDom)
 function studentEditor_confirm(thisDom)
 {
     //$(thisDom).parent().hide();
-
-    //学生表区域
     var parent=thisDom.parentElement.parentElement;
-    var pgdata=thisDom._pg_studentEditor_eb_studentTest3.data;
+    var pgData=thisDom._pg_studentEditor_eb_studentTest5.data;
 
-    //自动计算总分
-    //成绩表区域
-    var _parent = GUI.Doms._dg_index_eb_achievementTest3;
-    orui_datagrid_refresh(_parent);
-    var _data = GUI.Doms._dg_index_eb_achievementTest3.getDataSet();
-
-    for(var i=pgdata.code*4-4;i<pgdata.code*4;++i)
-    {
-        pgdata.totalScore+=_data[i].fraction;
-    }
-
-    orui_datagrid_edit(parent,pgdata);
+    orui_datagrid_edit(parent,pgData);
     orui_allowedClick($(thisDom).parent());
 }
 
@@ -62,15 +49,15 @@ function studentEditor_init(parentDom){
     //#region 需要界面组需要添加，修改的主要部分
     //设置每个子控件到_this
     //假设有一个控件放在className为class1的div下面
-        _div_class = _this.querySelector("._pg_studentEditor_eb_studentTest3").children[0];
+        _div_class = _this.querySelector("._pg_studentEditor_eb_studentTest5").children[0];
     //必须在这个地方调用
     _div_controlType = _div_class.getAttribute("_controlType");
     _div_class._parentDom = _this;
     _div_class_init_func = eval(_div_controlType);
     _div_class_init_func(_div_class);
     
-    _this._pg_studentEditor_eb_studentTest3 = _div_class;
-    GUI.Doms._pg_studentEditor_eb_studentTest3 = _div_class;
+    _this._pg_studentEditor_eb_studentTest5 = _div_class;
+    GUI.Doms._pg_studentEditor_eb_studentTest5 = _div_class;
     _div_class = new Object();
 
     //#endregion
@@ -112,4 +99,3 @@ function studentEditor_init(parentDom){
 
     //endregion
 }
-
