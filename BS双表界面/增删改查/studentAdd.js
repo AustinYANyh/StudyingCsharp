@@ -1,6 +1,6 @@
 function studentAdd_loadData(data, thisDom)
 {
-    thisDom._pg_studentAdd_eb_studentTest3.loadData(data);
+    thisDom._pg_studentAdd_eb_studentTest5.loadData(data);
 }
 
 function studentAdd_cancel(thisDom)
@@ -17,30 +17,10 @@ function studentAdd_beforeCancel(thisDom)
 function studentAdd_confirm(thisDom)
 {
     //$(thisDom).parent().hide();
-    var _thisDom=thisDom;
-    var parent=_thisDom.parentElement.parentElement;
-    var pgdata=_thisDom._pg_studentAdd_eb_studentTest3.data;
+    var parent=thisDom.parentElement.parentElement;
+    var pgData=thisDom._pg_studentAdd_eb_studentTest5.data;
 
-    //自动计算总分
-    //成绩表区域
-    var _parent = GUI.Doms._dg_index_eb_achievementTest3;
-    orui_datagrid_refresh(_parent);
-    var _data = GUI.Doms._dg_index_eb_achievementTest3.getDataSet();
-
-    for(var i=pgdata.code*4-4;i<pgdata.code*4;++i)
-    {
-        pgdata.totalScore+=_data[i].fraction;
-    }
-
-    orui.ajaxhelper.getId("student_ID",1,function(res)
-    {
-        res=JSON.parse(res);
-        data.id=res.ID;
-        pgdata = thisDom.loadData(pgdata);
-        orui_datagrid_add(parent,pgdata);
-    });
-
-    $(thisDom).parent().hide();
+    orui_datagrid_add(parent,pgData);
     orui_allowedClick($(thisDom).parent());
 }
 
@@ -69,15 +49,16 @@ function studentAdd_init(parentDom){
     //#region 需要界面组需要添加，修改的主要部分
     //设置每个子控件到_this
     //假设有一个控件放在className为class1的div下面
-        _div_class = _this.querySelector("._pg_studentAdd_eb_studentTest3").children[0];
+        _div_class = _this.querySelector("._pg_studentAdd_eb_studentTest5").children[0];
     //必须在这个地方调用
     _div_controlType = _div_class.getAttribute("_controlType");
     _div_class._parentDom = _this;
     _div_class_init_func = eval(_div_controlType);
     _div_class_init_func(_div_class);
     
-    _this._pg_studentAdd_eb_studentTest3 = _div_class;
-    GUI.Doms._pg_studentAdd_eb_studentTest3 = _div_class;
+    _this._pg_studentAdd_eb_studentTest5 = _div_class;
+    GUI.Doms._pg_studentAdd_eb_studentTest5 = _div_class;
+    _div_class.addOnEndEditListener(studentAdd_pg_endEdit)
     _div_class = new Object();
 
     //#endregion
@@ -120,3 +101,23 @@ function studentAdd_init(parentDom){
     //endregion
 }
 
+function studentAdd_pg_endEdit(data,orgValue,newValue,info)
+{
+    if(info.classField=="id")
+    {
+        var _parent=GUI.Doms._dg_index_eb_achievementTest5;
+        orui_datagrid_refresh(_parent);
+        var _data=_parent.getDataSet();
+
+        data.totalScore=0;
+        for(var i=0;i<_data.length;++i)
+        {
+            if(data.id == _data[i].studentId)
+            {
+                data.totalScore+=_data[i].fraction;
+            }
+        }
+
+        GUI.Doms._pg_studentAdd_eb_studentTest5.loadData(data);
+    }
+}
