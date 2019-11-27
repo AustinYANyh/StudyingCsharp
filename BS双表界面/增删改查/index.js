@@ -3,24 +3,24 @@ function index_loadData(data, thisDom)
 
 }
 
-function index__dg_index_eb_studentTest3_connection(target,orgSelection,newSelection) {
+function index__dg_index_eb_studentTest5_connection(target,orgSelection,newSelection) {
     var _this = target._parentDom;
     var _target = target;
 
     //#region界面组需要填空的部分⬇️
     //获取需要联动的下级控件
     //e.g.⬇️
-    var subDG = GUI.Doms._dg_index_eb_studentTest3;
+    var subDG = GUI.Doms._dg_index_eb_achievementTest5;
     var value = newSelection["id"];
     var filter = "studentId='"+value +"'";
 
     subDG.setFilter(filter);
-    //orui_datagrid_refresh(subDG);
+    orui_datagrid_refresh(subDG);
 
     //#endregion
 }
 
-//function index__dg_index_eb_studentTest3_beforeAdd(target,newData) {
+//function index__dg_index_eb_studentTest5_beforeAdd(target,newData) {
 //}
 
 //初始化函数
@@ -43,31 +43,31 @@ function index_init(parentDom){
     //#region 需要界面组需要添加，修改的主要部分
     //设置每个子控件到_this
     //假设有一个控件放在className为class1的div下面
-        _div_class = _this.querySelector("._dg_index_eb_studentTest3").children[0];
+        _div_class = _this.querySelector("._dg_index_eb_studentTest5").children[0];
     //必须在这个地方调用
     _div_controlType = _div_class.getAttribute("_controlType");
     _div_class._parentDom = _this;
     _div_class_init_func = eval(_div_controlType);
     _div_class_init_func(_div_class);
     
-    _this._dg_index_eb_studentTest3 = _div_class;
-    GUI.Doms._dg_index_eb_studentTest3 = _div_class;
+    _this._dg_index_eb_studentTest5 = _div_class;
+    GUI.Doms._dg_index_eb_studentTest5 = _div_class;
     _div_class = new Object();
     //写Connection相关的events
-    _this._dg_index_eb_studentTest3.addOnSelectionChangedListener(index__dg_index_eb_studentTest3_connection);
+    _this._dg_index_eb_studentTest5.addOnSelectionChangedListener(index__dg_index_eb_studentTest5_connection);
 
 
     //写特殊events
-    //_this._dg_index_eb_studentTest3.addOnBeforeAddListener(index__dg_index_eb_studentTest3_beforeAdd);
-    _div_class = _this.querySelector("._dg_index_eb_achievementTest3").children[0];
+    //_this._dg_index_eb_studentTest5.addOnBeforeAddListener(index__dg_index_eb_studentTest5_beforeAdd);
+    _div_class = _this.querySelector("._dg_index_eb_achievementTest5").children[0];
     //必须在这个地方调用
     _div_controlType = _div_class.getAttribute("_controlType");
     _div_class._parentDom = _this;
     _div_class_init_func = eval(_div_controlType);
     _div_class_init_func(_div_class);
     
-    _this._dg_index_eb_achievementTest3 = _div_class;
-    GUI.Doms._dg_index_eb_achievementTest3 = _div_class;
+    _this._dg_index_eb_achievementTest5 = _div_class;
+    GUI.Doms._dg_index_eb_achievementTest5 = _div_class;
     _div_class = new Object();
 
     //#endregion
