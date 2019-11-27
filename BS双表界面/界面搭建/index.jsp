@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta charset="UTF-8">
-    <title>颜色测试</title>
+    <title>双标第二次测试</title>
     <link rel="stylesheet" href="../../basicScripts/orui_style/orui_basic.css">
     <link rel="stylesheet" href="../../basicScripts/orui_style/orui.css">
     <link rel="stylesheet" href="../../basicScripts/orui_style/orui_combobox.css">
@@ -46,13 +46,12 @@
     <script type="text/javascript" src="../../basicScripts/orui_msgbox.js"></script>
     <script type="text/javascript" src="../../basicScripts/orui.js"></script>
     <script type="text/javascript" src="../../basicScripts/template.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/colcoradd.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/colcoradd_logic.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/colcoreditor.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/colcoreditor_logic.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/index.js"></script>
-    <script type="text/javascript" src="../../scripts/testcolor/index_logic.js"></script>
-    
+    <script type="text/javascript" src="../../scripts/studentTest5/index.js"></script>
+    <script type="text/javascript" src="../../scripts/studentTest5/studentAdd.js"></script>
+    <script type="text/javascript" src="../../scripts/studentTest5/studentEditor.js"></script>
+    <script type="text/javascript" src="../../scripts/studentTest5/achievementAdd.js"></script>
+    <script type="text/javascript" src="../../scripts/studentTest5/achievementEditor.js"></script>
+
     <%
         String site = request.getParameter("site");
         //MUST DO
@@ -61,7 +60,7 @@
 
         //Prepare var to load base entity infos in a format [{entityName: xxx, entityBias: bxxx, displayInfos:[{},{},...]}]
         String baseInfos = "[]";//OperationHelpers.getEntitiesByEntityBias("","","");
-        //String baseInfos = OperationHelpers.getEntities("testcolor",ui);
+        //String baseInfos = OperationHelpers.getEntities("studentTest5",ui);
         String baseQueryPlan = "[]";//OperationHelpers.getQueryPlan(ui);
     %>
 </head><body>
@@ -86,15 +85,15 @@
     </script>
     <div id="<%=ui%>_hidden_div"></div>
     <div class="orui_frame">
-        <div class="orui_frame_top" style="height:100%;">
+        <div class="orui_frame_top" style="height: 50%;">
             
             <div class="orui_frame_top_content" style="height:100%">
-                <div class="orui_frame_top_content_left _dg_index_eb_colcortest11" style="width: 100%; ">
+                <div class="orui_frame_top_content_left _dg_index_eb_studentTest5" style="width: 100%; ">
                     <div _width="100%"
                          _height="100%"
-                         _entityName="en_colcortest11"
-                         _entityBias="eb_colcortest11"
-                         _guiName="testcolor"
+                         _entityName="en_studentTest5"
+                         _entityBias="eb_studentTest5"
+                         _guiName="studentTest5"
                          _filter=""
                          _coreFilter=""
                          _orderBy=""
@@ -102,18 +101,44 @@
                          _updateURL="/com/oraps/servlet/serviceServlet"
                          _pageSize="100"
                          _isShowPager="true"
-                         _basicButtons='{"query":""}'
+                         _basicButtons='{"add":"studentAdd.jsp","edit":"studentEditor.jsp","refresh":""}'
                          _customButtons='[]'
                          _readOnly="1"
                          _controlType="orui_datagrid"
-                         _infos='<%=OperationHelpers.getEntitiesByEntityBias("testcolor", "index", "eb_colcortest11")%>'
+                         _infos='<%=OperationHelpers.getEntitiesByEntityBias("studentTest5", "index", "eb_studentTest5")%>'
                     ></div>
                 </div>
                 
                 
             </div>
         </div>
+        <div class="orui_frame_bottom" style="height:50%;">
+    
+    <div class="orui_frame_bottom_content"  style="height:100%">
+        <div class="orui_frame_bottom_content_left _dg_index_eb_achievementTest5" style="width: 100%; ">
+                    <div _width="100%"
+                         _height="100%"
+                         _entityName="en_achievementTest5"
+                         _entityBias="eb_achievementTest5"
+                         _guiName="studentTest5"
+                         _filter=""
+                         _coreFilter=""
+                         _orderBy=""
+                         _dataSourceURL="/com/oraps/servlet/serviceServlet"
+                         _updateURL="/com/oraps/servlet/serviceServlet"
+                         _pageSize="100"
+                         _isShowPager="true"
+                         _basicButtons='{"add":"achievementAdd.jsp","edit":"achievementEditor.jsp","refresh":""}'
+                         _customButtons='[]'
+                         _readOnly="1"
+                         _controlType="orui_datagrid"
+                         _infos='<%=OperationHelpers.getEntitiesByEntityBias("studentTest5", "index", "eb_achievementTest5")%>'
+                    ></div>
+                </div>
         
+        
+    </div>
+</div>
     </div>
 </div>
 
