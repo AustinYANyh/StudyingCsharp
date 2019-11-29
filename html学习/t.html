@@ -17,23 +17,27 @@ action="http://111.229.13.33:9094/image">
 </tr>
 <tr>
     <td>点击刷新:</td>
-    <td><input type="button" value="刷新" style="width: 70px; height: 30px;"/></td>
-
-    <script src="Bmob-2.2.0.min.js"></script>
+    <td><input type="button" value="刷新" onclick="refresh_click()" style="width: 70px; height: 30px;"/></td>
+    onclick=refresh_click()
+    <script src="./Bmob-2.2.0.min.js"></script>
     <script>
     // 初始化
-    Bmob.initialize('9b41c92db4976a1bae59d554f0c3fc4a', '7fa2bb3451025d9da1f234e700ea161a')
-    const query = Bmob.Query("tableName");
-    query.find().then
-    (res => 
-            {
-                console.log(res)
-                for (var i = 0; i < res.length; i++) 
+    Bmob.initialize('e780a02696eeb691', '124152')
+    function refresh_click()
+    {
+        const query = Bmob.Query("image_table");
+        query.find().then
+        (res => 
                 {
-                    document.write(`${i}:${res[i].title}-----${res[i].createdAt}<br>`)
-                };
-            }
-    );
+                    console.log(res)
+                    for (var i = 0; i < res.length; i++) 
+                    {
+                        document.write(res[i]["image_name"])
+                        document.write(res[i]["image_size"])
+                    };
+                }
+        );
+    }
     </script>
 </tr>
 </table>
