@@ -68,11 +68,6 @@ namespace Csharp_myeverything
         {
             LISTDATA.Items.Clear();
             EDI_PATH.Text = "";
-        }
-
-        private void BTN_CLEAR2_Click(object sender, EventArgs e)
-        {
-            LISTDATA.Items.Clear();
             EDI_NAME.Text = "";
         }
 
@@ -98,45 +93,66 @@ namespace Csharp_myeverything
             adapter.Fill(dataTable);
             LISTDATA.Items.Clear();
 
+            this.LISTDATA.BeginUpdate();
             if (dataTable.Rows.Count > 0)
             {
                 foreach (DataRow dr in dataTable.Rows)
                 {
                     string path = dr["path"].ToString();
                     string name = dr["name"].ToString();
+                    string key = EDI_NAME.Text.Trim();
+                    //name = name.Replace(key, "<font color=green>" + key + "</font>");
                     ListViewItem item = new ListViewItem(path.Trim());
                     item.SubItems.Add(name.Trim());
+                    item.UseItemStyleForSubItems = false;
+                    item.SubItems[1].ForeColor = Color.Green;
                     LISTDATA.Items.Add(item);
                     //LISTDATA.Items[itemIdx].SubItems[0].Text = path;
                     //LISTDATA.Items[itemIdx].SubItems[1].Text = name;
+
+                    //高亮显示
+                    //TO DO
                 }
             }
-
             this.LISTDATA.EndUpdate();
             mysql.Close();
         }
 
         private void 打开所在路径ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string path = LISTDATA.FocusedItem.SubItems[0].Text;
-            string name = LISTDATA.FocusedItem.SubItems[1].Text;
+            try
+            {
+                string path = LISTDATA.FocusedItem.SubItems[0].Text;
+                string name = LISTDATA.FocusedItem.SubItems[1].Text;
 
-            //OpenFileDialog ofd = new OpenFileDialog();
+                //OpenFileDialog ofd = new OpenFileDialog();
 
-            //打开指定路径
-            System.Diagnostics.Process.Start(path);
+                //打开指定路径
+                System.Diagnostics.Process.Start(path);
 
-            //打开指定文件夹并选中文件
-            //System.Diagnostics.Process.Start("Explorer", "/select," + path + "\\" + name);
+                //打开指定文件夹并选中文件
+                //System.Diagnostics.Process.Start("Explorer", "/select," + path + "\\" + name);
+            }
+            catch (System.NullReferenceException)
+            {
+                MessageBox.Show("请选中文件名!", "错误提示");
+            }
         }
 
         private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string path = LISTDATA.FocusedItem.SubItems[0].Text;
-            string name = LISTDATA.FocusedItem.SubItems[1].Text;
-
-            //打开文件夹中某个文件
-            System.Diagnostics.Process.Start(path + "/" + name);
+            try
+            {
+                string path = LISTDATA.FocusedItem.SubItems[0].Text;
+                string name = LISTDATA.FocusedItem.SubItems[1].Text;
+            
+                //打开文件夹中某个文件
+                System.Diagnostics.Process.Start(path + "/" + name);
+            }
+            catch (System.NullReferenceException)
+            {
+                MessageBox.Show("请选中文件名!", "错误提示");
+            }
         }
     }
 }
