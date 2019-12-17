@@ -1,4 +1,3 @@
-    //父窗口的代码
     //这个按钮必须为public
     public void BTN_SEARCH_Click(object sender, EventArgs e)
     {
@@ -11,7 +10,7 @@
 
     //EDI_PATH控件属性Modifiers修改成public
 
-     //弹出的子窗口中的按钮的代码
+    //弹出的窗口中的按钮的代码
     private void BTN_SURE_Click(object sender, EventArgs e)
     {
         string path = Search_EDI_PATH.Text.Trim();
