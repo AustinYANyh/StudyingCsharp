@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Configuration;
 using MySql.Data.MySqlClient;
+using System.IO;
 
 namespace Csharp_myeverything
 {
@@ -19,59 +20,74 @@ namespace Csharp_myeverything
             InitializeComponent();
         }
 
+        //public string txt
+        //{
+        //    get { return this.EDI_PATH.Text; }
+        //    set { this.EDI_PATH.Text = value; }
+        //}
+
         private void BTN_SHOW_Click(object sender, EventArgs e)
         {
-            if (EDI_PATH.Text.Trim() == "")
-            { //链接数据库
-                MySqlConnection mysql = new MySqlConnection
-                    ("server=111.229.13.33;User Id=luzihan;password=124152;Database=myeverything");
-
-                string sql = "select * from everything;";
-
-                //打开数据库执行sql语句
-                mysql.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, mysql);
-                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-
-                DataTable dataTable = new DataTable();
-
-                //填充结果集
-                dataTable.Clear();
-                adapter.Fill(dataTable);
-
-                this.LISTDATA.BeginUpdate();
-
-                if (dataTable.Rows.Count > 0)
-                {
-                    foreach (DataRow dr in dataTable.Rows)
-                    {
-                        string path = dr["path"].ToString();
-                        string name = dr["name"].ToString();
-                        ListViewItem item = new ListViewItem(path.Trim());
-                        item.SubItems.Add(name.Trim());
-                        LISTDATA.Items.Add(item);
-                        //LISTDATA.Items[itemIdx].SubItems[0].Text = path;
-                        //LISTDATA.Items[itemIdx].SubItems[1].Text = name;
-                    }
-                }
-
-                this.LISTDATA.EndUpdate();
-                mysql.Close();
-            }
-            else
-            {
-                MessageBox.Show("扫描功能暂未开放...", "提示信息");
-            }
+            updataListView();
         }
 
         private void BTN_CLEAR_Click(object sender, EventArgs e)
         {
             LISTDATA.Items.Clear();
-            EDI_PATH.Text = "";
             EDI_NAME.Text = "";
         }
 
         private void EDI_NAME_TextChanged(object sender, EventArgs e)
+        {
+            updataListView();
+        }
+
+        private void 打开所在路径ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (LISTDATA.SelectedItems.Count > 0)
+            {
+                string path = LISTDATA.FocusedItem.SubItems[0].Text;
+                string name = LISTDATA.FocusedItem.SubItems[1].Text;
+
+                //OpenFileDialog ofd = new OpenFileDialog();
+
+                //打开指定路径
+                System.Diagnostics.Process.Start(path);
+
+                //打开指定文件夹并选中文件
+                //System.Diagnostics.Process.Start("Explorer", "/select," + path + "\\" + name);
+            }
+            else
+            {
+                MessageBox.Show("请选中文件名!", "错误提示");
+            }
+        }
+
+        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (LISTDATA.SelectedItems.Count > 0)
+            {
+                string path = LISTDATA.FocusedItem.SubItems[0].Text;
+                string name = LISTDATA.FocusedItem.SubItems[1].Text;
+
+                //打开文件夹中某个文件
+                System.Diagnostics.Process.Start(path + "/" + name);
+            }
+            else
+            {
+                MessageBox.Show("请选中文件名!", "错误提示");
+            }
+        }
+
+        //这个按钮必须为public
+        public void BTN_SEARCH_Click(object sender, EventArgs e)
+        {
+            search se = new search();
+            se.StartPosition = FormStartPosition.CenterScreen;
+            se.Show(this);
+        }
+
+        public void updataListView()
         {
             //链接数据库
             MySqlConnection mysql = new MySqlConnection
@@ -105,7 +121,7 @@ namespace Csharp_myeverything
                     ListViewItem item = new ListViewItem(path.Trim());
                     item.SubItems.Add(name.Trim());
                     item.UseItemStyleForSubItems = false;
-                    item.SubItems[1].ForeColor = Color.Green;
+                    //item.SubItems[1].ForeColor = Color.Green;
                     LISTDATA.Items.Add(item);
                     //LISTDATA.Items[itemIdx].SubItems[0].Text = path;
                     //LISTDATA.Items[itemIdx].SubItems[1].Text = name;
@@ -117,42 +133,76 @@ namespace Csharp_myeverything
             this.LISTDATA.EndUpdate();
             mysql.Close();
         }
+    }
 
-        private void 打开所在路径ToolStripMenuItem_Click(object sender, EventArgs e)
+    class scan
+    {
+        public static void GetFolderAndFile(string[] path, List<string> FilePath, string FileName)
         {
-            try
+            //链接数据库
+            MySqlConnection mysql = new MySqlConnection
+                ("server=111.229.13.33;User Id=luzihan;password=124152;Database=myeverything");
+
+            foreach (string str in path)
             {
-                string path = LISTDATA.FocusedItem.SubItems[0].Text;
-                string name = LISTDATA.FocusedItem.SubItems[1].Text;
+                string[] Next = Directory.GetDirectories(str); //获取当前路径下的所有文件夹
+                string[] Files = Directory.GetFiles(str, FileName);
 
-                //OpenFileDialog ofd = new OpenFileDialog();
+                string NAME = "";
+                string PATH = "";
+                string temp = "";
 
-                //打开指定路径
-                System.Diagnostics.Process.Start(path);
+                foreach (string Nowpath in Next)
+                {    
+                    temp = Nowpath;
+                    PATH = temp.Substring(0, temp.LastIndexOf('\\'));
+                    NAME = temp.Substring(temp.LastIndexOf('\\') + 1);
+                    Data.insertSql(PATH, NAME);
+                    FilePath.Add(Nowpath);
+                }
 
-                //打开指定文件夹并选中文件
-                //System.Diagnostics.Process.Start("Explorer", "/select," + path + "\\" + name);
-            }
-            catch (System.NullReferenceException)
-            {
-                MessageBox.Show("请选中文件名!", "错误提示");
+                foreach (string file in Files)
+                {
+                    temp = file;
+                    PATH = temp.Substring(0, temp.LastIndexOf('\\'));
+                    NAME = temp.Substring(temp.LastIndexOf('\\') + 1);
+                    Data.insertSql(PATH, NAME);
+                    FilePath.Add(file);
+                }
+
+                GetFolderAndFile(Next, FilePath, FileName);
             }
         }
 
-        private void 打开ToolStripMenuItem_Click(object sender, EventArgs e)
+    }
+
+    class Data
+    {
+        static public void insertSql(string path, string name)
         {
-            try
+            //链接数据库
+            MySqlConnection mysql = new MySqlConnection
+                ("server=111.229.13.33;User Id=luzihan;password=124152;Database=myeverything");
+
+            string sql = "select * from everything;";
+
+            //打开数据库执行sql语句
+            mysql.Open();
+            MySqlCommand cmd = new MySqlCommand(sql, mysql);
+            MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
+
+            DataTable dataTable = new DataTable();
+            adapter.Fill(dataTable);
+
+            int lineNo = dataTable.Rows.Count;
+
+            sql = string.Format("insert into everything values({0},'{1}','{2}');", lineNo + 1, path, name);
+            cmd = new MySqlCommand(sql, mysql);
+            if(cmd.ExecuteNonQuery() < 0)
             {
-                string path = LISTDATA.FocusedItem.SubItems[0].Text;
-                string name = LISTDATA.FocusedItem.SubItems[1].Text;
-            
-                //打开文件夹中某个文件
-                System.Diagnostics.Process.Start(path + "/" + name);
+                MessageBox.Show("插入数据库失败!");
             }
-            catch (System.NullReferenceException)
-            {
-                MessageBox.Show("请选中文件名!", "错误提示");
-            }
+            mysql.Close();
         }
     }
 }
