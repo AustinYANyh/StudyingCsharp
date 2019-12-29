@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
+using System.Net;
+using System.IO;
 
 namespace processBar
 {
@@ -18,12 +20,12 @@ namespace processBar
             InitializeComponent();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        public void Form1_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void BTN_DOWNLOAD_Click(object sender, EventArgs e)
+        public void BTN_DOWNLOAD_Click(object sender, EventArgs e)
         {
             double i = 0;
             while(i<200)
@@ -38,14 +40,10 @@ namespace processBar
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public void button1_Click(object sender, EventArgs e)
         {
-            int i = 0;
-            while(i<1000)
-            {
-                i++;
-                LAB_PERCENT.Text = i.ToString();
-            }
+            save s = new save();
+            s.Show(this);
         }
     }
 }
