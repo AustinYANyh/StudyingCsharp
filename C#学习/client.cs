@@ -16,21 +16,21 @@ namespace chatroom
     public partial class Form1 : Form
     {
         public static Form1 form1;
+        public static ChatManager chatm = new ChatManager();
         public Form1()
         {
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             form1 = this;
+            chatm.Start();
         }
 
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
             string username = user.username + ":\n";
-            string message = REDI_MESSAGE.Text;
+            string message = username + REDI_MESSAGE.Text;
 
-            ChatManager chatm = new ChatManager();
-            chatm.Start();
-            chatm.SendMessage(username);
+            //chatm.SendMessage(username);
             chatm.SendMessage(message);
 
             REDI_MESSAGE.Clear();
@@ -40,15 +40,13 @@ namespace chatroom
     public class ChatManager
     {
         private string _ipAdress = "127.0.0.1";
-        private int _port = 8899;
+        private int _port = 9000;
         EndPoint remotPoint;
         Socket clientSocket;
-        private bool isCanSend = false;
-        private string buttonMessage = null;
         public string message;
 
         Thread receiveThread;
-        byte[] bufferReceive = new byte[1024];
+        byte[] bufferReceive = new byte[4096];
 
         public void Start()
         {
@@ -82,17 +80,32 @@ namespace chatroom
         {
             while (true)
             {
-                if (clientSocket.Connected)
+                try
                 {
-                    int length = clientSocket.Receive(bufferReceive);
-                    message = Encoding.UTF8.GetString(bufferReceive, 0, length);
-                    //Form1 frm = new Form1();
-                    Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
-                    //frm.LISTBOX_MESSAGE.Items.Add(message);
+                    if (clientSocket.Connected)
+                    {
+                        int length = clientSocket.Receive(bufferReceive);
+                        message = Encoding.UTF8.GetString(bufferReceive, 0, length);
+                        //Form1 frm = new Form1();
+                        if (Form1.form1.LISTBOX_MESSAGE.InvokeRequired)
+                        {
+                            Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { Form1.form1.LISTBOX_MESSAGE.Items.Add(message); }));
+                        }
+                        else
+                        {
+                            Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
+                        }
+                        //Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
+                        //frm.LISTBOX_MESSAGE.Items.Add(message);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
+                catch (System.Net.Sockets.SocketException ex)
                 {
-                    break;
+                    MessageBox.Show(ex.ToString());
                 }
             }
         }
