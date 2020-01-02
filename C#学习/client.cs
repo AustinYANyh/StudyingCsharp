@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using System.Runtime.InteropServices;
 
 namespace chatroom
 {
@@ -27,20 +28,37 @@ namespace chatroom
 
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
-            string username = user.username + ":\n";
-            string message = username + REDI_MESSAGE.Text;
+            //string username = user.username + ":\n";
+            string username = user.username + ":" + DateTime.Now.ToString();
+            //Graphics vGraphics = CreateGraphics();
+            //SizeF vSizeF = vGraphics.MeasureString("事实是事实是事实是事实是事实是事实是事实是事实是事实是事实是事实是事", Font);
+            //username = username.PadLeft(91);
+            string message = REDI_MESSAGE.Text;
 
-            //chatm.SendMessage(username);
+            chatm.SendMessage(username);
             chatm.SendMessage(message);
 
             REDI_MESSAGE.Clear();
+        }
+
+        ~Form1()
+        {
+            
+        }
+
+        private void REDI_MESSAGE_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.S && e.Modifiers == Keys.Alt)
+            {
+                BTN_SEND_Click(sender, e);
+            }
         }
     }
 
     public class ChatManager
     {
-        private string _ipAdress = "127.0.0.1";
-        private int _port = 9000;
+        private string _ipAdress = "111.229.13.33";
+        private int _port = 2000;
         EndPoint remotPoint;
         Socket clientSocket;
         public string message;
@@ -53,17 +71,13 @@ namespace chatroom
             ConnetToSever(_ipAdress, _port);
         }
 
-        public void Update(string message)
-        {
-            
-        }
-
         public void ConnetToSever(string ipadress, int port)
         {
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             remotPoint = new IPEndPoint(IPAddress.Parse(ipadress), port);
             //建立连接
-            clientSocket.Connect(remotPoint);
+            clientSocket.BeginConnect(remotPoint, new AsyncCallback(ConnectCallBack), clientSocket);
+            //clientSocket.Connect(remotPoint);
             //因为是一直在准备接受的状态，所以开启一个线程来负责处理接受消息
             receiveThread = new Thread(ReceiveMessageFormSever);
             receiveThread.Start();
@@ -89,11 +103,11 @@ namespace chatroom
                         //Form1 frm = new Form1();
                         if (Form1.form1.LISTBOX_MESSAGE.InvokeRequired)
                         {
-                            Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { Form1.form1.LISTBOX_MESSAGE.Items.Add(message); }));
+                            Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { updateListBox(message); }));
                         }
                         else
                         {
-                            Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
+                            updateListBox(message);
                         }
                         //Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
                         //frm.LISTBOX_MESSAGE.Items.Add(message);
@@ -108,6 +122,26 @@ namespace chatroom
                     MessageBox.Show(ex.ToString());
                 }
             }
+        }
+
+        public void updateListBox(string message)
+        {
+            bool scroll = false;
+            if (Form1.form1.LISTBOX_MESSAGE.TopIndex == Form1.form1.LISTBOX_MESSAGE.Items.Count - (int)(Form1.form1.LISTBOX_MESSAGE.Height / Form1.form1.LISTBOX_MESSAGE.ItemHeight))
+                scroll = true;
+            Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
+            if (scroll)
+                Form1.form1.LISTBOX_MESSAGE.TopIndex = Form1.form1.LISTBOX_MESSAGE.Items.Count - (int)(Form1.form1.LISTBOX_MESSAGE.Height / Form1.form1.LISTBOX_MESSAGE.ItemHeight);
+        }
+
+        private byte[] ConnectCallBack()
+        {
+            uint dummy = 0;
+            byte[] inOptionValues = new byte[Marshal.SizeOf(dummy) * 3];
+            BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 0);
+            BitConverter.GetBytes((uint)3000).CopyTo(inOptionValues, Marshal.SizeOf(dummy));//keep-alive间隔
+            BitConverter.GetBytes((uint)500).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);// 尝试间隔
+            return inOptionValues;
         }
     }
 }
