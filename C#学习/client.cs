@@ -23,8 +23,7 @@ namespace chatroom
             InitializeComponent();
             Control.CheckForIllegalCrossThreadCalls = false;
             form1 = this;
-            chatm.Start();
-        }
+            chatm.Start();        }
 
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
@@ -76,9 +75,9 @@ namespace chatroom
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             remotPoint = new IPEndPoint(IPAddress.Parse(ipadress), port);
             //建立连接
-            clientSocket.BeginConnect(remotPoint, new AsyncCallback(ConnectCallBack), clientSocket);
-            //clientSocket.Connect(remotPoint);
-            //因为是一直在准备接受的状态，所以开启一个线程来负责处理接受消息
+            //clientSocket.BeginConnect(remotPoint, ConnectCallBack, clientSocket);
+            clientSocket.Connect(remotPoint);
+            //因为是一直在准备接受的状态，所以开启一个线程来负责处理接受消息 
             receiveThread = new Thread(ReceiveMessageFormSever);
             receiveThread.Start();
 
@@ -134,14 +133,14 @@ namespace chatroom
                 Form1.form1.LISTBOX_MESSAGE.TopIndex = Form1.form1.LISTBOX_MESSAGE.Items.Count - (int)(Form1.form1.LISTBOX_MESSAGE.Height / Form1.form1.LISTBOX_MESSAGE.ItemHeight);
         }
 
-        private byte[] ConnectCallBack()
+        private void ConnectCallBack(IAsyncResult ar)
         {
             uint dummy = 0;
             byte[] inOptionValues = new byte[Marshal.SizeOf(dummy) * 3];
-            BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 0);
-            BitConverter.GetBytes((uint)3000).CopyTo(inOptionValues, Marshal.SizeOf(dummy));//keep-alive间隔
-            BitConverter.GetBytes((uint)500).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);// 尝试间隔
-            return inOptionValues;
+            BitConverter.GetBytes((uint)1).CopyTo(inOptionValues, 0);//启用Keep-Alive
+            BitConverter.GetBytes((uint)5000).CopyTo(inOptionValues, Marshal.SizeOf(dummy));//在这个时间间隔内没有数据交互，则发探测包 毫秒
+            BitConverter.GetBytes((uint)1000).CopyTo(inOptionValues, Marshal.SizeOf(dummy) * 2);//发探测包时间间隔 毫秒
+            //client.Client.IOControl(IOControlCode.KeepAliveValues, inOptionValues, null);
         }
     }
 }
