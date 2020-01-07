@@ -11,6 +11,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 
 namespace chatroom
 {
@@ -27,8 +28,18 @@ namespace chatroom
 
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
-            string username = user.username + ":" + DateTime.Now.ToString();
-            string message = REDI_MESSAGE.Text;
+            string ip = chatm.GetIP();
+            string username = ip + "-" + user.username + ":" + DateTime.Now.ToString();
+            string message = ip + "-" + REDI_MESSAGE.Text;
+
+            //等于0是直接点发送,等于1是使用快捷键输入框有一个\n
+            if (REDI_MESSAGE.Text.Length == 1 || REDI_MESSAGE.Text.Length == 0)
+            {
+                GBOX_WARNING.Visible = true;
+                REDI_MESSAGE.Clear();
+                timer1.Enabled = true;
+                return;
+            }
 
             chatm.SendMessage(username);
             chatm.SendMessage(message);
@@ -40,17 +51,8 @@ namespace chatroom
         {
             if (e.KeyChar == 13)
             {
-                if (REDI_MESSAGE.Text.Length == 1)
-                {
-                    GBOX_WARNING.Visible = true;
-                    REDI_MESSAGE.Clear();
-                    timer1.Enabled = true;
-                }
-                else
-                {
-                    BTN_SEND_Click(sender, e);
-                    e.Handled = true;
-                }
+                BTN_SEND_Click(sender, e);
+                e.Handled = true;
             }
         }
 
@@ -115,6 +117,22 @@ namespace chatroom
             timer2.Enabled = false;
         }
 
+        [DllImport("user32.dll")]//拖动无窗体的控件
+        public static extern bool ReleaseCapture();
+        [DllImport("user32.dll")]
+        public static extern bool SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
+        public const int WM_SYSCOMMAND = 0x0112;
+        public const int SC_MOVE = 0xF010;
+        public const int HTCAPTION = 0x0002;
+
+        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        {
+            //拖动窗体
+            ReleaseCapture();
+            SendMessage(this.Handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION, 0);
+        }
+
+
         //窗口关闭,不管什么线程都被强制退出
         //调试用
         //private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -128,7 +146,7 @@ namespace chatroom
         private string _ipAdress = "111.229.13.33";
         private int _port = 2000;
         EndPoint remotPoint;
-        Socket clientSocket;
+        public Socket clientSocket;
         public string message;
         bool isInputing = false;
 
@@ -182,21 +200,25 @@ namespace chatroom
                         int length = clientSocket.Receive(bufferReceive);
                         message = Encoding.UTF8.GetString(bufferReceive, 0, length);
 
-                        if (message == "isInputing...")
+                        //string clientip = clientSocket.LocalEndPoint.ToString();
+                        //int index = clientip.IndexOf(":");
+                        //clientip = clientip.Substring(0,index);
+
+                        int index = message.IndexOf("-");
+                        string mesIp = message.Substring(0,index);
+                        string mes = message.Substring(index + 1);
+                        string ip = GetIP();
+                        if (mesIp != ip && mes == "isInputing...")
                         {
                             if (Form1.form1.LAB_STATE.InvokeRequired)
                             {
                                 Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab(); }));
                             }
                         }
-                        //结束输入状态
-                        //else if (message == "finishInputing...")
-                        //{
-                        //    if (Form1.form1.LAB_STATE.InvokeRequired)
-                        //    {
-                        //        Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab2(); }));
-                        //    }
-                        //}
+                        else if (mesIp == ip && mes == "isInputing...")
+                        {
+                            //do nothing
+                        }
                         //客户端发来的消息,更新到listbox
                         else
                         {
@@ -221,6 +243,48 @@ namespace chatroom
                 }
             }
         }
+        /// <summary>
+        /// 获取ip地址
+        /// </summary>
+        /// <returns></returns>
+        public string GetLocalIp()
+        {
+            ///获取本地的IP地址
+            string AddressIP = string.Empty;
+            foreach (IPAddress _IPAddress in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
+            {
+                if (_IPAddress.AddressFamily.ToString() == "InterNetwork")
+                {
+                    AddressIP = _IPAddress.ToString();
+                }
+            }
+            return AddressIP;
+        }
+
+        /// <summary>
+        /// 获取外网ip地址
+        /// </summary>
+        /// <returns></returns>
+        public string GetIP()
+        {
+            using (var webClient = new WebClient())
+            {
+               try{
+                    webClient.Credentials = CredentialCache.DefaultCredentials;
+                    byte[] pageDate = webClient.DownloadData("http://pv.sohu.com/cityjson?ie=utf-8");
+                    String ip = Encoding.UTF8.GetString(pageDate);
+                    webClient.Dispose();
+
+                    Match rebool = Regex.Match(ip, @"\d{2,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
+                    return rebool.Value;
+               }
+               catch (Exception e)
+               {
+                   return "";
+               }
+
+            }
+        }
 
         /// <summary>
         /// 检测用户输入状态
@@ -233,7 +297,8 @@ namespace chatroom
 
                 if (isInputing == true)
                 {
-                    byte[] buffer = Encoding.UTF8.GetBytes("isInputing...");
+                    string ip = GetIP();
+                    byte[] buffer = Encoding.UTF8.GetBytes(ip + "-" + "isInputing...");
                     clientSocket.SendTo(buffer, remotPoint);
                 }
                 else
@@ -298,9 +363,37 @@ namespace chatroom
 
         [DllImport("User32.dll", EntryPoint = "FindWindow")]
         private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        //窗体任务栏图标闪烁
+        [DllImport("user32.dll")]
+        static extern bool FlashWindowEx(ref FLASHWINFO pwfi);
+
+        [DllImport("User32.dll", CharSet = CharSet.Unicode, EntryPoint = "FlashWindow")]
+        static extern bool FlashWindow(IntPtr handle, bool invert);
+
+        [StructLayout(LayoutKind.Sequential)]
+        public struct FLASHWINFO
+        {
+            public UInt32 cbSize;
+            public IntPtr hwnd;
+            public UInt32 dwFlags;
+            public UInt32 uCount;
+            public UInt32 dwTimeOut;
+        }
+
+        public const UInt32 FLASHW_STOP = 0x00000000;
+        public const UInt32 FLASHW_CAPTION = 0x00000001;
+        public const UInt32 FLASHW_TRAY = 0x00000002;
+        public const UInt32 FLASHW_ALL = 0x00000003;
+        public const UInt32 FLASHW_TIMER = 0x00000004;
+        public const UInt32 FLASHW_TIMERNOFG = 0x0000000C;
+
         public void updateListBox(string message)
         {
             Form1.form1.LISTBOX_MESSAGE.ClearSelected();
+
+            int index = message.IndexOf("-");
+            message = message.Substring(index + 1);
 
             //焦点不在软件界面,接受消息前播放声音提醒
             IntPtr hwnd = FindWindow(null, "兔夫君和鹿夫人");
@@ -308,6 +401,20 @@ namespace chatroom
             if (Form1.form1.REDI_MESSAGE.Focused == false)
             {
                 //Thread.Sleep(500);
+
+                //闪烁
+                FLASHWINFO fi = new FLASHWINFO();
+
+                fi.cbSize = (uint)Marshal.SizeOf(fi);
+                fi.hwnd = hwnd;
+                fi.dwFlags = FLASHW_TIMER | FLASHW_ALL;
+                fi.uCount = 5;
+                fi.dwTimeOut = 75;
+
+                FlashWindowEx(ref fi);
+
+                //任务栏消息提示
+                FlashWindow(hwnd, true);
                 System.Media.SystemSounds.Hand.Play();
             }
 
