@@ -29,7 +29,7 @@ namespace chatroom
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
             string ip = chatm.GetIP();
-            string username = ip + "-" + user.username + ":" + DateTime.Now.ToString();
+            //string username = ip + "-" + user.username + ":" + DateTime.Now.ToString();
             string message = ip + "-" + REDI_MESSAGE.Text;
 
             //等于0是直接点发送,等于1是使用快捷键输入框有一个\n
@@ -41,7 +41,7 @@ namespace chatroom
                 return;
             }
 
-            chatm.SendMessage(username);
+            //chatm.SendMessage(username);
             chatm.SendMessage(message);
 
             REDI_MESSAGE.Clear();
@@ -132,6 +132,54 @@ namespace chatroom
             SendMessage(this.Handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION, 0);
         }
 
+        private void BTN_CLOSE_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                BTN_CLOSE.Image = Image.FromFile(@"./选中关闭.png");
+            }
+            catch(System.IO.FileNotFoundException file_err)
+            {
+                MessageBox.Show("资源路径不正确或资源缺失...");
+            }
+        }
+
+        private void BTN_CLOSE_MouseLeave(object sender, EventArgs e)
+        {
+            try
+            {
+                BTN_CLOSE.Image = Image.FromFile(@"./关闭.png");
+            }
+            catch (System.IO.FileNotFoundException file_err)
+            {
+                MessageBox.Show("资源路径不正确或资源缺失...");
+            }
+        }
+
+        private void button1_MouseMove(object sender, MouseEventArgs e)
+        {
+            try
+            {
+                button1.Image = Image.FromFile(@"./选中最小化.png");
+            }
+            catch (System.IO.FileNotFoundException file_err)
+            {
+                MessageBox.Show("资源路径不正确或资源缺失...");
+            }
+        }
+
+        private void button1_MouseLeave(object sender, EventArgs e)
+        {
+            try
+            {
+                button1.Image = Image.FromFile(@"./最小化.png");
+            }
+            catch (System.IO.FileNotFoundException file_err)
+            {
+                MessageBox.Show("资源路径不正确或资源缺失...");
+            }
+        }
+
 
         //窗口关闭,不管什么线程都被强制退出
         //调试用
@@ -197,17 +245,30 @@ namespace chatroom
                 {
                     if (clientSocket.Connected)
                     {
-                        int length = clientSocket.Receive(bufferReceive);
-                        message = Encoding.UTF8.GetString(bufferReceive, 0, length);
+                        object lockobj = new object();
+                        lock (lockobj)
+                        {
+                            int length = clientSocket.Receive(bufferReceive);
+                            message = Encoding.UTF8.GetString(bufferReceive, 0, length);
 
+                            //处理tcp粘包问题
+                            int pos = message.IndexOf("\n");
+                            if (message.IndexOf("\n") != -1 && pos != message.Length - 1)
+                            {
+                                message = message.Substring(0, pos);
+                            }
+                        }
                         //string clientip = clientSocket.LocalEndPoint.ToString();
                         //int index = clientip.IndexOf(":");
                         //clientip = clientip.Substring(0,index);
 
                         int index = message.IndexOf("-");
-                        string mesIp = message.Substring(0,index);
+                        string mesIp = message.Substring(0, index);
                         string mes = message.Substring(index + 1);
+                        
                         string ip = GetIP();
+
+
                         if (mesIp != ip && mes == "isInputing...")
                         {
                             if (Form1.form1.LAB_STATE.InvokeRequired)
@@ -297,9 +358,13 @@ namespace chatroom
 
                 if (isInputing == true)
                 {
-                    string ip = GetIP();
-                    byte[] buffer = Encoding.UTF8.GetBytes(ip + "-" + "isInputing...");
-                    clientSocket.SendTo(buffer, remotPoint);
+                    object lockobj = new object();
+                    lock (lockobj)
+                    {
+                        string ip = GetIP();
+                        byte[] buffer = Encoding.UTF8.GetBytes(ip + "-" + "isInputing...");
+                        clientSocket.SendTo(buffer, remotPoint);
+                    }
                 }
                 else
                 {
@@ -390,36 +455,50 @@ namespace chatroom
 
         public void updateListBox(string message)
         {
-            Form1.form1.LISTBOX_MESSAGE.ClearSelected();
+            object lockObj = new object();
 
-            int index = message.IndexOf("-");
-            message = message.Substring(index + 1);
-
-            //焦点不在软件界面,接受消息前播放声音提醒
-            IntPtr hwnd = FindWindow(null, "兔夫君和鹿夫人");
-            //if (CheckIsTopMost(hwnd) == true)
-            if (Form1.form1.REDI_MESSAGE.Focused == false)
+            lock (lockObj)
             {
-                //Thread.Sleep(500);
+                Form1.form1.LISTBOX_MESSAGE.ClearSelected();
 
-                //闪烁
-                FLASHWINFO fi = new FLASHWINFO();
+                int index = message.IndexOf("-");
+                string name = user.dic[message.Substring(0, index)] + ":" + DateTime.Now.ToString();
 
-                fi.cbSize = (uint)Marshal.SizeOf(fi);
-                fi.hwnd = hwnd;
-                fi.dwFlags = FLASHW_TIMER | FLASHW_ALL;
-                fi.uCount = 5;
-                fi.dwTimeOut = 75;
+                message = message.Substring(index + 1);
 
-                FlashWindowEx(ref fi);
+                Form1.form1.LISTBOX_MESSAGE.Items.Add(name);
+               
+                //焦点不在软件界面,接受消息前播放声音提醒
+                IntPtr hwnd = FindWindow(null, "兔夫君和鹿夫人");
+                //if (CheckIsTopMost(hwnd) == true)
+                if (Form1.form1.REDI_MESSAGE.Focused == false)
+                {
+                    //Thread.Sleep(500);
 
-                //任务栏消息提示
-                FlashWindow(hwnd, true);
-                System.Media.SystemSounds.Hand.Play();
+                    //闪烁
+                    FLASHWINFO fi = new FLASHWINFO();
+
+                    fi.cbSize = (uint)Marshal.SizeOf(fi);
+                    fi.hwnd = hwnd;
+                    fi.dwFlags = FLASHW_TIMER | FLASHW_ALL;
+                    fi.uCount = 5;
+                    fi.dwTimeOut = 75;
+
+                    FlashWindowEx(ref fi);
+
+                    //任务栏消息提示
+                    FlashWindow(hwnd, true);
+                    System.Media.SystemSounds.Hand.Play();
+                }
+
+                //object lockObj = new object();
+
+                //lock (lockObj)
+                {
+                    Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
+                    Form1.form1.LISTBOX_MESSAGE.TopIndex = Form1.form1.LISTBOX_MESSAGE.Items.Count - (int)(Form1.form1.LISTBOX_MESSAGE.Height / Form1.form1.LISTBOX_MESSAGE.ItemHeight);
+                }
             }
-
-            Form1.form1.LISTBOX_MESSAGE.Items.Add(message);
-            Form1.form1.LISTBOX_MESSAGE.TopIndex = Form1.form1.LISTBOX_MESSAGE.Items.Count - (int)(Form1.form1.LISTBOX_MESSAGE.Height / Form1.form1.LISTBOX_MESSAGE.ItemHeight);
         }
 
         private void ConnectCallBack(IAsyncResult ar)
