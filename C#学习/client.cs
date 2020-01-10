@@ -12,6 +12,8 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Drawing;
+using System.Drawing.Drawing2D;
 
 namespace chatroom
 {
@@ -28,8 +30,7 @@ namespace chatroom
 
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
-            string ip = chatm.GetIP();
-            //string username = ip + "-" + user.username + ":" + DateTime.Now.ToString();
+            string ip = user.GetLocalIp();
             string message = ip + "-" + REDI_MESSAGE.Text;
 
             //等于0是直接点发送,等于1是使用快捷键输入框有一个\n
@@ -105,19 +106,15 @@ namespace chatroom
 
         private void timer2_Tick(object sender, EventArgs e)
         {
-            //if (Form1.form1.LAB_STATE.InvokeRequired)
-            //{
-            //    Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() =>
-            //    {
-            //        Form1.form1.LAB_STATE.Text = " ";
-            //        Application.DoEvents();
-            //    }));
-            //}
             Form1.form1.LAB_STATE.Text = " ";
             timer2.Enabled = false;
         }
 
-        [DllImport("user32.dll")]//拖动无窗体的控件
+        /// <summary>
+        /// 拖动无窗体的控件
+        /// </summary>
+        /// <returns></returns>
+        [DllImport("user32.dll")]
         public static extern bool ReleaseCapture();
         [DllImport("user32.dll")]
         public static extern bool SendMessage(IntPtr hwnd, int wMsg, int wParam, int lParam);
@@ -125,20 +122,25 @@ namespace chatroom
         public const int SC_MOVE = 0xF010;
         public const int HTCAPTION = 0x0002;
 
-        private void Form1_MouseDown(object sender, MouseEventArgs e)
+        private void PANEL_TITLE_MouseDown(object sender, MouseEventArgs e)
         {
             //拖动窗体
             ReleaseCapture();
             SendMessage(this.Handle, WM_SYSCOMMAND, SC_MOVE + HTCAPTION, 0);
         }
 
+        /// <summary>
+        /// 最小化和关闭按钮鼠标事件
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void BTN_CLOSE_MouseMove(object sender, MouseEventArgs e)
         {
             try
             {
                 BTN_CLOSE.Image = Image.FromFile(@"./选中关闭.png");
             }
-            catch(System.IO.FileNotFoundException file_err)
+            catch(System.IO.FileNotFoundException)
             {
                 MessageBox.Show("资源路径不正确或资源缺失...");
             }
@@ -150,7 +152,7 @@ namespace chatroom
             {
                 BTN_CLOSE.Image = Image.FromFile(@"./关闭.png");
             }
-            catch (System.IO.FileNotFoundException file_err)
+            catch (System.IO.FileNotFoundException)
             {
                 MessageBox.Show("资源路径不正确或资源缺失...");
             }
@@ -162,7 +164,7 @@ namespace chatroom
             {
                 button1.Image = Image.FromFile(@"./选中最小化.png");
             }
-            catch (System.IO.FileNotFoundException file_err)
+            catch (System.IO.FileNotFoundException)
             {
                 MessageBox.Show("资源路径不正确或资源缺失...");
             }
@@ -174,7 +176,7 @@ namespace chatroom
             {
                 button1.Image = Image.FromFile(@"./最小化.png");
             }
-            catch (System.IO.FileNotFoundException file_err)
+            catch (System.IO.FileNotFoundException)
             {
                 MessageBox.Show("资源路径不正确或资源缺失...");
             }
@@ -223,7 +225,8 @@ namespace chatroom
                 MessageBox.Show("服务器未开启...请先开启...");
                 Form1.form1.Close();
             }
-            //因为是一直在准备接受的状态，所以开启一个线程来负责处理接受消息 
+
+            //创建线程执行接收和检测用户输入状态
             receiveThread = new Thread(ReceiveMessageFormSever);
             receiveThread.Start();
 
@@ -252,7 +255,14 @@ namespace chatroom
                             message = Encoding.UTF8.GetString(bufferReceive, 0, length);
 
                             //处理tcp粘包问题
-                            int pos = message.IndexOf("\n");
+                            //1.输入状态信息在前
+                            int pos = message.IndexOf("isInputing...");
+                            if (message.IndexOf("isInputing...") != -1 && pos != message.Length - 13)
+                            {
+                                message = message.Substring(pos + 13);
+                            }
+                            //2.输入状态信息在后
+                            pos = message.IndexOf("\n");
                             if (message.IndexOf("\n") != -1 && pos != message.Length - 1)
                             {
                                 message = message.Substring(0, pos);
@@ -266,9 +276,10 @@ namespace chatroom
                         string mesIp = message.Substring(0, index);
                         string mes = message.Substring(index + 1);
                         
-                        string ip = GetIP();
+                        string ip = user.GetLocalIp();
 
 
+                        
                         if (mesIp != ip && mes == "isInputing...")
                         {
                             if (Form1.form1.LAB_STATE.InvokeRequired)
@@ -304,49 +315,7 @@ namespace chatroom
                 }
             }
         }
-        /// <summary>
-        /// 获取ip地址
-        /// </summary>
-        /// <returns></returns>
-        public string GetLocalIp()
-        {
-            ///获取本地的IP地址
-            string AddressIP = string.Empty;
-            foreach (IPAddress _IPAddress in Dns.GetHostEntry(Dns.GetHostName()).AddressList)
-            {
-                if (_IPAddress.AddressFamily.ToString() == "InterNetwork")
-                {
-                    AddressIP = _IPAddress.ToString();
-                }
-            }
-            return AddressIP;
-        }
-
-        /// <summary>
-        /// 获取外网ip地址
-        /// </summary>
-        /// <returns></returns>
-        public string GetIP()
-        {
-            using (var webClient = new WebClient())
-            {
-               try{
-                    webClient.Credentials = CredentialCache.DefaultCredentials;
-                    byte[] pageDate = webClient.DownloadData("http://pv.sohu.com/cityjson?ie=utf-8");
-                    String ip = Encoding.UTF8.GetString(pageDate);
-                    webClient.Dispose();
-
-                    Match rebool = Regex.Match(ip, @"\d{2,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}");
-                    return rebool.Value;
-               }
-               catch (Exception e)
-               {
-                   return "";
-               }
-
-            }
-        }
-
+        
         /// <summary>
         /// 检测用户输入状态
         /// <summary>
@@ -361,7 +330,7 @@ namespace chatroom
                     object lockobj = new object();
                     lock (lockobj)
                     {
-                        string ip = GetIP();
+                        string ip = user.GetLocalIp();
                         byte[] buffer = Encoding.UTF8.GetBytes(ip + "-" + "isInputing...");
                         clientSocket.SendTo(buffer, remotPoint);
                     }

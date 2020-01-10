@@ -13,8 +13,6 @@ namespace chatroom
 {
     public partial class logon : Form
     {
-        private static MySqlConnection mysql = new MySqlConnection
-                ("server=111.229.13.33;User Id=luzihan;password=124152;Database=chat_login");
         public logon()
         {
             InitializeComponent();
@@ -33,14 +31,20 @@ namespace chatroom
 
             if(name.Length <= 0 || passwd.Length <= 0)
             {
-                MessageBox.Show("用户名或密码不合法,请重试...");
+                MessageBox.Show("用户名或密码不合法,请重试...","提示",MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             
+            if(EDI_LOGON_IP.Text.Trim().Length <= 0)
+            {
+                MessageBox.Show("IP地址为必填项!...","提示",MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
             try
             {
                 sql = string.Format("select * from loginfo where log_name ='{0}';", name);
-                DataTable datatable = selectSql(sql);
+                DataTable datatable = MySQL.selectSql(sql);
 
                 if (datatable.Rows.Count > 0)
                 {
@@ -50,7 +54,7 @@ namespace chatroom
 
                 sql = string.Format("select * from loginfo where log_ip ='{0}';", EDI_LOGON_IP.Text.Trim());
                 datatable.Clear();
-                datatable = selectSql(sql);
+                datatable = MySQL.selectSql(sql);
 
                 if (datatable.Rows.Count > 0)
                 {
@@ -66,7 +70,7 @@ namespace chatroom
             
             sql = string.Format("insert into loginfo values('{0}','{1}');", name, passwd);
 
-            if (executeSql(sql) == false)
+            if (MySQL.executeSql(sql) == false)
             {
                 MessageBox.Show("插入数据库失败!");
                 return;
@@ -75,52 +79,9 @@ namespace chatroom
             this.Close();
         }
 
-        public DataTable selectSql(string sql)
-        {
-            DataTable datatable = new DataTable();
-            try
-            {
-                mysql.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, mysql);
-                MySqlDataAdapter adapter = new MySqlDataAdapter(cmd);
-                
-                datatable.Clear();
-                adapter.Fill(datatable);
-
-                mysql.Close();
-                return datatable;
-            }
-            catch(MySqlException err)
-            {
-                MessageBox.Show(err.ToString());
-                return datatable;
-            }
-        }
-
-        public bool executeSql(string sql)
-        {
-            try
-            {
-                mysql.Open();
-                MySqlCommand cmd = new MySqlCommand(sql, mysql);
-
-                if (cmd.ExecuteNonQuery() < 0)
-                {
-                    return false;
-                }
-                mysql.Close();
-                return true;
-            }
-            catch(MySql.Data.MySqlClient.MySqlException err)
-            {
-                MessageBox.Show(err.ToString());
-                return false;
-            }
-        }
-
         private void BTN_LOGON_IPCLICK_Click(object sender, EventArgs e)
         {
-            EDI_LOGON_IP.Text = user.GetIP();
+            EDI_LOGON_IP.Text = user.GetLocalIp();
         }
     }
 }
