@@ -96,7 +96,14 @@ namespace chatroom
 
         private void BTN_CLOSE_Click(object sender, EventArgs e)
         {
-            this.Close();
+            try
+            {
+                this.Close();
+            }
+            catch(System.Net.Sockets.SocketException)
+            {
+                MessageBox.Show("对方已关闭连接...");
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -184,11 +191,10 @@ namespace chatroom
 
 
         //窗口关闭,不管什么线程都被强制退出
-        //调试用
-        //private void Form1_FormClosing(object sender, FormClosingEventArgs e)
-        //{
-        //    System.Environment.Exit(0);
-        //}
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            System.Environment.Exit(0);
+        }
     }
 
     public class ChatManager
@@ -222,7 +228,8 @@ namespace chatroom
             }
             catch(SocketException)
             {
-                MessageBox.Show("服务器未开启...请先开启...");
+                //MessageBox.Show("服务器未开启...请先开启...");
+                MessageBox.Show("The server is outline...Please open first...");
                 Form1.form1.Close();
             }
 
@@ -248,12 +255,25 @@ namespace chatroom
                 {
                     if (clientSocket.Connected)
                     {
-                        object lockobj = new object();
-                        lock (lockobj)
-                        {
-                            int length = clientSocket.Receive(bufferReceive);
-                            message = Encoding.UTF8.GetString(bufferReceive, 0, length);
+                        int length = clientSocket.Receive(bufferReceive);
+                        message = Encoding.UTF8.GetString(bufferReceive, 0, length);
 
+                        //登录或断线消息---系统消息
+                        //System message:223.167.169.200:31966客户端已成功连接...
+                        //System message:223.167.169.200:31966已断开连接...
+                        if (message.IndexOf("System message:") != -1)
+                        {
+                            if (Form1.form1.LISTBOX_MESSAGE.InvokeRequired)
+                            {
+                                Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { _update(message); }));
+                            }
+                            else
+                            {
+                                _update(message);
+                            }
+                        }
+                        else
+                        {
                             //处理tcp粘包问题
                             //1.输入状态信息在前
                             int pos = message.IndexOf("isInputing...");
@@ -267,40 +287,35 @@ namespace chatroom
                             {
                                 message = message.Substring(0, pos);
                             }
-                        }
-                        //string clientip = clientSocket.LocalEndPoint.ToString();
-                        //int index = clientip.IndexOf(":");
-                        //clientip = clientip.Substring(0,index);
-
-                        int index = message.IndexOf("-");
-                        string mesIp = message.Substring(0, index);
-                        string mes = message.Substring(index + 1);
-                        
-                        string ip = user.GetLocalIp();
 
 
-                        
-                        if (mesIp != ip && mes == "isInputing...")
-                        {
-                            if (Form1.form1.LAB_STATE.InvokeRequired)
+                            int index = message.IndexOf("-");
+                            string mesIp = message.Substring(0, index);
+                            string mes = message.Substring(index + 1);
+                            string ip = user.GetLocalIp();
+
+                            if (mesIp != ip && mes == "isInputing...")
                             {
-                                Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab(); }));
+                                if (Form1.form1.LAB_STATE.InvokeRequired)
+                                {
+                                    Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab(); }));
+                                }
                             }
-                        }
-                        else if (mesIp == ip && mes == "isInputing...")
-                        {
-                            //do nothing
-                        }
-                        //客户端发来的消息,更新到listbox
-                        else
-                        {
-                            if (Form1.form1.LISTBOX_MESSAGE.InvokeRequired)
+                            else if (mesIp == ip && mes == "isInputing...")
                             {
-                                Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { updateListBox(message); }));
+                                //do nothing
                             }
+                            //客户端发来的消息,更新到listbox
                             else
                             {
-                                updateListBox(message);
+                                if (Form1.form1.LISTBOX_MESSAGE.InvokeRequired)
+                                {
+                                    Form1.form1.LISTBOX_MESSAGE.Invoke(new MethodInvoker(() => { updateListBox(message); }));
+                                }
+                                else
+                                {
+                                    updateListBox(message);
+                                }
                             }
                         }
                     }
@@ -422,6 +437,28 @@ namespace chatroom
         public const UInt32 FLASHW_TIMER = 0x00000004;
         public const UInt32 FLASHW_TIMERNOFG = 0x0000000C;
 
+        public void _update(string message)
+        {
+            //System message:223.167.169.200:31966客户端已成功连接...
+            //System message:223.167.169.200:31966已断开连接...
+            if(message.IndexOf("客户端已成功连接...") != -1)
+            {
+                message = message.Substring(message.IndexOf(":") + 1);
+                string netip = message.Substring(0, message.IndexOf(":"));
+                Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Center;
+                Form1.form1.REDI_SHOWMESSAGE.AppendText(user.mesdic[netip] + "已登录!!!");
+                //Form1.form1.LISTBOX_MESSAGE.Items.Add((user.mesdic[netip] + "已登录!!!").PadLeft(53));
+            }
+            else
+            {
+                message = message.Substring(message.IndexOf(":") + 1);
+                string netip = message.Substring(0, message.IndexOf(":"));
+                Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Center;
+                Form1.form1.REDI_SHOWMESSAGE.AppendText(user.mesdic[netip] + "已退出...");
+                //Form1.form1.LISTBOX_MESSAGE.Items.Add((user.mesdic[netip] + "已退出...").PadLeft(53));
+            }
+        }
+
         public void updateListBox(string message)
         {
             object lockObj = new object();
@@ -430,13 +467,35 @@ namespace chatroom
             {
                 Form1.form1.LISTBOX_MESSAGE.ClearSelected();
 
+                //192.168.1.10-1
                 int index = message.IndexOf("-");
-                string name = user.dic[message.Substring(0, index)] + ":" + DateTime.Now.ToString();
 
-                message = message.Substring(index + 1);
+                //自己的消息
+                string name = user.dic[message.Substring(0, index)] + ":" + DateTime.Now.ToString();
+                
+                if(message.Substring(0, index) == user.GetLocalIp())
+                {
+                    Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Right;
+                    Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
+
+                    message = message.Substring(index + 1);
+                    Form1.form1.REDI_SHOWMESSAGE.AppendText(message);        
+                }
+                else
+                {
+                    Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Left;
+                    Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
+
+                    message = message.Substring(index + 1);
+                    Form1.form1.REDI_SHOWMESSAGE.AppendText(message); 
+                }
+
+                Form1.form1.REDI_SHOWMESSAGE.Select(Form1.form1.REDI_SHOWMESSAGE.TextLength, 0);
+                Form1.form1.REDI_SHOWMESSAGE.ScrollToCaret();
+                //message = message.Substring(index + 1); 
 
                 Form1.form1.LISTBOX_MESSAGE.Items.Add(name);
-               
+
                 //焦点不在软件界面,接受消息前播放声音提醒
                 IntPtr hwnd = FindWindow(null, "兔夫君和鹿夫人");
                 //if (CheckIsTopMost(hwnd) == true)

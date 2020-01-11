@@ -29,6 +29,7 @@ namespace chatroom
             foreach(DataRow dr in datatable.Rows)
             {
                 user.dic.Add(dr["log_ip"].ToString(), dr["log_name"].ToString());
+                user.mesdic.Add(dr["log_netip"].ToString(), dr["log_name"].ToString());
             }
         }
 
@@ -58,11 +59,11 @@ namespace chatroom
 
                     if (MySQL.executeSql(sql) == false)
                     {
-                        MessageBox.Show("外网IP地址更新失败...");
+                        //MessageBox.Show("外网IP地址更新失败...");
+                        MessageBox.Show("netIP address updates failed...");
                     }
                 }
-                user.mesdic.Add(datatable.Rows[0]["log_netip"].ToString(), datatable.Rows[0]["log_name"].ToString());
-
+                //user.mesdic.Add(datatable.Rows[0]["log_netip"].ToString(), datatable.Rows[0]["log_name"].ToString());
                 this.DialogResult = DialogResult.OK;
             }
             else
@@ -81,7 +82,8 @@ namespace chatroom
 
             if (datatable.Rows.Count == 0)
             {
-                MessageBox.Show("用户名不存在，请重试！");
+                //MessageBox.Show("用户名不存在，请重试！");
+                MessageBox.Show("User name doesnot exist，please try again！");
                 return false;
             }
             else
@@ -93,12 +95,14 @@ namespace chatroom
                         return true;
                     }
                     else
-                        MessageBox.Show("此主机IP地址与用户名绑定的不一致,请重试...");
+                        //MessageBox.Show("此主机IP地址与用户名绑定的不一致,请重试...");
+                        MessageBox.Show("The host IP address is inconsistent with the user name binding. Please try again...");
                         return false;
                 }
                 else
                 {
-                    MessageBox.Show("密码错误，请重试！");
+                    //MessageBox.Show("密码错误，请重试！");
+                    MessageBox.Show("Wrong password,please try again");
                     return false;
                 }
             }
