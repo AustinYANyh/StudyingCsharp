@@ -32,8 +32,109 @@ namespace chatroom
         {
             //将该控件的 IsWebBrowserContextMenuEnabled 属性设置为 false，以防止 WebBrowser 控件在用户右击它时显示其快捷菜单
             webKitBrowser1.IsWebBrowserContextMenuEnabled = false;
+            REDI_SHOWMESSAGE.Visible = false;
 
             string sb = "";
+//            sb=@"<html>
+//<head>
+//<style>
+//  /* bubble style */
+//        .sender{
+//            clear:both;
+//        }
+//        .sender div:nth-of-type(1){
+//            float: left;
+//        }
+//        .sender div:nth-of-type(2){
+//            background-color: aquamarine;
+//            float: left;
+//            margin: 0 20px 10px 15px;
+//            padding: 10px 10px 10px 0px;
+//            border-radius:7px;
+//        }
+// 
+//        .receiver div:first-child img,
+//        .sender div:first-child img{
+//            width:50px;
+//            height: 50px;
+//        }
+// 
+//        .receiver{
+//            clear:both;
+//        }
+//        .receiver div:nth-child(1){
+//            float: right;
+//        }
+//        .receiver div:nth-of-type(2){
+//            float:right;
+//            background-color: gold;
+//            margin: 0 10px 10px 20px;
+//            padding: 10px 0px 10px 10px;
+//            border-radius:7px;
+//        }
+// 
+//        .left_triangle{
+//            height:0px;  
+//            width:0px;  
+//            border-width:8px;  
+//            border-style:solid;  
+//            border-color:transparent aquamarine transparent transparent;  
+//            position: relative;
+//            left:-16px;
+//            top:3px;
+//        }
+// 
+//        .right_triangle{
+//            height:0px;  
+//            width:0px;  
+//            border-width:8px;  
+//            border-style:solid;  
+//            border-color:transparent transparent transparent gold;  
+//            position: relative;
+//            right:-16px;
+//            top:3px;
+//        }
+//
+//        .BTN_SEND{
+//            position:absolute;
+//            bottom: 0;
+//        }
+//
+//        .footer {
+//            position: fixed;
+//            left: 0px;
+//            bottom: 0px;
+//            width: 100%;
+//            height: 50px;
+//            background-color: #eee;
+//            z-index: 9999;
+//        }
+//  </style>
+//</head>
+//<body>
+//<!-- Left -->
+//<div class=""sender"">
+//      <div>
+//          <img src=""./鹿.jpg"">
+//      </div>
+//  <div>
+//      <div class=""left_triangle""></div>
+//      <span> 夫君君! </span>
+//   </div>
+//  </div>
+//<!-- Right -->
+//  <div class=""receiver"">
+//      <div>
+//          <img src=""./兔.jpg"">
+//      </div>
+//   <div>
+//        <div class=""right_triangle""></div>
+//        <span> 鹿宝宝~ </span>
+//   </div>
+//  </div>  
+//</body>
+//</html>
+//    ";
             sb = @"<html><head>
 <script type=""text/javascript"">window.location.hash = ""#ok"";</script>
 <style type=""text/css"">
@@ -68,13 +169,13 @@ namespace chatroom
     background-color: rgba(0,0,0,0.7);  
 }  
   
-textarea{width: 500px;height: 300px;border: none;padding: 5px;}  
+textarea{width: 500px;height: 300px;border: none;padding: 0px;}  
 
-    .chat_content_group.self {
+	.chat_content_group.self {
 text-align: right;
 }
 .chat_content_group {
-padding: 10px;
+padding: 0px;
 }
 .chat_content_group.self>.chat_content {
 text-align: left;
@@ -104,7 +205,7 @@ background: linear-gradient(#cf9,#9c3);*/
 -webkit-border-radius: 5px;
 -moz-border-radius: 5px;
 border-radius: 5px;
-padding: 10px 15px;
+padding: 5px 10px;
 word-break: break-all;
 /*box-shadow: 1px 1px 5px #000;*/
 line-height: 1.4;
@@ -128,7 +229,7 @@ margin: 0 0 0 10px;
 text-align: left;
 }
 .chat_content_group {
-padding: 10px;
+padding: 0px;
 }
 .chat_content_avatar {
 float: left;
@@ -155,9 +256,11 @@ box-shadow:0 0 3px #ccc;
 }
 .imgtest img{width:100%;
 min-height:100%; text-align:center;}
-    </style>
+	</style>
 </head><body>  
 ";
+
+
             webKitBrowser1.DocumentText = sb;
         }
 
@@ -166,25 +269,35 @@ min-height:100%; text-align:center;}
             string ip = user.GetLocalIp();
             string message = ip + "-" + REDI_MESSAGE.Text;
 
-            //等于0是直接点发送,等于1是使用快捷键输入框有一个\n
-            if (REDI_MESSAGE.Text.Length == 1 || REDI_MESSAGE.Text.Length == 0)
+            if (REDI_MESSAGE.Rtf.IndexOf(@"{\pict\") > -1)
             {
-                GBOX_WARNING.Visible = true;
-                REDI_MESSAGE.Clear();
-                timer1.Enabled = true;
-                return;
+                message = ip + "-" + REDI_MESSAGE.Rtf;
+                user.mesLength = message.Length;
+                
+                chatm.SendMessage(message);
             }
-
-            //信息长度超过150字节,不允许发送
-            if(UnicodeEncoding.Default.GetBytes(REDI_MESSAGE.Text).Length > 200)
+            else
             {
-                REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Center;
-                REDI_SHOWMESSAGE.AppendText("信息长度过长,请分段发送!\r\n");
-                return;
-            }
+                //等于0是直接点发送,等于1是使用快捷键输入框有一个\n
+                if (REDI_MESSAGE.Text == "\n" || REDI_MESSAGE.Text.Length == 0)
+                {
+                    GBOX_WARNING.Visible = true;
+                    REDI_MESSAGE.Clear();
+                    timer1.Enabled = true;
+                    return;
+                }
 
-            //chatm.SendMessage(username);
-            chatm.SendMessage(message);
+                //信息长度超过150字节,不允许发送
+                if (UnicodeEncoding.Default.GetBytes(REDI_MESSAGE.Text).Length > 200)
+                {
+                    REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Center;
+                    REDI_SHOWMESSAGE.AppendText("信息长度过长,请分段发送!\r\n");
+                    return;
+                }
+
+                //chatm.SendMessage(username);
+                chatm.SendMessage(message);
+            }
 
             REDI_MESSAGE.Clear();
         }
@@ -284,6 +397,22 @@ min-height:100%; text-align:center;}
             }
         }
 
+        /// <summary>
+        /// 窗口抖动
+        /// </summary>
+        public void windowRock()
+        {
+            //获取当前窗体的坐标
+            Point point = this.Location;
+            //反复给窗体坐标复制一百次，达到震动的效果
+            for (int i = 0; i < 300; i++)
+            {
+                this.Location = new Point(point.X - 7, point.Y - 7);
+                this.Location = new Point(point.X + 7, point.Y + 7);
+            }
+            this.Location = point;
+        }
+
         private void BTN_CLOSE_MouseLeave(object sender, EventArgs e)
         {
             try
@@ -326,6 +455,31 @@ min-height:100%; text-align:center;}
         {
             System.Environment.Exit(0);
         }
+
+        private void BTN_P_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == System.Windows.Forms.MouseButtons.Left)
+            {
+                contextMenuStrip2.Show(MousePosition.X, MousePosition.Y);
+            }
+        }
+
+        private void 文本模式ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            REDI_SHOWMESSAGE.Visible = true;
+            webKitBrowser1.Visible = false;
+        }
+
+        private void 气泡模式ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            REDI_SHOWMESSAGE.Visible = false;
+            webKitBrowser1.Visible = true;
+        }
+
+        private void BTN_ROCK_Click(object sender, EventArgs e)
+        {
+            chatm.SendMessage("System message:Rock");
+        }
     }
 
     public class ChatManager
@@ -366,10 +520,16 @@ min-height:100%; text-align:center;}
 
             //创建线程执行接收和检测用户输入状态
             receiveThread = new Thread(ReceiveMessageFormSever);
+            receiveThread.IsBackground = true;
             receiveThread.Start();
 
             stateThread = new Thread(checkEDIState);
             stateThread.Start();
+
+            //防止断开连接,每5分钟发送一次keep alive
+            Thread keepAlive = new Thread(KeepAlive);
+            keepAlive.Start();
+            
         }
 
         public void SendMessage(string message)
@@ -389,23 +549,37 @@ min-height:100%; text-align:center;}
                         object lockobj = new object();
                         lock(lockobj)
                         {
-                            int length = clientSocket.Receive(bufferReceive);
-                            message = Encoding.UTF8.GetString(bufferReceive, 0, length);
 
+                            int length = clientSocket.Receive(bufferReceive, bufferReceive.Length, 0);
+                            message = Encoding.UTF8.GetString(bufferReceive, 0, length);
+                                          
                             //登录或断线消息---系统消息
                             //System message:223.167.169.200:31966客户端已成功连接...
                             //System message:223.167.169.200:31966已断开连接...
                             if (message.IndexOf("System message:") != -1)
                             {
-                                if (Form1.form1.REDI_MESSAGE.InvokeRequired)
+                                if (message.IndexOf("Rock") != -1)
                                 {
-                                    Form1.form1.REDI_MESSAGE.Invoke(new MethodInvoker(() => { _update(message); }));
+                                    Form1.form1.windowRock();
                                 }
                                 else
                                 {
-                                    _update(message);
+                                    if (Form1.form1.REDI_MESSAGE.InvokeRequired)
+                                    {
+                                        Form1.form1.REDI_MESSAGE.Invoke(new MethodInvoker(() => { _update(message); }));
+                                    }
+                                    else
+                                    {
+                                        _update(message);
+                                    }
                                 }
                             }
+                            //发送带图片的信息,直接发送rtf
+                            //else if (message.IndexOf(@"{\pict\") > -1)
+                            //{
+                                //Clipboard.SetData(DataFormats.Rtf, message);
+                                //Form1.form1.REDI_SHOWMESSAGE.Paste();
+                            //}
                             else
                             {
                                 //处理tcp粘包问题
@@ -422,32 +596,35 @@ min-height:100%; text-align:center;}
                                     message = message.Substring(0, pos);
                                 }
 
-                                int index = message.IndexOf("-");
-                                string mesIp = message.Substring(0, index);
-                                string mes = message.Substring(index + 1);
-                                string ip = user.GetLocalIp();
+                                if (message.IndexOf("-") != -1)
+                                {
+                                    int index = message.IndexOf("-");
+                                    string mesIp = message.Substring(0, index);
+                                    string mes = message.Substring(index + 1);
+                                    string ip = user.GetLocalIp();
 
-                                if (mesIp != ip && mes == "isInputing...")
-                                {
-                                    if (Form1.form1.LAB_STATE.InvokeRequired)
+                                    if (mesIp != ip && mes == "isInputing...")
                                     {
-                                        Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab(); }));
+                                        if (Form1.form1.LAB_STATE.InvokeRequired)
+                                        {
+                                            Form1.form1.LAB_STATE.Invoke(new MethodInvoker(() => { updateLab(); }));
+                                        }
                                     }
-                                }
-                                else if (mesIp == ip && mes == "isInputing...")
-                                {
-                                    //do nothing
-                                }
-                                //客户端发来的消息,更新到listbox
-                                else
-                                {
-                                    if (Form1.form1.REDI_MESSAGE.InvokeRequired)
+                                    else if (mesIp == ip && mes == "isInputing...")
                                     {
-                                        Form1.form1.REDI_MESSAGE.Invoke(new MethodInvoker(() => { updateMessageBox(message); }));
+                                        //do nothing
                                     }
+                                    //客户端发来的消息,更新到listbox
                                     else
                                     {
-                                        updateMessageBox(message);
+                                        if (Form1.form1.REDI_MESSAGE.InvokeRequired)
+                                        {
+                                            Form1.form1.REDI_MESSAGE.Invoke(new MethodInvoker(() => { updateMessageBox(message); }));
+                                        }
+                                        else
+                                        {
+                                            updateMessageBox(message);
+                                        }
                                     }
                                 }
                             }//end of system message's if
@@ -464,7 +641,29 @@ min-height:100%; text-align:center;}
                 }
             }
         }
-        
+
+        public void onReceive(IAsyncResult ar)
+        {
+            try
+            {
+                clientSocket.EndReceive(ar);
+
+            }
+            catch (ObjectDisposedException)
+            { 
+            }
+        }
+
+        private void KeepAlive()
+        {
+            while(true)
+            {
+                Thread.Sleep(30000);
+                byte[] buffer = Encoding.UTF8.GetBytes(DateTime.Now.ToString() + " " + user.mesdic[user.GetIP()] + " 客户端发送过来的心跳!~");
+                clientSocket.SendTo(buffer,remotPoint);
+            }
+        }
+
         /// <summary>
         /// 检测用户输入状态
         /// <summary>
@@ -502,6 +701,7 @@ min-height:100%; text-align:center;}
         public bool func()
         {
             isInputing = false;
+
             int strLengthBefore = 0;
             if (Form1.form1.REDI_MESSAGE.InvokeRequired)
             {
@@ -597,7 +797,7 @@ min-height:100%; text-align:center;}
                 Form1.form1.REDI_SHOWMESSAGE.AppendText(user.mesdic[netip] + "已退出..." + "\r\n");
             }
         }
-
+     
         public void updateMessageBox(string message)
         {
             object lockObj = new object();
@@ -607,9 +807,16 @@ min-height:100%; text-align:center;}
                 //192.168.1.10-1
                 int index = message.IndexOf("-");
 
+                Dictionary<string,string> imgdic = new Dictionary<string,string>();
+
+                //imgdic.Add("闫云皓", "http://111.229.13.33:9094/image/show/6");
+                //imgdic.Add("陆子涵", "http://111.229.13.33:9094/image/show/5");
+                imgdic.Add("闫云皓", @"./兔.jpg");
+                imgdic.Add("陆子涵", @"./鹿.jpg");
+
                 //自己的消息
                 string name = user.dic[message.Substring(0, index)] + ":" + DateTime.Now.ToString();
-                
+          
                 if(message.Substring(0, index) == user.GetLocalIp())
                 {
                     Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Right;
@@ -617,18 +824,27 @@ min-height:100%; text-align:center;}
                     changeColor(name, Color.Green);
 
                     message = message.Substring(index + 1);
-                    Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+                    if (message.IndexOf(@"{\pict\") > -1)
+                    {
+                        Clipboard.SetData(DataFormats.Rtf, message);
+                        Form1.form1.REDI_SHOWMESSAGE.Paste();
+                    }
+                    else
+                    {
+                        Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
 
-                    //方法学习自https://www.cnblogs.com/tuzhiyuan/p/4518076.html
-                    string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>
+                        //方法学习自https://www.cnblogs.com/tuzhiyuan/p/4518076.html
+                        string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>
                                                 <div class=""chat_content_group self"">
-                                                    <img class=""chat_content_avatar"" src=""http://face1.web.qq.com/cgi/svr/face/getface?cache=1&amp;type=1&amp;f=40&amp;uin=3128767651&amp;t=1432111720&amp;vfwebqq=5c3a30b487c67c5d37c2415dd32df3ffe3bc5b464d930ddd027d36911fc8d26a4cd23fffce868928"" width=""40px"" height=""40px"">
+                                                    <img class=""chat_content_avatar"" src="" " + imgdic[name.Substring(0, name.IndexOf(":"))] + @""" width=""40px"" height=""40px"">
                                                         <p class=""chat_nick"">" + name + @"</p>
                                                     <p class=""chat_content"">" + message + @"</p>
                                                 </div>
                                                 <a id='ok'></a>
                                                 ";
-                    Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
+                        //string str = "<div class=receiver><div><img src=\"\.\/兔.jpg\"></div><div><div class=\"right_triangle"></div><span>" + EDIMESSAGE.value + "</span></div></div>;";
+                        Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
+                    }
                 }
                 else
                 {
