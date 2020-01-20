@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
@@ -26,11 +27,11 @@ namespace chatroom
             string sql = "select * from loginfo;";
             DataTable datatable = MySQL.selectSql(sql);
 
-            foreach(DataRow dr in datatable.Rows)
+            foreach (DataRow dr in datatable.Rows)
             {
                 user.dic.Add(dr["log_ip"].ToString(), dr["log_name"].ToString());
                 user.mesdic.Add(dr["log_netip"].ToString(), dr["log_name"].ToString());
-            }
+            } 
         }
 
         private void EDI_PASSWD_KeyDown(object sender, KeyEventArgs e)
@@ -45,15 +46,17 @@ namespace chatroom
 
         private void Func_login()
         {
-            if (checkLogin(EDI_USERNAME.Text, EDI_PASSWD.Text) == true)
+            user.username = EDI_USERNAME.Text;
+
+            string sql = string.Format("select * from loginfo where log_name = '{0}';", user.username);
+            DataTable datatable = MySQL.selectSql(sql);
+
+            //如果外网IP变化,更新数据库
+            if (datatable.Rows[0]["log_netip"].ToString() != user.GetIP())
             {
-                user.username = EDI_USERNAME.Text;
+                DialogResult dr = MessageBox.Show("当前IP地址与数据库数据不一致,是否更新?", "提示", MessageBoxButtons.YesNo);
 
-                string sql = string.Format("select * from loginfo where log_name = '{0}';",user.username);
-                DataTable datatable = MySQL.selectSql(sql);
-
-                //如果外网IP变化,更新数据库
-                if (datatable.Rows[0]["log_netip"].ToString() != user.GetIP())
+                if (dr == System.Windows.Forms.DialogResult.Yes)
                 {
                     sql = string.Format("update loginfo set log_netip = '{0}' where log_name = '{1}';", user.GetIP(), datatable.Rows[0]["log_name"]);
 
@@ -63,6 +66,31 @@ namespace chatroom
                         MessageBox.Show("netIP address updates failed...");
                     }
                 }
+            }
+
+            //如果内网IP变化,更新数据库
+            if (datatable.Rows[0]["log_ip"].ToString() != user.GetLocalIp())
+            {
+                DialogResult dr = MessageBox.Show("IP地址与用户名绑定的不一致,是否更新?", "提示", MessageBoxButtons.YesNo);
+
+                if (dr == System.Windows.Forms.DialogResult.Yes)
+                {
+                    sql = string.Format("update loginfo set log_ip = '{0}' where log_name = '{1}';", user.GetLocalIp(), datatable.Rows[0]["log_name"]);
+
+                    if (MySQL.executeSql(sql) == false)
+                    {
+                        //MessageBox.Show("内网IP地址更新失败...");
+                        MessageBox.Show("IP address updates failed...");
+                    }
+                }
+            }
+
+            user.dic.Clear();
+            user.mesdic.Clear();
+            initDic();
+
+            if (checkLogin(EDI_USERNAME.Text, EDI_PASSWD.Text) == true)
+            {             
                 //user.mesdic.Add(datatable.Rows[0]["log_netip"].ToString(), datatable.Rows[0]["log_name"].ToString());
                 this.DialogResult = DialogResult.OK;
             }
@@ -88,25 +116,23 @@ namespace chatroom
             }
             else
             {
-                if(passwd == datatable.Rows[0]["log_passwd"].ToString())
-                {
-                    if (user.GetLocalIp() == datatable.Rows[0]["log_ip"].ToString())
-                    {
-                        return true;
-                    }
-                    else
-                        //MessageBox.Show("此主机IP地址与用户名绑定的不一致,请重试...");
-                        MessageBox.Show("The host IP address is inconsistent with the user name binding. Please try again...");
-                        return false;
-                }
-                else
+                if(passwd != datatable.Rows[0]["log_passwd"].ToString())
                 {
                     //MessageBox.Show("密码错误，请重试！");
                     MessageBox.Show("Wrong password,please try again");
                     return false;
                 }
+                else
+                {
+                    if(user.GetLocalIp() != datatable.Rows[0]["log_ip"].ToString())
+                    {
+                        //MessageBox.Show("IP地址与用户名绑定的不一致，请重试...");
+                        MessageBox.Show("The IP address is inconsistent with the username binding,please try again...");
+                        return false;
+                    }
+                }
             }
-            return false;
+            return true;
         }
 
         private void BTN_LOGIN_Click(object sender, EventArgs e)
@@ -132,6 +158,7 @@ namespace chatroom
     public partial class user : Form
     {
         public static string username = "";   //注意全局变量要使用static
+        public static int mesLength = 0;
         public static Dictionary<string, string> dic = new Dictionary<string, string>();
         public static Dictionary<string, string> mesdic = new Dictionary<string, string>();
 
