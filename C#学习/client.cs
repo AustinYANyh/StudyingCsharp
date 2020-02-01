@@ -404,7 +404,7 @@ min-height:100%; text-align:center;}
         {
             //获取当前窗体的坐标
             Point point = this.Location;
-            //反复给窗体坐标复制一百次，达到震动的效果
+            //反复给窗体坐标复制三百次，达到震动的效果
             for (int i = 0; i < 300; i++)
             {
                 this.Location = new Point(point.X - 7, point.Y - 7);
@@ -484,7 +484,7 @@ min-height:100%; text-align:center;}
 
     public class ChatManager
     {
-        private string _ipAdress = "111.229.13.33";
+        private string _ipAdress = "127.0.0.1";
         private int _port = 2000;
         EndPoint remotPoint;
         public Socket clientSocket;
@@ -514,7 +514,7 @@ min-height:100%; text-align:center;}
             catch(SocketException)
             {
                 //MessageBox.Show("服务器未开启...请先开启...");
-                MessageBox.Show("The server is outline...Please open first...");
+                MessageBox.Show("服务器未开启...请先开启...\r\nThe server is outline...Please open first...");
                 Form1.form1.Close();
             }
 
@@ -548,11 +548,20 @@ min-height:100%; text-align:center;}
                     {
                         object lockobj = new object();
                         lock(lockobj)
-                        {
-
+                        {                          
                             int length = clientSocket.Receive(bufferReceive, bufferReceive.Length, 0);
                             message = Encoding.UTF8.GetString(bufferReceive, 0, length);
-                                          
+                            string strlength = message.Substring(0, message.IndexOf("-"));
+
+                            while(length > 0)
+                            {
+                                if(message.Length >= Convert.ToInt32(strlength))
+                                {
+                                    break;
+                                }
+                                length = clientSocket.Receive(bufferReceive, bufferReceive.Length, 0);
+                                message += Encoding.UTF8.GetString(bufferReceive, 0, length);
+                            }
                             //登录或断线消息---系统消息
                             //System message:223.167.169.200:31966客户端已成功连接...
                             //System message:223.167.169.200:31966已断开连接...
@@ -562,7 +571,7 @@ min-height:100%; text-align:center;}
                                 {
                                     Form1.form1.windowRock();
                                 }
-                                else
+                                else if(message.IndexOf("连接") != -1)
                                 {
                                     if (Form1.form1.REDI_MESSAGE.InvokeRequired)
                                     {
@@ -572,6 +581,11 @@ min-height:100%; text-align:center;}
                                     {
                                         _update(message);
                                     }
+                                }
+                                //心跳信息
+                                else
+                                {
+                                    //客户端不做处理，do nothing
                                 }
                             }
                             //发送带图片的信息,直接发送rtf
@@ -659,7 +673,7 @@ min-height:100%; text-align:center;}
             while(true)
             {
                 Thread.Sleep(30000);
-                byte[] buffer = Encoding.UTF8.GetBytes(DateTime.Now.ToString() + " " + user.mesdic[user.GetIP()] + " 客户端发送过来的心跳!~");
+                byte[] buffer = Encoding.UTF8.GetBytes("System message:" + "-" + DateTime.Now.ToString() + " " + user.dic[user.GetLocalIp()] + " 客户端发送过来的心跳!~");
                 clientSocket.SendTo(buffer,remotPoint);
             }
         }
