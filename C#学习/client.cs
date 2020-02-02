@@ -267,12 +267,11 @@ min-height:100%; text-align:center;}
         private void BTN_SEND_Click(object sender, EventArgs e)
         {
             string ip = user.GetLocalIp();
-            string message = ip + "-" + REDI_MESSAGE.Text;
+            string message = REDI_MESSAGE.Text.Length + "-" + ip + "-" + REDI_MESSAGE.Text;
 
             if (REDI_MESSAGE.Rtf.IndexOf(@"{\pict\") > -1)
             {
-                message = ip + "-" + REDI_MESSAGE.Rtf;
-                user.mesLength = message.Length;
+                message = REDI_MESSAGE.Rtf.Length + "-" + ip + "-" + REDI_MESSAGE.Rtf;
                 
                 chatm.SendMessage(message);
             }
@@ -404,7 +403,7 @@ min-height:100%; text-align:center;}
         {
             //获取当前窗体的坐标
             Point point = this.Location;
-            //反复给窗体坐标复制三百次，达到震动的效果
+            //反复给窗体坐标复制一百次，达到震动的效果
             for (int i = 0; i < 300; i++)
             {
                 this.Location = new Point(point.X - 7, point.Y - 7);
@@ -468,12 +467,15 @@ min-height:100%; text-align:center;}
         {
             REDI_SHOWMESSAGE.Visible = true;
             webKitBrowser1.Visible = false;
+            richTextBox1.Visible = false;
         }
 
         private void 气泡模式ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             REDI_SHOWMESSAGE.Visible = false;
-            webKitBrowser1.Visible = true;
+            //webKitBrowser1.Visible = true;
+            richTextBox1.Visible = true;
+            webKitBrowser1.Visible = false;
         }
 
         private void BTN_ROCK_Click(object sender, EventArgs e)
@@ -484,16 +486,21 @@ min-height:100%; text-align:center;}
 
     public class ChatManager
     {
-        private string _ipAdress = "127.0.0.1";
+        private string _ipAdress = "111.229.13.33";
+        //private string _ipAdress = "127.0.0.1";
         private int _port = 2000;
         EndPoint remotPoint;
         public Socket clientSocket;
         public string message;
         bool isInputing = false;
+        bool ischeckEDI = false;
+        bool iskeepalive = false;
 
         Thread receiveThread;
         Thread stateThread;
-        public byte[] bufferReceive = new byte[4096];
+
+        //缓冲区大小分配为4M
+        public byte[] bufferReceive = new byte[1024*1024*4];
 
         public void Start()
         {
@@ -514,7 +521,7 @@ min-height:100%; text-align:center;}
             catch(SocketException)
             {
                 //MessageBox.Show("服务器未开启...请先开启...");
-                MessageBox.Show("服务器未开启...请先开启...\r\nThe server is outline...Please open first...");
+                MessageBox.Show("The server is outline...Please open first...");
                 Form1.form1.Close();
             }
 
@@ -548,10 +555,15 @@ min-height:100%; text-align:center;}
                     {
                         object lockobj = new object();
                         lock(lockobj)
-                        {                          
+                        {
                             int length = clientSocket.Receive(bufferReceive, bufferReceive.Length, 0);
                             message = Encoding.UTF8.GetString(bufferReceive, 0, length);
-                            string strlength = message.Substring(0, message.IndexOf("-"));
+                            string strlength = "";
+                            if (length != 0)
+                            {
+                                strlength = message.Substring(0, message.IndexOf("-"));
+                                message = message.Substring(message.IndexOf("-")+1);
+                            }
 
                             while(length > 0)
                             {
@@ -559,13 +571,15 @@ min-height:100%; text-align:center;}
                                 {
                                     break;
                                 }
+                                
                                 length = clientSocket.Receive(bufferReceive, bufferReceive.Length, 0);
                                 message += Encoding.UTF8.GetString(bufferReceive, 0, length);
                             }
+ 
                             //登录或断线消息---系统消息
                             //System message:223.167.169.200:31966客户端已成功连接...
                             //System message:223.167.169.200:31966已断开连接...
-                            if (message.IndexOf("System message:") != -1)
+                            if (message.IndexOf("System message:") != -1 )
                             {
                                 if (message.IndexOf("Rock") != -1)
                                 {
@@ -582,18 +596,21 @@ min-height:100%; text-align:center;}
                                         _update(message);
                                     }
                                 }
-                                //心跳信息
+                                //客户端收到心跳信息不做任何处理
                                 else
                                 {
-                                    //客户端不做处理，do nothing
+                                    //do nothing
                                 }
                             }
                             //发送带图片的信息,直接发送rtf
-                            //else if (message.IndexOf(@"{\pict\") > -1)
-                            //{
-                                //Clipboard.SetData(DataFormats.Rtf, message);
-                                //Form1.form1.REDI_SHOWMESSAGE.Paste();
-                            //}
+                            else if (message.IndexOf(@"{\pict\") > -1)
+                            {
+                                //message = message.Substring(message.IndexOf("-") + 1);
+                                if (Form1.form1.REDI_SHOWMESSAGE.InvokeRequired)
+                                {
+                                    Form1.form1.REDI_SHOWMESSAGE.Invoke(new MethodInvoker(() => { updateMessageBox(message); }));
+                                }
+                            }
                             else
                             {
                                 //处理tcp粘包问题
@@ -652,6 +669,7 @@ min-height:100%; text-align:center;}
                 catch (System.Net.Sockets.SocketException ex)
                 {
                     MessageBox.Show(ex.ToString());
+                    MessageBox.Show(ex.ErrorCode.ToString());
                 }
             }
         }
@@ -670,11 +688,18 @@ min-height:100%; text-align:center;}
 
         private void KeepAlive()
         {
-            while(true)
+            while (iskeepalive == true)
             {
-                Thread.Sleep(30000);
-                byte[] buffer = Encoding.UTF8.GetBytes("System message:" + "-" + DateTime.Now.ToString() + " " + user.dic[user.GetLocalIp()] + " 客户端发送过来的心跳!~");
-                clientSocket.SendTo(buffer,remotPoint);
+                Thread.Sleep(300000);
+                try
+                {
+                    byte[] buffer = Encoding.UTF8.GetBytes("System message:" + DateTime.Now.ToString() + " " + user.dic[user.GetLocalIp()] + " 客户端发送过来的心跳!~");
+                    clientSocket.SendTo(buffer, remotPoint);
+                }
+                catch(SocketException e)
+                {
+                    MessageBox.Show(e.ErrorCode.ToString());
+                }
             }
         }
 
@@ -683,7 +708,7 @@ min-height:100%; text-align:center;}
         /// <summary>
         private void checkEDIState()
         {
-            while (true)
+            while (ischeckEDI == true)
             {
                 func();
 
@@ -694,13 +719,15 @@ min-height:100%; text-align:center;}
                     {
                         try
                         {
-                            string ip = user.GetLocalIp();
-                            byte[] buffer = Encoding.UTF8.GetBytes(ip + "-" + "isInputing...");
+                            string ip = user.GetLocalIp();;
+                            string tmp = "-" + "isInputing...";
+                            int length = ip.Length + tmp.Length;
+                            byte[] buffer = Encoding.UTF8.GetBytes(length + "-" + ip + tmp);
                             clientSocket.SendTo(buffer, remotPoint);
                         }
                         catch(SocketException e)
                         {
-                            MessageBox.Show(e.ToString());
+                            MessageBox.Show(e.ErrorCode.ToString());
                         }
                     }
                 }
@@ -811,6 +838,12 @@ min-height:100%; text-align:center;}
                 Form1.form1.REDI_SHOWMESSAGE.AppendText(user.mesdic[netip] + "已退出..." + "\r\n");
             }
         }
+
+        public void updateMessageBoxPic(string message)
+        {
+            Clipboard.SetData(DataFormats.Rtf, message);
+            Form1.form1.REDI_SHOWMESSAGE.Paste();
+        }
      
         public void updateMessageBox(string message)
         {
@@ -840,7 +873,10 @@ min-height:100%; text-align:center;}
                     message = message.Substring(index + 1);
                     if (message.IndexOf(@"{\pict\") > -1)
                     {
+                        Form1.form1.richTextBox1.AppendText(name + "\r\n");
                         Clipboard.SetData(DataFormats.Rtf, message);
+                        Form1.form1.richTextBox1.Paste();
+                        Form1.form1.REDI_SHOWMESSAGE.Paste();
                         Form1.form1.REDI_SHOWMESSAGE.Paste();
                     }
                     else
