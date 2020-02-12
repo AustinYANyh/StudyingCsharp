@@ -14,6 +14,7 @@ using System.Threading;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Drawing.Drawing2D;
+using System.IO;
 
 namespace chatroom
 {
@@ -25,6 +26,31 @@ namespace chatroom
         {
             InitializeComponent();
             form1 = this;
+            form1.Size = new Size(654, 558);
+
+            //加载历史记录
+            if (System.IO.File.Exists("./history.txt"))
+            {
+                REDI_HISTORY.LoadFile("./history.txt", RichTextBoxStreamType.PlainText);
+                List<string> list = new List<string>();
+                
+                foreach(string data in user.dic.Values)
+                {
+                    if (data != user.username)
+                    {
+                        list.Add(data);
+                    }
+                }
+                chatm.changeColorHistory2(user.username,Color.Green);
+                chatm.changeColorHistory2(list[0], Color.Blue);
+            } 
+            else
+            {
+                //不存在文件
+                File.Create("./history.txt");//创建该文件
+            }
+            
+            //气泡模式聊天记录在289行
             chatm.Start();        
         }
         [System.Runtime.InteropServices.ComVisibleAttribute(true)]
@@ -260,7 +286,18 @@ min-height:100%; text-align:center;}
 </head><body>  
 ";
 
-
+            //气泡模式的聊天记录
+            if (System.IO.File.Exists("./htmlHistory.txt"))
+            {
+                BinaryReader br = new BinaryReader(new FileStream("./htmlHistory.txt", FileMode.Open));
+                string htmlHistory = br.ReadString();
+                sb = htmlHistory;
+                br.Close();
+            }
+            else
+            {
+                File.Create("./htmlHistory.txt");
+            }
             webKitBrowser1.DocumentText = sb;
         }
 
@@ -271,9 +308,14 @@ min-height:100%; text-align:center;}
 
             if (REDI_MESSAGE.Rtf.IndexOf(@"{\pict\") > -1)
             {
+                chatm.isInputing = false;
+                chatm.ischeckEDI = false;
+                chatm.iskeepalive = false;
+
                 message = REDI_MESSAGE.Rtf.Length + "-" + ip + "-" + REDI_MESSAGE.Rtf;
-                
+
                 chatm.SendMessage(message);
+               
             }
             else
             {
@@ -465,22 +507,40 @@ min-height:100%; text-align:center;}
 
         private void 文本模式ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            REDI_SHOWMESSAGE.Visible = true;
+            REDI_SHOWMESSAGE.Visible = false;
             webKitBrowser1.Visible = false;
-            richTextBox1.Visible = false;
+            richTextBox1.Visible = true;
         }
 
         private void 气泡模式ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             REDI_SHOWMESSAGE.Visible = false;
-            //webKitBrowser1.Visible = true;
-            richTextBox1.Visible = true;
-            webKitBrowser1.Visible = false;
+            webKitBrowser1.Visible = true;
+            richTextBox1.Visible = false;
+            //webKitBrowser1.Visible = false;
         }
 
         private void BTN_ROCK_Click(object sender, EventArgs e)
         {
-            chatm.SendMessage("System message:Rock");
+            chatm.SendMessage("19-" + "System message:Rock");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(Form1.form1.Size.Width == 654)
+            {
+                Form1.form1.Size = new System.Drawing.Size(954, 558);
+                Form1.form1.REDI_HISTORY.Visible = true;
+
+                //显示在最下方
+                Form1.form1.REDI_HISTORY.Select(Form1.form1.REDI_HISTORY.TextLength, 0);
+                Form1.form1.REDI_HISTORY.ScrollToCaret();
+            }
+            else
+            {
+                Form1.form1.REDI_HISTORY.Visible = false;
+                Form1.form1.Size = new System.Drawing.Size(654, 558);
+            }
         }
     }
 
@@ -492,9 +552,9 @@ min-height:100%; text-align:center;}
         EndPoint remotPoint;
         public Socket clientSocket;
         public string message;
-        bool isInputing = false;
-        bool ischeckEDI = false;
-        bool iskeepalive = false;
+        public bool isInputing = true;
+        public bool ischeckEDI = true;
+        public bool iskeepalive = true;
 
         Thread receiveThread;
         Thread stateThread;
@@ -521,7 +581,7 @@ min-height:100%; text-align:center;}
             catch(SocketException)
             {
                 //MessageBox.Show("服务器未开启...请先开启...");
-                MessageBox.Show("The server is outline...Please open first...");
+                MessageBox.Show("服务器未开启...请先开启...\r\nThe server is outline...Please open first...");
                 Form1.form1.Close();
             }
 
@@ -610,6 +670,9 @@ min-height:100%; text-align:center;}
                                 {
                                     Form1.form1.REDI_SHOWMESSAGE.Invoke(new MethodInvoker(() => { updateMessageBox(message); }));
                                 }
+                                isInputing = true;
+                                ischeckEDI = true;
+                                iskeepalive = true;
                             }
                             else
                             {
@@ -690,10 +753,10 @@ min-height:100%; text-align:center;}
         {
             while (iskeepalive == true)
             {
-                Thread.Sleep(300000);
+                Thread.Sleep(30000);
                 try
-                {
-                    byte[] buffer = Encoding.UTF8.GetBytes("System message:" + DateTime.Now.ToString() + " " + user.dic[user.GetLocalIp()] + " 客户端发送过来的心跳!~");
+                {           
+                    byte[] buffer = Encoding.UTF8.GetBytes("50-System message:" + DateTime.Now.ToString() + " " + user.dic[user.GetLocalIp()] + " 客户端发送过来的心跳!~");
                     clientSocket.SendTo(buffer, remotPoint);
                 }
                 catch(SocketException e)
@@ -863,25 +926,41 @@ min-height:100%; text-align:center;}
 
                 //自己的消息
                 string name = user.dic[message.Substring(0, index)] + ":" + DateTime.Now.ToString();
-          
+              
                 if(message.Substring(0, index) == user.GetLocalIp())
                 {
-                    Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Right;
-                    Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
-                    changeColor(name, Color.Green);
+                    //Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Right;
+                    //Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
 
+                    //文本模式去除左右对齐
+                    //Form1.form1.richTextBox1.SelectionAlignment = HorizontalAlignment.Right;
+                    
                     message = message.Substring(index + 1);
                     if (message.IndexOf(@"{\pict\") > -1)
                     {
                         Form1.form1.richTextBox1.AppendText(name + "\r\n");
+                        Form1.form1.richTextBox1.AppendText(name + "\r\n");
+                        changeColor(name, Color.Green);
                         Clipboard.SetData(DataFormats.Rtf, message);
                         Form1.form1.richTextBox1.Paste();
-                        Form1.form1.REDI_SHOWMESSAGE.Paste();
-                        Form1.form1.REDI_SHOWMESSAGE.Paste();
+                        //Form1.form1.REDI_SHOWMESSAGE.Paste();
                     }
                     else
                     {
-                        Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+                        //Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+                        Form1.form1.richTextBox1.AppendText(name + "\r\n");
+                        changeColor(name, Color.Green);
+                        Form1.form1.richTextBox1.AppendText(message);
+
+                        //历史记录更新
+                        object newlockObj = new object();
+
+                        lock (newlockObj)
+                        {
+                            Form1.form1.REDI_HISTORY.AppendText(name + "\r\n");
+                            changeColorHistory(name, Color.Green);
+                            Form1.form1.REDI_HISTORY.AppendText(message);
+                        }
 
                         //方法学习自https://www.cnblogs.com/tuzhiyuan/p/4518076.html
                         string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>
@@ -889,21 +968,41 @@ min-height:100%; text-align:center;}
                                                     <img class=""chat_content_avatar"" src="" " + imgdic[name.Substring(0, name.IndexOf(":"))] + @""" width=""40px"" height=""40px"">
                                                         <p class=""chat_nick"">" + name + @"</p>
                                                     <p class=""chat_content"">" + message + @"</p>
+                                                    <img src=""./鹿.jpg"">
                                                 </div>
                                                 <a id='ok'></a>
                                                 ";
                         //string str = "<div class=receiver><div><img src=\"\.\/兔.jpg\"></div><div><div class=\"right_triangle"></div><span>" + EDIMESSAGE.value + "</span></div></div>;";
                         Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
+                        BinaryWriter bw = new BinaryWriter(new FileStream("./htmlHistory.txt", FileMode.Create));
+                        bw.Write(Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str);
+                        bw.Close();
                     }
                 }
+                //对方的消息
                 else
                 {
-                    Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Left;
-                    Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
+                    //文本模式去除左右对齐
+                    //Form1.form1.REDI_SHOWMESSAGE.SelectionAlignment = HorizontalAlignment.Left;
+
+                    //Form1.form1.REDI_SHOWMESSAGE.AppendText(name + "\r\n");
+                    Form1.form1.richTextBox1.AppendText(name + "\r\n");
                     changeColor(name, Color.Blue);
 
                     message = message.Substring(index + 1);
-                    Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+
+                    //Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+                    Form1.form1.richTextBox1.AppendText(message);
+
+                    //历史记录更新
+                    object newlockObj = new object();
+
+                    lock (newlockObj)
+                    {
+                        Form1.form1.REDI_HISTORY.AppendText(name + "\r\n");
+                        changeColorHistory(name, Color.Blue);
+                        Form1.form1.REDI_HISTORY.AppendText(message);
+                    }
 
                     string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>                         
                                 <div class=""chat_content_group buddy"">
@@ -916,9 +1015,14 @@ min-height:100%; text-align:center;}
                     Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
                 }
 
-                Form1.form1.REDI_SHOWMESSAGE.Select(Form1.form1.REDI_SHOWMESSAGE.TextLength, 0);
-                Form1.form1.REDI_SHOWMESSAGE.ScrollToCaret();
+                //Form1.form1.REDI_SHOWMESSAGE.Select(Form1.form1.REDI_SHOWMESSAGE.TextLength, 0);
+                //Form1.form1.REDI_SHOWMESSAGE.ScrollToCaret();
+                Form1.form1.richTextBox1.Select(Form1.form1.richTextBox1.TextLength, 0);
+                Form1.form1.richTextBox1.ScrollToCaret();
                 //message = message.Substring(index + 1); 
+
+                //保存聊天记录
+                Form1.form1.REDI_HISTORY.SaveFile("./history.txt", RichTextBoxStreamType.PlainText);
 
                 //焦点不在软件界面,接受消息前播放声音提醒
                 IntPtr hwnd = FindWindow(null, "兔夫君和鹿夫人");
@@ -950,16 +1054,43 @@ min-height:100%; text-align:center;}
         /// </summary>
         public void changeColor(string str,Color color)
         {
-            ArrayList list = getIndexArray(Form1.form1.REDI_SHOWMESSAGE.Text, str);
-            for (int i = 0; i < list.Count; i++)
+            //ArrayList list = getIndexArray(Form1.form1.REDI_SHOWMESSAGE.Text, str);
+            ArrayList list = getIndexArray(Form1.form1.richTextBox1.Text, str);
+            for (int i = 0; i < list.Count; i++)
             {
                 int index = (int)list[i];
-                Form1.form1.REDI_SHOWMESSAGE.Select(index, str.Length);
-                Form1.form1.REDI_SHOWMESSAGE.SelectionColor = color;
+                //Form1.form1.REDI_SHOWMESSAGE.Select(index, str.Length);
+                //Form1.form1.REDI_SHOWMESSAGE.SelectionColor = color;
+                Form1.form1.richTextBox1.Select(index, str.Length);
+                Form1.form1.richTextBox1.SelectionColor = color;
             }
-        }
- 
-        public ArrayList getIndexArray(String inputStr, String findStr)
+        }
+
+        public void changeColorHistory(string str, Color color)
+        {
+            ArrayList list = getIndexArray(Form1.form1.REDI_HISTORY.Text, str);
+            for (int i = 0; i < list.Count; i++)
+            {
+                int index = (int)list[i];
+   
+                Form1.form1.REDI_HISTORY.Select(index, str.Length);
+                Form1.form1.REDI_HISTORY.SelectionColor = color;
+            }
+        }
+
+        public void changeColorHistory2(string str, Color color)
+        {
+            ArrayList list = getIndexArray(Form1.form1.REDI_HISTORY.Text, str);
+            for (int i = 0; i < list.Count; i++)
+            {
+                int index = (int)list[i];
+
+                Form1.form1.REDI_HISTORY.Select(index, str.Length+20);
+                Form1.form1.REDI_HISTORY.SelectionColor = color;
+            }
+        }
+
+        public ArrayList getIndexArray(String inputStr, String findStr)
         {
             ArrayList list = new ArrayList();
             int start = 0;
