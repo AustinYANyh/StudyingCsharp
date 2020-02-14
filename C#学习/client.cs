@@ -32,17 +32,7 @@ namespace chatroom
             if (System.IO.File.Exists("./history.txt"))
             {
                 REDI_HISTORY.LoadFile("./history.txt", RichTextBoxStreamType.PlainText);
-                List<string> list = new List<string>();
-                
-                foreach(string data in user.dic.Values)
-                {
-                    if (data != user.username)
-                    {
-                        list.Add(data);
-                    }
-                }
-                chatm.changeColorHistory2(user.username,Color.Green);
-                chatm.changeColorHistory2(list[0], Color.Blue);
+                ColorUsername();
             } 
             else
             {
@@ -52,6 +42,21 @@ namespace chatroom
             
             //气泡模式聊天记录在289行
             chatm.Start();        
+        }
+
+        public void ColorUsername()
+        {
+            List<string> list = new List<string>();
+
+            foreach (string data in user.dic.Values)
+            {
+                if (data != user.username)
+                {
+                    list.Add(data);
+                }
+            }
+            chatm.changeColorHistory2(user.username, Color.Green);
+            chatm.changeColorHistory2(list[0], Color.Blue);
         }
         [System.Runtime.InteropServices.ComVisibleAttribute(true)]
         private void Form1_Load(object sender, EventArgs e)
@@ -531,6 +536,9 @@ min-height:100%; text-align:center;}
             {
                 Form1.form1.Size = new System.Drawing.Size(954, 558);
                 Form1.form1.REDI_HISTORY.Visible = true;
+                Form1.form1.LAB_SEARCH.Visible = true;
+                Form1.form1.EDI_SEARCH.Visible = true;
+                Form1.form1.BTN_SEARCH.Visible = true;
 
                 //显示在最下方
                 Form1.form1.REDI_HISTORY.Select(Form1.form1.REDI_HISTORY.TextLength, 0);
@@ -539,7 +547,180 @@ min-height:100%; text-align:center;}
             else
             {
                 Form1.form1.REDI_HISTORY.Visible = false;
+                Form1.form1.LAB_SEARCH.Visible = false;
+                Form1.form1.EDI_SEARCH.Visible = false;
+                Form1.form1.BTN_SEARCH.Visible = false;
                 Form1.form1.Size = new System.Drawing.Size(654, 558);
+            }
+        }
+
+        /// <summary>
+        /// 聊天记录搜索
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void EDI_SEARCH_TextChanged(object sender, EventArgs e)
+        {
+            string searchInfo = Form1.form1.EDI_SEARCH.Text.Trim();
+            if(searchInfo == "")
+            {
+                REDI_HISTORY.LoadFile("./history.txt", RichTextBoxStreamType.PlainText);
+                ColorUsername();
+                return;
+            }
+            FileStream fm = new FileStream("./history.txt", FileMode.Open);
+            BinaryReader br = new BinaryReader(fm);
+            Byte[] buffer = br.ReadBytes((int)fm.Length);
+            br.Read(buffer, 0, buffer.Length);
+            string history = Encoding.Default.GetString(buffer);
+            br.Close();
+
+            Match res = Regex.Match(searchInfo, @"[0-9]");
+            
+
+            //汉字
+            if(res.Length == 0)
+            {
+                List<string> info = new List<string>();
+                //string pattern = @"\w{0,}[" + searchInfo + @"]{" + searchInfo.Length + @"}\w{0,}";
+                string pattern = @"\w{0,}" + searchInfo + @"\w{0,}";
+
+                foreach (Match each in Regex.Matches(history, pattern))
+                {
+                    info.Add(each.Value);
+                }
+
+                //获取索引
+                List<int> indexList = new List<int>();
+                for (int i=0;i<info.Count;++i)
+                {
+                    indexList.Add(getIndex(info[i], history));
+                }                     
+
+                //获取用户名和时间信息
+                ArrayList nameAndTime = new ArrayList();
+                ArrayList tempList = new ArrayList();
+                for (int i = 0; i < indexList.Count; ++i)
+                {
+                    if((int)indexList[i] == -1)
+                    {
+                        continue;
+                    }
+                    string temp = history.Substring(0, (int)indexList[i]);
+                    foreach (Match each in Regex.Matches(temp, @"\w{3}\:\d{4}\/\d{1,2}\/\d{1,2} \d{2}\:\d{2}\:\d{2}"))
+                    {
+                        tempList.Add(each.Value);
+                    }
+                    nameAndTime.Add(tempList[tempList.Count - 1]);
+                    tempList.Clear();
+                }
+
+                //刷新历史记录框
+                REDI_HISTORY.Clear();
+                for(int i=0;i<info.Count;++i)
+                {
+                    REDI_HISTORY.AppendText(nameAndTime[i].ToString() + "\r\n");
+                    REDI_HISTORY.AppendText(info[i] + "\r\n");
+
+                    if (nameAndTime[i].ToString().Substring(0, 3) == user.username)
+                    {
+                        chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Green);
+                    }
+                    else
+                    {
+                        chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Blue);
+                    }
+                    
+                    chatm.changeColorHistory(searchInfo, Color.Red);
+                }
+            }
+            //数字
+            else
+            {
+                //将历史记录中的日期时间全部消除在匹配
+                string TmpHistory = history;
+                foreach (Match each in Regex.Matches(history, @"\w{3}\:\d{4}\/\d{1,2}\/\d{1,2} \d{2}\:\d{2}\:\d{2}"))
+                {
+                    TmpHistory = TmpHistory.Replace(each.Value,"");
+                }
+
+                SeachHistory(EDI_SEARCH.Text.Trim(), TmpHistory, history);
+            }
+            //foreach(Match res in Regex.Matches(REDI_HISTORY.Text,@"")
+        }
+
+        public void SeachHistory(string searchInfo,string tmphistory,string realhistory)
+        {
+            List<string> info = new List<string>();
+            string pattern = @"\w{0,}" + searchInfo + @"\w{0,}";
+
+            foreach (Match each in Regex.Matches(tmphistory, pattern))
+            {
+                info.Add(each.Value);
+            }
+
+            //获取索引
+            List<int> indexList = new List<int>();
+            string fakeHistory = realhistory;
+            int P = 0;
+            for (int i = 0; i < info.Count; ++i)
+            {
+                if (getIndex(info[i], fakeHistory) < 20) { }
+                else
+                {
+                    indexList.Add(getIndex(info[i], fakeHistory) + P);
+                }
+                fakeHistory = fakeHistory.Substring(getIndex(info[i], fakeHistory) + 1);
+                P = realhistory.Length - fakeHistory.Length;
+            }
+
+            //获取用户名和时间信息
+            ArrayList nameAndTime = new ArrayList();
+            ArrayList tempList = new ArrayList();
+            for (int i = 0; i < indexList.Count; ++i)
+            {
+                if ((int)indexList[i] == -1)
+                {
+                    continue;
+                }
+                string temp = realhistory.Substring(0, (int)indexList[i]);
+                foreach (Match each in Regex.Matches(temp, @"\w{3}\:\d{4}\/\d{1,2}\/\d{1,2} \d{2}\:\d{2}\:\d{2}"))
+                {
+                    tempList.Add(each.Value);
+                }
+                nameAndTime.Add(tempList[tempList.Count - 1]);
+                tempList.Clear();
+            }
+
+            //刷新历史记录框
+            REDI_HISTORY.Clear();
+            for (int i = 0; i < info.Count; ++i)
+            {
+                REDI_HISTORY.AppendText(nameAndTime[i].ToString() + "\r\n");
+                REDI_HISTORY.AppendText(info[i] + "\r\n");
+
+                if (nameAndTime[i].ToString().Substring(0, 3) == user.username)
+                {
+                    chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Green);
+                }
+                else
+                {
+                    chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Blue);
+                }
+
+                chatm.changeColorHistory(searchInfo, Color.Red);
+            }
+        }
+
+        public int getIndex(string input,string history)
+        {
+            if(history.IndexOf(input) != -1)
+            {
+                return history.IndexOf(input);
+            }
+            else
+            {
+                return -1;
             }
         }
     }
