@@ -318,7 +318,7 @@ min-height:100%; text-align:center;}
                 chatm.iskeepalive = false;
 
                 message = REDI_MESSAGE.Rtf.Length + "-" + ip + "-" + REDI_MESSAGE.Rtf;
-
+               
                 chatm.SendMessage(message);
                
             }
@@ -342,6 +342,9 @@ min-height:100%; text-align:center;}
                 }
 
                 //chatm.SendMessage(username);
+
+                //发送之前清空聊天记录搜索框，避免搜索中加入新信息REDI_HISTORY发生变化导致历史记录出错
+                EDI_SEARCH.Clear();
                 chatm.SendMessage(message);
             }
 
@@ -540,6 +543,8 @@ min-height:100%; text-align:center;}
                 Form1.form1.EDI_SEARCH.Visible = true;
                 Form1.form1.BTN_SEARCH.Visible = true;
 
+                Form1.form1.EDI_SEARCH.Focus();
+
                 //显示在最下方
                 Form1.form1.REDI_HISTORY.Select(Form1.form1.REDI_HISTORY.TextLength, 0);
                 Form1.form1.REDI_HISTORY.ScrollToCaret();
@@ -551,6 +556,8 @@ min-height:100%; text-align:center;}
                 Form1.form1.EDI_SEARCH.Visible = false;
                 Form1.form1.BTN_SEARCH.Visible = false;
                 Form1.form1.Size = new System.Drawing.Size(654, 558);
+
+                Form1.form1.REDI_MESSAGE.Focus();
             }
         }
 
@@ -723,6 +730,89 @@ min-height:100%; text-align:center;}
                 return -1;
             }
         }
+
+        private void BTN_FONT_MouseDown(object sender, MouseEventArgs e)
+        {
+            if(e.Button == MouseButtons.Left)
+            {
+                contextMenuStrip3.Show(MousePosition.X, MousePosition.Y);
+            }
+        }
+  
+        private void toolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            REDI_HISTORY.Font = new Font(REDI_HISTORY.SelectionFont.FontFamily, 9, FontStyle.Regular);
+            REDI_MESSAGE.Font = new Font(REDI_MESSAGE.SelectionFont.FontFamily, 9, FontStyle.Regular);
+            richTextBox1.Font = new Font(richTextBox1.SelectionFont.FontFamily, 9, FontStyle.Regular);
+
+            toolStripMenuItem2.Checked = true;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            toolStripMenuItem6.Checked = false;
+            EDI_SEARCH.Clear();
+            ColorUsername();
+        }
+
+        private void toolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            REDI_HISTORY.Font = new Font(REDI_HISTORY.SelectionFont.FontFamily, 10, FontStyle.Regular);
+            REDI_MESSAGE.Font = new Font(REDI_MESSAGE.SelectionFont.FontFamily, 10, FontStyle.Regular);
+            richTextBox1.Font = new Font(richTextBox1.SelectionFont.FontFamily, 10, FontStyle.Regular);
+
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = true;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            toolStripMenuItem6.Checked = false;
+            EDI_SEARCH.Clear();
+            ColorUsername();
+        }
+
+        private void toolStripMenuItem4_Click(object sender, EventArgs e)
+        {
+            REDI_HISTORY.Font = new Font(REDI_HISTORY.SelectionFont.FontFamily, 11, FontStyle.Regular);
+            REDI_MESSAGE.Font = new Font(REDI_MESSAGE.SelectionFont.FontFamily, 11, FontStyle.Regular);
+            richTextBox1.Font = new Font(richTextBox1.SelectionFont.FontFamily, 11, FontStyle.Regular);
+
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = true;
+            toolStripMenuItem5.Checked = false;
+            toolStripMenuItem6.Checked = false;
+            EDI_SEARCH.Clear();
+            ColorUsername();
+        }
+
+        private void toolStripMenuItem5_Click(object sender, EventArgs e)
+        {
+            REDI_HISTORY.Font = new Font(REDI_HISTORY.SelectionFont.FontFamily, 12, FontStyle.Regular);
+            REDI_MESSAGE.Font = new Font(REDI_MESSAGE.SelectionFont.FontFamily, 12, FontStyle.Regular);
+            richTextBox1.Font = new Font(richTextBox1.SelectionFont.FontFamily, 12, FontStyle.Regular);
+
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = true;
+            toolStripMenuItem6.Checked = false;
+            EDI_SEARCH.Clear();
+            ColorUsername();
+        }
+
+        private void toolStripMenuItem6_Click(object sender, EventArgs e)
+        {
+            REDI_HISTORY.Font = new Font(REDI_HISTORY.SelectionFont.FontFamily, 13, FontStyle.Regular);
+            REDI_MESSAGE.Font = new Font(REDI_MESSAGE.SelectionFont.FontFamily, 13, FontStyle.Regular);
+            richTextBox1.Font = new Font(richTextBox1.SelectionFont.FontFamily, 13, FontStyle.Regular);
+
+            toolStripMenuItem2.Checked = false;
+            toolStripMenuItem3.Checked = false;
+            toolStripMenuItem4.Checked = false;
+            toolStripMenuItem5.Checked = false;
+            toolStripMenuItem6.Checked = true;
+            EDI_SEARCH.Clear();
+            ColorUsername();
+        }
     }
 
     public class ChatManager
@@ -736,6 +826,7 @@ min-height:100%; text-align:center;}
         public bool isInputing = true;
         public bool ischeckEDI = true;
         public bool iskeepalive = true;
+        public int PY = 19;
 
         Thread receiveThread;
         Thread stateThread;
@@ -1266,7 +1357,7 @@ min-height:100%; text-align:center;}
             {
                 int index = (int)list[i];
 
-                Form1.form1.REDI_HISTORY.Select(index, str.Length+20);
+                Form1.form1.REDI_HISTORY.Select(index, str.Length + PY);
                 Form1.form1.REDI_HISTORY.SelectionColor = color;
             }
         }
