@@ -32,7 +32,28 @@ namespace chatroom
             if (System.IO.File.Exists("./history.txt"))
             {
                 REDI_HISTORY.LoadFile("./history.txt", RichTextBoxStreamType.PlainText);
-                ColorUsername();
+
+                List<string> list = new List<string>();
+
+                foreach (string data in user.dic.Values)
+                {
+                    if (data != user.username)
+                    {
+                        list.Add(data);
+                    }
+                }
+                string pattern = @"\w{3}:\d{4}\/\d{1,2}\/\d{1,2} \d{1,2}\:\d{2}\:\d{2}";
+                foreach(Match each in Regex.Matches(REDI_HISTORY.Text,pattern))
+                {
+                    if(each.Value.Substring(0,3) == user.username)
+                    {
+                        chatm.changeColorHistory(each.Value, Color.Green);
+                    }
+                    else
+                    {
+                        chatm.changeColorHistory(each.Value, Color.Blue);
+                    }
+                }
             } 
             else
             {
@@ -44,7 +65,7 @@ namespace chatroom
             chatm.Start();        
         }
 
-        public void ColorUsername()
+        public void ColorUsernameHistory()
         {
             List<string> list = new List<string>();
 
@@ -55,8 +76,43 @@ namespace chatroom
                     list.Add(data);
                 }
             }
-            chatm.changeColorHistory2(user.username, Color.Green);
-            chatm.changeColorHistory2(list[0], Color.Blue);
+            string pattern = @"\w{3}:\d{4}\/\d{1,2}\/\d{1,2} \d{1,2}\:\d{2}\:\d{2}";
+            foreach (Match each in Regex.Matches(REDI_HISTORY.Text, pattern))
+            {
+                if (each.Value.Substring(0, 3) == user.username)
+                {
+                    chatm.changeColorHistory(each.Value, Color.Green);
+                }
+                else
+                {
+                    chatm.changeColorHistory(each.Value, Color.Blue);
+                }
+            }
+        }
+
+        public void ColorUsernameMessageBox()
+        {
+            List<string> list = new List<string>();
+
+            foreach (string data in user.dic.Values)
+            {
+                if (data != user.username)
+                {
+                    list.Add(data);
+                }
+            }
+            string pattern = @"\w{3}:\d{4}\/\d{1,2}\/\d{1,2} \d{1,2}\:\d{2}\:\d{2}";
+            foreach (Match each in Regex.Matches(richTextBox1.Text, pattern))
+            {
+                if (each.Value.Substring(0, 3) == user.username)
+                {
+                    chatm.changeColor(each.Value, Color.Green);
+                }
+                else
+                {
+                    chatm.changeColor(each.Value, Color.Blue);
+                }
+            }
         }
         [System.Runtime.InteropServices.ComVisibleAttribute(true)]
         private void Form1_Load(object sender, EventArgs e)
@@ -572,7 +628,7 @@ min-height:100%; text-align:center;}
             if(searchInfo == "")
             {
                 REDI_HISTORY.LoadFile("./history.txt", RichTextBoxStreamType.PlainText);
-                ColorUsername();
+                ColorUsernameHistory();
                 return;
             }
             FileStream fm = new FileStream("./history.txt", FileMode.Open);
@@ -637,18 +693,23 @@ min-height:100%; text-align:center;}
                     {
                         chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Blue);
                     }
-                    
+
                     chatm.changeColorHistory(searchInfo, Color.Red);
                 }
             }
             //数字
             else
             {
-                //将历史记录中的日期时间全部消除在匹配
+                //将历史记录中的日期时间  同等替换  在匹配
                 string TmpHistory = history;
-                foreach (Match each in Regex.Matches(history, @"\w{3}\:\d{4}\/\d{1,2}\/\d{1,2} \d{2}\:\d{2}\:\d{2}"))
+                foreach (Match each in Regex.Matches(history, @"\w{3}\:\d{4}\/\d{1,2}\/\d{1,2} \d{1,2}\:\d{2}\:\d{2}"))
                 {
-                    TmpHistory = TmpHistory.Replace(each.Value,"");
+                    string replace = "";
+                    for (int i = 0; i < each.Value.Length;++i)
+                    {
+                        replace += "-";
+                    }
+                    TmpHistory = TmpHistory.Replace(each.Value, replace);
                 }
 
                 SeachHistory(EDI_SEARCH.Text.Trim(), TmpHistory, history);
@@ -668,17 +729,13 @@ min-height:100%; text-align:center;}
 
             //获取索引
             List<int> indexList = new List<int>();
-            string fakeHistory = realhistory;
+
             int P = 0;
             for (int i = 0; i < info.Count; ++i)
             {
-                if (getIndex(info[i], fakeHistory) < 20) { }
-                else
-                {
-                    indexList.Add(getIndex(info[i], fakeHistory) + P);
-                }
-                fakeHistory = fakeHistory.Substring(getIndex(info[i], fakeHistory) + 1);
-                P = realhistory.Length - fakeHistory.Length;
+                indexList.Add(getIndex(info[i], tmphistory) + P);
+                P += getIndex(info[i], tmphistory);
+                tmphistory = tmphistory.Substring(getIndex(info[i], tmphistory) + 1);
             }
 
             //获取用户名和时间信息
@@ -751,7 +808,8 @@ min-height:100%; text-align:center;}
             toolStripMenuItem5.Checked = false;
             toolStripMenuItem6.Checked = false;
             EDI_SEARCH.Clear();
-            ColorUsername();
+            ColorUsernameHistory();
+            ColorUsernameMessageBox();
         }
 
         private void toolStripMenuItem3_Click(object sender, EventArgs e)
@@ -766,7 +824,8 @@ min-height:100%; text-align:center;}
             toolStripMenuItem5.Checked = false;
             toolStripMenuItem6.Checked = false;
             EDI_SEARCH.Clear();
-            ColorUsername();
+            ColorUsernameHistory();
+            ColorUsernameMessageBox();
         }
 
         private void toolStripMenuItem4_Click(object sender, EventArgs e)
@@ -781,7 +840,8 @@ min-height:100%; text-align:center;}
             toolStripMenuItem5.Checked = false;
             toolStripMenuItem6.Checked = false;
             EDI_SEARCH.Clear();
-            ColorUsername();
+            ColorUsernameHistory();
+            ColorUsernameMessageBox();
         }
 
         private void toolStripMenuItem5_Click(object sender, EventArgs e)
@@ -796,7 +856,8 @@ min-height:100%; text-align:center;}
             toolStripMenuItem5.Checked = true;
             toolStripMenuItem6.Checked = false;
             EDI_SEARCH.Clear();
-            ColorUsername();
+            ColorUsernameHistory();
+            ColorUsernameMessageBox();
         }
 
         private void toolStripMenuItem6_Click(object sender, EventArgs e)
@@ -811,7 +872,8 @@ min-height:100%; text-align:center;}
             toolStripMenuItem5.Checked = false;
             toolStripMenuItem6.Checked = true;
             EDI_SEARCH.Clear();
-            ColorUsername();
+            ColorUsernameHistory();
+            ColorUsernameMessageBox();
         }
     }
 
@@ -1352,6 +1414,7 @@ min-height:100%; text-align:center;}
 
         public void changeColorHistory2(string str, Color color)
         {
+
             ArrayList list = getIndexArray(Form1.form1.REDI_HISTORY.Text, str);
             for (int i = 0; i < list.Count; i++)
             {
