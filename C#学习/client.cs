@@ -762,7 +762,13 @@ min-height:100%; text-align:center;}
             {
                 REDI_HISTORY.AppendText(nameAndTime[i].ToString() + "\r\n");
                 REDI_HISTORY.AppendText(info[i] + "\r\n");
+ 
+                chatm.changeColorHistory(searchInfo, Color.Red);
+            }
 
+            //用户名和日期重新染色
+            for(int i = 0;i<nameAndTime.Count;++i)
+            {
                 if (nameAndTime[i].ToString().Substring(0, 3) == user.username)
                 {
                     chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Green);
@@ -771,8 +777,6 @@ min-height:100%; text-align:center;}
                 {
                     chatm.changeColorHistory(nameAndTime[i].ToString(), Color.Blue);
                 }
-
-                chatm.changeColorHistory(searchInfo, Color.Red);
             }
         }
 
