@@ -8,138 +8,107 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace testGUI
+namespace FriendLIst
 {
     public partial class Form1 : Form
     {
-        Point pointLABGRP2 = new Point();
-
         public Form1()
         {
-            InitializeComponent();          
+            InitializeComponent();
+            Gloal.pointofLABGRP2 = LAB_GRP2.Location;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            /*
-            Graphics graphics = panel1.CreateGraphics();
+            richTextBox1.Clear();
+            for (int i = 0; i < Gloal.contrlCount; ++i)
+            { 
+                richTextBox1.AppendText(Gloal.labList[i].Location.Y.ToString() + "\n");
+            }
 
-            Rectangle rectangle = new Rectangle(50, 50, 30, 20);
-            graphics.DrawRectangle(new Pen(Brushes.Red), rectangle);
-
-            //graphics = richTextBox1.CreateGraphics();
-
-            rectangle = new Rectangle(2, 0, 20, 25);
-            graphics.DrawRectangle(new Pen(Brushes.Red), rectangle);
-            */
-            this.panel2.HorizontalScroll.Enabled = false;
-            this.panel2.VerticalScroll.Enabled = true;
-            Add add = new Add();
-            add.StartPosition = FormStartPosition.CenterParent;
-            add.ShowDialog();
-            
-            string picPath = "./选中最小化.png";
-            string name = Gloal.addListName;
+            add ad = new add();
+            ad.StartPosition = FormStartPosition.CenterParent;
+            ad.ShowDialog();
 
             Gloal.contrlCount += 1;
-
-            PictureBox pic = new PictureBox();
-            pic.Name = "pictureBox" + Gloal.contrlCount;
-            pic.Location = new Point(pictureBox1.Location.X, pictureBox1.Location.Y + ((Gloal.contrlCount -1)*35));
-            pic.Image = Image.FromFile(picPath);
-            pic.AutoSize = true;
-
+            //panel1.BackColor = Color.Red;
+            panel1.Height = 80;
+            string name = "LAB_GRP1_NAME" + Gloal.contrlCount;
+            //Point point = new Point(LAB_GRP1.Location.X + 20, LAB_GRP1.Location.Y + (Gloal.contrlCount * 35));
+            Point point = new Point(10, 0 + ((Gloal.contrlCount -1) * 35));
             Label lab = new Label();
-            lab.AutoSize = true;
-            lab.Name = "LAB_GRP1_NAME" + Gloal.contrlCount;
-            lab.Location = new Point(LAB_GRP1_NAME1.Location.X, LAB_GRP1_NAME1.Location.Y + ((Gloal.contrlCount -1)*35));
-            //lab.Location = new Point(LAB_GRP1_NAME1.Location.X, pictureBox1.Location.Y + ((Gloal.contrlCount - 1) * 35)); 
-            lab.Text = Gloal.addListName;
-            //lab.Font = new Font("宋体", 9, FontStyle.Regular);
-            lab.Font = LAB_GRP1_NAME1.Font;
-            lab.AutoSize = true;
-            this.panel2.Controls.Add(lab);
-            this.panel2.Controls.Add(pic);
-
-            Gloal.picList.Add(pic);
+            lab.Name = name;
+            lab.Location = new Point(point.X, point.Y);
+            lab.Text = Gloal.addName;
+            //lab.Text = "鹿宝宝";
+            Gloal.addName = "";
+            this.panel1.Controls.Add(lab);
+            lab.BringToFront();
             Gloal.labList.Add(lab);
 
-            lab.Visible = pictureBox1.Visible == false ? false : true;
-            pic.Visible = pictureBox1.Visible == false ? false : true;
+            //LAB_GRP2.Location = new Point(LAB_GRP1.Location.X, LAB_GRP1.Location.Y + (Gloal.contrlCount * 35) + 29);
+            LAB_GRP2.Location = new Point(LAB_GRP1.Location.X, panel1.Location.Y + panel1.Height + 9);
 
-            InitList();
-            richTextBox1.Clear();
-            richTextBox1.AppendText(LAB_GROUP1.Location.Y.ToString() + "\n");
+            closeList();
+            openList();
+        }
+
+        public void refrushList()
+        {
+            for (int i = 1; i <= Gloal.contrlCount; ++i)
+            {
+                Point point = new Point(10, 0 + ((i - 1) * 35));
+                Gloal.labList[i-1].Location = new Point(point.X, point.Y);
+            }
+        }
+
+        private void LAB_GRP1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (Gloal.labList[0].Visible == false)
+                {
+                    openList();
+                }
+                else
+                {
+                    closeList();
+                }
+            }
+            catch (Exception error)
+            {
+                //列表中无内容
+                //do nothing
+            }
+        }
+
+        public void openList()
+        {
+            refrushList();
             for (int i = 0; i < Gloal.contrlCount; ++i)
             {
-                richTextBox1.AppendText("   " + Gloal.picList[i].Location.Y.ToString() + "\n");
+                Gloal.labList[i].Visible = true;
             }
-            richTextBox1.AppendText(LAB_GROUP2.Location.Y.ToString() + "\n");
+            panel1.Visible = true;
+            LAB_GRP2.BringToFront();
+            LAB_GRP2.Location = new Point(LAB_GRP1.Location.X, panel1.Location.Y + panel1.Height + 9);
         }
-
-        private void Form1_Load(object sender, EventArgs e)
+        public void closeList()
         {
-            pointLABGRP2 = LAB_GROUP2.Location;
-
-            Gloal.picList.Add(pictureBox1);
-            Gloal.picList.Add(pictureBox2);
-            Gloal.labList.Add(LAB_GRP1_NAME2);
-            Gloal.labList.Add(LAB_GRP1_NAME1);
-
-            Point temp = LAB_GRP1_NAME2.Location;
-            LAB_GRP1_NAME2.Location = LAB_GRP1_NAME1.Location;
-            LAB_GRP1_NAME1.Location = new Point(temp.X, temp.Y);
-
-            this.panel2.Controls.Add(LAB_GRP1_NAME1);
-            this.panel2.Controls.Add(LAB_GRP1_NAME2);
-            this.panel2.Controls.Add(pictureBox1);
-            this.panel2.Controls.Add(pictureBox2);
-
-            richTextBox1.AppendText(LAB_GROUP1.Location.Y.ToString() + "\n");
             for (int i = 0; i < Gloal.contrlCount; ++i)
             {
-                richTextBox1.AppendText("   " + Gloal.picList[i].Location.Y.ToString() + "\n");
+                Gloal.labList[i].Visible = false;
             }
-            richTextBox1.AppendText(LAB_GROUP2.Location.Y.ToString() + "\n");
-        }
-
-        private void LAB_GROUP1_Click(object sender, EventArgs e)
-        {
-            InitList();
-        }
-
-        private void InitList()
-        {
-            if (pictureBox1.Visible == false)
-            {
-                for (int i = 0; i < Gloal.contrlCount; ++i)
-                {
-                    Gloal.picList[i].Visible = true;
-                    Gloal.labList[i].Visible = true;
-                    Gloal.labList[i].Refresh();
-                    Gloal.picList[i].Refresh();
-                }
-                LAB_GROUP2.Location = new Point(pointLABGRP2.X, pointLABGRP2.Y);
-                //LAB_GROUP2.Location = new Point(LAB_GROUP1.Location.X, Gloal.labList[Gloal.contrlCount - 1].Location.Y + 25);
-                //LAB_GROUP2.Location = new Point(38,282);
-            }
-            else
-            {
-                for (int i = 0; i < Gloal.contrlCount; ++i)
-                {
-                    Gloal.picList[i].Visible = false;
-                    Gloal.labList[i].Visible = false;
-                }
-                LAB_GROUP2.Location = new Point(LAB_GROUP1.Location.X,LAB_GROUP1.Location.Y + 25);
-            }
+            panel1.Visible = false;
+            LAB_GRP2.Location = Gloal.pointofLABGRP2;
         }
     }
-}
 
-class Gloal
-{
-    public static string addListName = "";
-    public static int contrlCount = 2;
-    public static List<PictureBox> picList = new List<PictureBox>();
-    public static List<Label> labList = new List<Label>();
+    public class Gloal
+    {
+        public static Point pointofLABGRP2 = new Point();
+        public static List<Label> labList = new List<Label>();
+        public static int contrlCount = 0;
+        public static string addName = "";
+    }
 }
