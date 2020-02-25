@@ -15,11 +15,17 @@ namespace FriendLIst
     {
         public static Image picimageMe;
         public static Image picimageYou;
+        public static Panel panelBase = new Panel();
         public messageBox()
         {
             InitializeComponent();
             createPicYou();
             createPicMe();
+            panelBase.AutoScroll = false;
+            panelBase.HorizontalScroll.Enabled = false;
+            this.panel1.HorizontalScroll.Enabled = false;
+            panelBase.Height = 0;
+            panelBase.Width = this.Width-35;
         }
 
         public void createPicMe()
@@ -107,6 +113,8 @@ namespace FriendLIst
             }
             MessMa.messCount += 1;
         */
+            panelBase.Height += 70;
+
             Point newPoint = new Point(0, 0);
             this.panel1.AutoScrollPosition = newPoint;
 
@@ -120,7 +128,8 @@ namespace FriendLIst
             pic.Size = new Size(64, 64);
             MessMa.pointOfPic = pic.Location;
             MessMa.picHeight = pic.Height;
-            this.panel1.Controls.Add(pic);
+            //this.panel1.Controls.Add(pic);
+            panelBase.Controls.Add(pic);
             pic.BringToFront();
 
             Label lab = new Label();
@@ -130,7 +139,8 @@ namespace FriendLIst
             lab.Font = new System.Drawing.Font("宋体", 12, FontStyle.Regular);
             lab.Location = new Point(pic.Location.X + pic.Width + 3, pic.Location.Y);
             MessMa.pointOfLab = lab.Location;
-            this.panel1.Controls.Add(lab);
+            //this.panel1.Controls.Add(lab);
+            panelBase.Controls.Add(lab);
             lab.BringToFront();
             lab.Visible = false;
             //toolTip1.SetToolTip(lab, "我爱你呀,鹿宝宝!~");
@@ -140,7 +150,8 @@ namespace FriendLIst
             string mess = richTextBox1.Text;
             MessMa.messList.Add(mess);
             richTextBox1.Clear();
-            Graphics g = this.panel1.CreateGraphics();
+            //Graphics g = this.panel1.CreateGraphics();
+            Graphics g = panelBase.CreateGraphics();
             SizeF sizeF = g.MeasureString(mess, new Font("宋体", 17));
             MessMa.stringWidth.Add((int)sizeF.Width);
             MessMa.stringHeight.Add((int)sizeF.Height);
@@ -181,13 +192,16 @@ namespace FriendLIst
             bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
             Draw(BBB.ClientRectangle, bitmapGraphics, 18, true, 1, Color.FromArgb(90, 143, 0), Color.FromArgb(90, 143, 0));
             BBB.BackgroundImage = localBitmap;
-            this.panel1.Controls.Add(BBB);
+            //this.panel1.Controls.Add(BBB);
+            panelBase.Controls.Add(BBB);
             BBB.Controls.Add(ricBox);
             //BBB.BringToFront();
 
+            this.panel1.Controls.Add(panelBase);
+
             //panel1.Refresh();
             //newPoint = new Point(0, this.panel1.Height - panel1.AutoScrollPosition.Y);
-            newPoint = new Point(0, this.panel1.Height);
+            newPoint = new Point(0, panelBase.Height);
             panel1.AutoScrollPosition = newPoint;
 
             g.Dispose();
@@ -195,8 +209,10 @@ namespace FriendLIst
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Point newPoint = new Point(0, 0);
-            this.panel1.AutoScrollPosition = newPoint;
+            //Point newPoint = new Point(0, 0);
+            //this.panel1.AutoScrollPosition = newPoint;
+
+            panelBase.Height += 70;
 
             PictureBox pic = new PictureBox();
             pic.Image = Image.FromFile("./头像.png");
@@ -208,7 +224,8 @@ namespace FriendLIst
             pic.Size = new Size(64, 64);
             MessMa.pointOfPic = pic.Location;
             MessMa.picHeight = pic.Height;
-            this.panel1.Controls.Add(pic);
+            //this.panel1.Controls.Add(pic);
+            panelBase.Controls.Add(pic);
             pic.BringToFront();
 
             Label lab = new Label();
@@ -219,6 +236,7 @@ namespace FriendLIst
             lab.Location = new Point(pic.Location.X + pic.Width + 3, pic.Location.Y);
             MessMa.pointOfLab = lab.Location;
             this.panel1.Controls.Add(lab);
+            panelBase.Controls.Add(lab);
             lab.BringToFront();
             lab.Visible = false;
             //toolTip1.SetToolTip(lab, "我爱你呀,鹿宝宝!~");
@@ -228,7 +246,7 @@ namespace FriendLIst
             string mess = richTextBox1.Text;
             MessMa.messList.Add(mess);
             richTextBox1.Clear();
-            Graphics g = this.panel1.CreateGraphics();
+            Graphics g = panelBase.CreateGraphics();
             SizeF sizeF = g.MeasureString(mess, new Font("宋体", 17));
             MessMa.stringWidth.Add((int)sizeF.Width);
             MessMa.stringHeight.Add((int)sizeF.Height);
@@ -269,13 +287,16 @@ namespace FriendLIst
             bitmapGraphics.SmoothingMode = SmoothingMode.AntiAlias;
             Draw(BBB.ClientRectangle, bitmapGraphics, 18, true, 0, Color.FromArgb(90, 143, 0), Color.FromArgb(90, 143, 0));
             BBB.BackgroundImage = localBitmap;
-            this.panel1.Controls.Add(BBB);
+            //this.panel1.Controls.Add(BBB);
+            panelBase.Controls.Add(BBB);
             BBB.Controls.Add(ricBox);
             //BBB.BringToFront();
 
+            this.panel1.Controls.Add(panelBase);
+
             //panel1.Refresh();
             //newPoint = new Point(0, this.panel1.Height - panel1.AutoScrollPosition.Y);
-            newPoint = new Point(0, this.panel1.Height);
+            Point newPoint = new Point(0, panelBase.Height);
             panel1.AutoScrollPosition = newPoint;
 
             g.Dispose();
