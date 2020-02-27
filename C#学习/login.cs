@@ -16,12 +16,65 @@ namespace chatroom
 {
     public partial class login : Form
     {
+        public static List<TextBox> textList = new List<TextBox>();
+        public static List<Label> labList = new List<Label>();
+        public static List<Button> btnList = new List<Button>();
+
         public login()
         {
             InitializeComponent();
             EDI_PASSWD.AutoSize = false;
             EDI_PASSWD.Height = EDI_USERNAME.Height;
             initDic();
+        }
+
+        private void login_Load(object sender, EventArgs e)
+        {
+            EDI_USERNAME.Visible = false;
+            EDI_PASSWD.Visible = false;
+            LAB_USERNAME.Visible = false;        
+            LAB_PASSWD.Visible = false;
+            BTN_LOGON.Visible = false;
+            BTN_LOGIN.Visible = false;
+
+            btnList.Add(BTN_LOGON);
+            btnList.Add(BTN_LOGIN);
+            labList.Add(LAB_USERNAME);
+            labList.Add(LAB_PASSWD);
+            textList.Add(EDI_USERNAME);
+            textList.Add(EDI_PASSWD);
+
+            LAB_USERNAME.Parent = this;
+            LAB_PASSWD.Parent = this;
+            LAB_USERNAME.BackColor = Color.Transparent;
+            LAB_PASSWD.BackColor = Color.Transparent;
+
+            this.Size = new Size(654, 558);
+            Bitmap bitmap = new Bitmap(Image.FromFile("./背景.jpg"), this.Size);
+            this.BackgroundImage = bitmap;
+            this.Width = 467;
+            timer1.Enabled = true;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {      
+            EDI_USERNAME.Visible = true;
+            LAB_USERNAME.Visible = true;
+            timer2.Enabled = true;
+            timer1.Enabled = false;      
+        }
+        private void timer2_Tick(object sender, EventArgs e)
+        {
+            EDI_PASSWD.Visible = true;
+            LAB_PASSWD.Visible = true;
+            timer3.Enabled = true;
+            timer2.Enabled = false;
+        }
+        private void timer3_Tick(object sender, EventArgs e)
+        {
+            BTN_LOGIN.Visible = true;
+            BTN_LOGON.Visible = true;
+            timer3.Enabled = false;
         }
 
         private void initDic()
@@ -113,12 +166,9 @@ namespace chatroom
             log_on.ShowDialog();
         }
 
-        private void login_Load(object sender, EventArgs e)
+        private void EDI_USERNAME_TextChanged(object sender, EventArgs e)
         {
-            LAB_USERNAME.Parent = this;
-            LAB_PASSWD.Parent = this;
-            LAB_USERNAME.BackColor = Color.Transparent;
-            LAB_PASSWD.BackColor = Color.Transparent;
+            user.username = EDI_USERNAME.Text;
         }
     }
 
