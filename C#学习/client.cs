@@ -613,6 +613,7 @@ min-height:100%; text-align:center;}
                 Form1.form1.BTN_SEARCH.Visible = false;
                 Form1.form1.Size = new System.Drawing.Size(654, 558);
 
+                EDI_SEARCH.Clear();
                 Form1.form1.REDI_MESSAGE.Focus();
             }
         }
@@ -1328,29 +1329,40 @@ min-height:100%; text-align:center;}
                     changeColor(name, Color.Blue);
 
                     message = message.Substring(index + 1);
-
-                    //Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
-                    Form1.form1.richTextBox1.AppendText(message);
-
-                    //历史记录更新
-                    object newlockObj = new object();
-
-                    lock (newlockObj)
+                    if (message.IndexOf(@"{\pict\") > -1)
                     {
-                        Form1.form1.REDI_HISTORY.AppendText(name + "\r\n");
-                        changeColorHistory(name, Color.Blue);
-                        Form1.form1.REDI_HISTORY.AppendText(message);
+                        Form1.form1.richTextBox1.AppendText(name + "\r\n");
+                        Form1.form1.richTextBox1.AppendText(name + "\r\n");
+                        changeColor(name, Color.Blue);
+                        Clipboard.SetData(DataFormats.Rtf, message);
+                        Form1.form1.richTextBox1.Paste();
+                        //Form1.form1.REDI_SHOWMESSAGE.Paste();
                     }
+                    else
+                    {
+                        //Form1.form1.REDI_SHOWMESSAGE.AppendText(message);
+                        Form1.form1.richTextBox1.AppendText(message);
 
-                    string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>                         
+                        //历史记录更新
+                        object newlockObj = new object();
+
+                        lock (newlockObj)
+                        {
+                            Form1.form1.REDI_HISTORY.AppendText(name + "\r\n");
+                            changeColorHistory(name, Color.Blue);
+                            Form1.form1.REDI_HISTORY.AppendText(message);
+                        }
+
+                        string str = @"<script type=""text/javascript"">window.location.hash = ""#ok"";</script>                         
                                 <div class=""chat_content_group buddy"">
                                         <img class=""chat_content_avatar"" src=""http://face6.web.qq.com/cgi/svr/face/getface?cache=1&amp;type=1&amp;f=40&amp;uin=1286679566&amp;t=1432111720&amp;vfwebqq=5c3a30b487c67c5d37c2415dd32df3ffe3bc5b464d930ddd027d36911fc8d26a4cd23fffce868928"" width=""40px"" height=""40px"">
-                                        <p class=""chat_nick"">" + name +@"</p>
+                                        <p class=""chat_nick"">" + name + @"</p>
                                         <p class=""chat_content"">" + message + @"</p>
                                     </div>
                                 <a id='ok'></a>
                                 ";
-                    Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
+                        Form1.form1.webKitBrowser1.DocumentText = Form1.form1.webKitBrowser1.DocumentText.Replace("<a id='ok'></a>", "") + str;
+                    }
                 }
 
                 //Form1.form1.REDI_SHOWMESSAGE.Select(Form1.form1.REDI_SHOWMESSAGE.TextLength, 0);
