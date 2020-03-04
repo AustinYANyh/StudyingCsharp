@@ -85,21 +85,33 @@ namespace Csharp_Plot
         public static List<float> EllispepointList = new List<float>();
         public static Point midPoint = new Point();
         public static int ThreeDLength = 145;
+        public static int ParallelogramLength = 255;
+        public static int ParallelogramHeight = 175;
         public static int needXReverse = 1;
         public static int needYReverse = 1;
         public static int needZReverse = 1;
         public static int LeftandRightP = 0;
         public static int UpandDownP = 0;
+        public static int PreLandRP = 0;
+        public static int PreUandDP = 0;
         public static bool XandZ = false;
         public static bool XandY = false;
         public static bool YandZ = false;
         public static bool XandYandZ = false;
+        public static bool G17 = false;
 
         //椭圆和三角形属性
         public static int triangleHeight = 85;
         public static float ellipseWidth = 50;
         public static float ellipseHeight = 40;
+        public static List<Point> triPoints = new List<Point>();
+        public static List<Point> eliPoints = new List<Point>();
 
+        //坐标点属性
+        public static List<Point> NowXPoint = new List<Point>();
+        public static List<Point> NowYPoint = new List<Point>();
+        public static List<Point> NowZPoint = new List<Point>();
+        
 
         public Form1()
         {
@@ -110,6 +122,97 @@ namespace Csharp_Plot
         {
             initVar();
             this.Controls.Add(panel1);
+
+            //画椭圆
+            float x = (this.panel1.Width / 2) - (ellipseWidth / 2) + LeftandRightP;
+            float y = (this.panel1.Height / 2) - (ellipseHeight / 2) - (triangleHeight / 2) + UpandDownP;
+
+            EllispepointList.Add(x);
+            EllispepointList.Add(y);
+            EllispepointList.Add(ellipseWidth);
+            EllispepointList.Add(ellipseHeight);
+
+            eliPoints.Add(new Point((int)x, (int)y));
+
+            //画三角形
+            //左边起点x,y+ellipseHeight/2   中间点x+ellipseWidth/2,y+ellipseHeight/2+三角形高   
+            //右边点x +ellipseWidth,y+ellipseHeight/2    
+            Point pointLeft = new Point((int)x + 1, (int)(y + ellipseHeight / 2));
+            Point pointMid = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
+            Point pointRight = new Point((int)(x + ellipseWidth - 1), (int)(y + ellipseHeight / 2));
+
+            TrianglepointList.Add(pointLeft);
+            TrianglepointList.Add(pointMid);
+            TrianglepointList.Add(pointRight);
+
+            triPoints.Add(pointLeft);
+            triPoints.Add(pointMid);
+            triPoints.Add(pointRight);
+
+            InitXYZ();
+        }
+
+        public void InitXYZ()
+        {
+            NowXPoint.Clear();
+            NowYPoint.Clear();
+            NowZPoint.Clear();
+
+            //初始XYZ坐标
+            double xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
+            double yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
+
+            Point xPoint = new Point(TrianglepointList[1].X + (int)xWidth, TrianglepointList[1].Y + (int)yHeight);
+            Point XPoint = new Point(TrianglepointList[1].X + (int)xWidth, TrianglepointList[1].Y + (int)yHeight - 15);
+            Point ypoint = new Point(TrianglepointList[1].X + (int)xWidth, TrianglepointList[1].Y - (int)yHeight);
+            Point YPoint = new Point(TrianglepointList[1].X + (int)xWidth - 15, TrianglepointList[1].Y - (int)yHeight - 15);
+            Point zPoint = new Point(TrianglepointList[1].X, TrianglepointList[1].Y - ThreeDLength);
+            Point ZPoint = new Point(TrianglepointList[1].X - 10, TrianglepointList[1].Y - ThreeDLength - 13);
+
+            NowXPoint.Add(xPoint);
+            NowXPoint.Add(XPoint);
+            NowYPoint.Add(ypoint);
+            NowYPoint.Add(YPoint);
+            NowZPoint.Add(zPoint);
+            NowZPoint.Add(ZPoint);
+        }
+
+        public List<Point> CalPoint(Point midPoint)
+        {
+            double xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
+            double yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
+
+            Point xPoint = new Point(midPoint.X + (int)xWidth, midPoint.Y + (int)yHeight);
+            Point XPoint = new Point(midPoint.X + (int)xWidth, midPoint.Y + (int)yHeight - 15);
+            Point ypoint = new Point(midPoint.X + (int)xWidth, midPoint.Y - (int)yHeight);
+            Point YPoint = new Point(midPoint.X + (int)xWidth - 15, midPoint.Y - (int)yHeight - 15);
+            Point zPoint = new Point(midPoint.X, midPoint.Y - ThreeDLength);
+            Point ZPoint = new Point(midPoint.X - 10, midPoint.Y - ThreeDLength - 13);
+
+            Point RxPoint = new Point(midPoint.X + needXReverse*(int)xWidth, midPoint.Y + needXReverse * (int)yHeight);
+            Point RXPoint = new Point(midPoint.X + needXReverse * (int)xWidth, midPoint.Y + needXReverse * (int)yHeight - needXReverse * 15);
+            Point Rypoint = new Point(midPoint.X + needYReverse * (int)xWidth, midPoint.Y - needYReverse*(int)yHeight);
+            Point RYPoint = new Point(midPoint.X + needYReverse*(int)xWidth - needYReverse*15, midPoint.Y - needYReverse*(int)yHeight - needYReverse*15);
+            Point RzPoint = new Point(midPoint.X, midPoint.Y - needZReverse*ThreeDLength);
+            Point RZPoint = new Point(midPoint.X - 10, midPoint.Y - needZReverse * ThreeDLength - needZReverse * 13);
+
+            List<Point> calPoint = new List<Point>();
+
+            calPoint.Add(xPoint);
+            calPoint.Add(XPoint);
+            calPoint.Add(ypoint);
+            calPoint.Add(YPoint);
+            calPoint.Add(zPoint);
+            calPoint.Add(ZPoint);
+
+            calPoint.Add(RxPoint);
+            calPoint.Add(RXPoint);
+            calPoint.Add(Rypoint);
+            calPoint.Add(RYPoint);
+            calPoint.Add(RzPoint);
+            calPoint.Add(RZPoint);
+
+            return calPoint;
         }
 
         unsafe private void BTN_Open_Click(object sender, EventArgs e)
@@ -607,7 +710,15 @@ namespace Csharp_Plot
 
             if (XandYandZ == true)
             {
-                rePaint(graphics);
+                if (G17 == false)
+                {
+                    rePaint(graphics);
+                }
+                else
+                {
+                    rePaint(graphics);
+                    paintG17();
+                }
             }
             else if(XandY == true)
             {
@@ -630,7 +741,15 @@ namespace Csharp_Plot
 
             if (XandYandZ == true)
             {
-                rePaint(graphics);
+                if (G17 == false)
+                {
+                    rePaint(graphics);
+                }
+                else
+                {
+                    rePaint(graphics);
+                    paintG17();
+                }
             }
             else if (XandY == true)
             {
@@ -653,7 +772,15 @@ namespace Csharp_Plot
 
             if (XandYandZ == true)
             {
-                rePaint(graphics);
+                if (G17 == false)
+                {
+                    rePaint(graphics);
+                }
+                else
+                {
+                    rePaint(graphics);
+                    paintG17();
+                }
             }
             else if (XandY == true)
             {
@@ -676,7 +803,15 @@ namespace Csharp_Plot
 
             if (XandYandZ == true)
             {
-                rePaint(graphics);
+                if (G17 == false)
+                {
+                    rePaint(graphics);
+                }
+                else
+                {
+                    rePaint(graphics);
+                    paintG17();
+                }
             }
             else if (XandY == true)
             {
@@ -706,76 +841,149 @@ namespace Csharp_Plot
             XandZ = false;
             YandZ = false;
 
-            Point[] points = { TrianglepointList[0], TrianglepointList[1], TrianglepointList[2] };
+            Point[] points = { triPoints[0], triPoints[1], triPoints[2] };
             graphics.FillPolygon(Brushes.Red, points);
 
-            graphics.FillEllipse(new SolidBrush(Color.Yellow), EllispepointList[0], EllispepointList[1], EllispepointList[2], EllispepointList[3]);
+            graphics.FillEllipse(new SolidBrush(Color.Yellow), eliPoints[0].X, eliPoints[0].Y, EllispepointList[2], EllispepointList[3]);
             graphics.Dispose();
         }
 
         public void paintTandE(Graphics graphics)
         {
             SolidBrush brush = new SolidBrush(Color.Yellow);
-
-            //画椭圆
-            float x = (this.panel1.Width / 2) - (ellipseWidth / 2) + LeftandRightP;
-            float y = (this.panel1.Height / 2) - (ellipseHeight / 2) - (triangleHeight / 2) + UpandDownP;
-
-            EllispepointList.Add(x);
-            EllispepointList.Add(y);
-            EllispepointList.Add(ellipseWidth);
-            EllispepointList.Add(ellipseHeight);
-
-            //画三角形
             Pen pen = new Pen(Color.Red, 3);
-            //左边起点x,y+ellipseHeight/2   中间点x+ellipseWidth/2,y+ellipseHeight/2+三角形高   
-            //右边点x +ellipseWidth,y+ellipseHeight/2    
-            Point pointLeft = new Point((int)x + 1, (int)(y + ellipseHeight / 2));
-            Point pointMid = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
-            Point pointRight = new Point((int)(x + ellipseWidth - 1), (int)(y + ellipseHeight / 2));
 
-            TrianglepointList.Add(pointLeft);
-            TrianglepointList.Add(pointMid);
-            TrianglepointList.Add(pointRight);
+            Point triLeft = new Point(triPoints[0].X + LeftandRightP - PreLandRP,
+                triPoints[0].Y + UpandDownP - PreUandDP);
+            Point triMid = new Point(triPoints[1].X + LeftandRightP - PreLandRP,
+                triPoints[1].Y + UpandDownP - PreUandDP);
+            Point triRight = new Point(triPoints[2].X + LeftandRightP - PreLandRP,
+                triPoints[2].Y + UpandDownP - PreUandDP);
 
-            graphics.DrawLine(pen, pointLeft, pointMid);
-            graphics.DrawLine(pen, pointMid, pointRight);
-            graphics.DrawLine(pen, pointLeft, pointRight);
+            triPoints.Clear(); 
+            triPoints.Add(triLeft);  
+            triPoints.Add(triMid);
+            triPoints.Add(triRight);  
+                              
+            graphics.DrawLine(pen, triLeft, triMid);
+            graphics.DrawLine(pen, triLeft, triRight);
+            graphics.DrawLine(pen, triMid, triRight);
 
             //填充三角形
-            Point[] points = { pointLeft, pointMid, pointRight };
+            Point[] points = { triLeft, triMid, triRight };
             graphics.FillPolygon(Brushes.Red, points);
 
             //填充椭圆
+            float x = eliPoints[0].X + LeftandRightP - PreLandRP;
+            float y = eliPoints[0].Y + UpandDownP - PreUandDP;
+            graphics.FillEllipse(brush, x, y, ellipseWidth, ellipseHeight);
+            eliPoints.Clear();
+            eliPoints.Add(new Point((int)x, (int)y));
+        }
+
+        public void paintTandE1(Graphics graphics)
+        {
+            SolidBrush brush = new SolidBrush(Color.Yellow);
+            Pen pen = new Pen(Color.Red, 3);
+
+            Point triLeft = new Point(TrianglepointList[0].X + LeftandRightP,
+                TrianglepointList[0].Y + UpandDownP);
+            Point triMid = new Point(TrianglepointList[1].X + LeftandRightP,
+                TrianglepointList[1].Y + UpandDownP);
+            Point triRight = new Point(TrianglepointList[2].X + LeftandRightP,
+               TrianglepointList[2].Y + UpandDownP);
+
+            triPoints.Clear();
+            triPoints.Add(triLeft);
+            triPoints.Add(triMid);
+            triPoints.Add(triRight);
+
+            graphics.DrawLine(pen, triLeft, triMid);
+            graphics.DrawLine(pen, triLeft, triRight);
+            graphics.DrawLine(pen, triMid, triRight);
+
+            //填充三角形
+            Point[] points = { triLeft, triMid, triRight };
+            graphics.FillPolygon(Brushes.Red, points);
+
+            //填充椭圆
+            float x = EllispepointList[0] + LeftandRightP;
+            float y = EllispepointList[1] + UpandDownP;
+            eliPoints.Clear();
+            eliPoints.Add(new Point((int)x, (int)y));
             graphics.FillEllipse(brush, x, y, ellipseWidth, ellipseHeight);
         }
 
         public void paint3D(Graphics graphics,Point standardPoint)
-        {
-            //计算X的坐标
-            double xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
-            double yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
-
-            Point xPoint = new Point(standardPoint.X + (int)xWidth, standardPoint.Y + (int)yHeight);
+        { 
+            Point xPoint = new Point(NowXPoint[0].X + LeftandRightP - PreLandRP,
+                NowXPoint[0].Y + UpandDownP - PreUandDP);
+            
             Pen pen = new Pen(Color.Blue, 1);
             graphics.DrawLine(pen, xPoint, standardPoint);
-            Point XPoint = new Point(standardPoint.X + (int)xWidth, standardPoint.Y + (int)yHeight - 15);
+            Point XPoint = new Point(NowXPoint[1].X + LeftandRightP - PreLandRP, 
+                NowXPoint[1].Y + UpandDownP - PreUandDP);
             graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular), Brushes.Blue, XPoint);
 
             pen = new Pen(Brushes.Green, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X, standardPoint.Y - ThreeDLength));
+            Point zPoint = new Point(NowZPoint[0].X + LeftandRightP - PreLandRP, 
+                NowZPoint[0].Y + UpandDownP - PreUandDP);
+            graphics.DrawLine(pen, standardPoint, zPoint);
             //受限于panel高度,+Z的Y高度只能+13
+            Point ZPoint = new Point(NowZPoint[1].X + LeftandRightP - PreLandRP, 
+                NowZPoint[1].Y + UpandDownP - PreUandDP);
             graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Green), new Point(standardPoint.X - 10, standardPoint.Y - ThreeDLength - 13));
+                new SolidBrush(Color.Green), ZPoint);
 
-            //计算Y的坐标
-            xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
-            yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
             pen = new Pen(Color.Red, 1);
-            Point ypoint = new Point(standardPoint.X + (int)xWidth, standardPoint.Y - (int)yHeight);
-            graphics.DrawLine(pen, ypoint, standardPoint);
+            Point ypoint = new Point(NowYPoint[0].X + LeftandRightP - PreLandRP, 
+                NowYPoint[0].Y + UpandDownP - PreUandDP);
+            Point YPoint = new Point(NowYPoint[1].X + LeftandRightP - PreLandRP, 
+                NowYPoint[1].Y + UpandDownP - PreUandDP);
+            graphics.DrawLine(pen, ypoint, standardPoint); 
             graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Red), new Point(standardPoint.X + (int)xWidth - 15, standardPoint.Y - (int)yHeight - 15));
+                new SolidBrush(Color.Red), YPoint);
+
+            PreLandRP = LeftandRightP;
+            PreUandDP = UpandDownP;
+
+            updateXPoints(xPoint, XPoint);
+            updateYPoints(ypoint, YPoint);
+            updateZPoints(zPoint, ZPoint);
+        }                 
+
+        public void update3D(List<Point> list)
+        {
+            Graphics graphics = panel1.CreateGraphics();
+
+            Point xPoint = list[0];
+
+            Pen pen = new Pen(Color.Blue, 1);
+            graphics.DrawLine(pen, xPoint, midPoint);
+            Point XPoint = list[1];
+            graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular), Brushes.Blue, XPoint);
+
+            pen = new Pen(Brushes.Green, 1);
+            Point zPoint = list[4];
+            graphics.DrawLine(pen, midPoint, zPoint);
+            //受限于panel高度,+Z的Y高度只能+13
+            Point ZPoint =list[5];
+            graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
+                new SolidBrush(Color.Green), ZPoint);
+
+            pen = new Pen(Color.Red, 1);
+            Point ypoint = list[2];
+            Point YPoint = list[3];
+            graphics.DrawLine(pen, ypoint, midPoint);
+            graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
+                new SolidBrush(Color.Red), YPoint);
+
+            PreLandRP = LeftandRightP;
+            PreUandDP = UpandDownP;
+
+            updateXPoints(xPoint, XPoint);
+            updateYPoints(ypoint, YPoint);
+            updateZPoints(zPoint, ZPoint);
         }
 
         public void rePaint(Graphics graphics)
@@ -790,67 +998,116 @@ namespace Csharp_Plot
             midPoint = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
             paint3D(graphics, midPoint);
 
-            paintTandE(graphics);
+            Point[] points = { triPoints[0], triPoints[1], triPoints[2] };
+            graphics.FillPolygon(Brushes.Red, points);
+
+            //填充椭圆
+            graphics.FillEllipse(Brushes.Yellow, eliPoints[0].X, eliPoints[0].Y, ellipseWidth, ellipseHeight);
         }
 
         public void rePaintXandY(Graphics graphics)
         {
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), 0, 0, panel1.Width, panel1.Height);
 
-            paintTandE(graphics);
+           // paintTandE(graphics);
 
             float x = (this.panel1.Width / 2) - (ellipseWidth / 2) + LeftandRightP;
             float y = (this.panel1.Height / 2) - (ellipseHeight / 2) - (triangleHeight / 2) + UpandDownP;
 
             midPoint = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
+
+            Point xPoint = new Point(NowXPoint[0].X + LeftandRightP - PreLandRP,
+                NowXPoint[0].Y + UpandDownP - PreUandDP);
+            Point XPoint = new Point(NowXPoint[1].X + LeftandRightP - PreLandRP,
+                NowXPoint[1].Y + UpandDownP - PreUandDP);
+
+            Point yPoint = new Point(NowYPoint[0].X + LeftandRightP - PreLandRP,
+                NowYPoint[0].Y + UpandDownP - PreUandDP);
+            Point YPoint = new Point(NowYPoint[1].X + LeftandRightP - PreLandRP,
+               NowYPoint[1].Y + UpandDownP - PreUandDP);
+
+            PreUandDP = UpandDownP;
+            PreLandRP = LeftandRightP;
+            updateYPoints(yPoint, YPoint);
+            updateXPoints(xPoint, XPoint);
+
             paintXandY(graphics, midPoint);
 
-            paintTandE(graphics);
+            paintTandE1(graphics);
         }
 
         public void rePaintYandZ(Graphics graphics)
         {
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), 0, 0, panel1.Width, panel1.Height);
 
-            paintTandE(graphics);
 
             float x = (this.panel1.Width / 2) - (ellipseWidth / 2) + LeftandRightP;
             float y = (this.panel1.Height / 2) - (ellipseHeight / 2) - (triangleHeight / 2) + UpandDownP;
 
             midPoint = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
+    
+            Point yPoint = new Point(NowYPoint[0].X + LeftandRightP - PreLandRP,
+                NowYPoint[0].Y + UpandDownP - PreUandDP);
+            Point YPoint = new Point(NowYPoint[1].X + LeftandRightP - PreLandRP,
+               NowYPoint[1].Y + UpandDownP - PreUandDP);
+
+            Point zPoint = new Point(NowZPoint[0].X + LeftandRightP - PreLandRP,
+                NowZPoint[0].Y + UpandDownP - PreUandDP);
+            Point ZPoint = new Point(NowZPoint[1].X + LeftandRightP - PreLandRP,
+                NowZPoint[1].Y + UpandDownP - PreUandDP);
+
+            PreUandDP = UpandDownP;
+            PreLandRP = LeftandRightP;
+            updateYPoints(yPoint, YPoint);
+            updateZPoints(zPoint, ZPoint);
+
             paintYandZ(graphics, midPoint);
 
-            paintTandE(graphics);
+            paintTandE1(graphics);
         }
 
         public void rePaintXandZ(Graphics graphics)
         {
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), 0, 0, panel1.Width, panel1.Height);
 
-            paintTandE(graphics);
-
             float x = (this.panel1.Width / 2) - (ellipseWidth / 2) + LeftandRightP;
             float y = (this.panel1.Height / 2) - (ellipseHeight / 2) - (triangleHeight / 2) + UpandDownP;
 
             midPoint = new Point((int)(x + ellipseWidth / 2), (int)(y + ellipseHeight / 2 + triangleHeight));
+
+            Point xPoint = new Point(NowXPoint[0].X + LeftandRightP - PreLandRP,
+                NowXPoint[0].Y + UpandDownP - PreUandDP);
+            Point XPoint = new Point(NowXPoint[1].X + LeftandRightP - PreLandRP,
+                NowXPoint[1].Y + UpandDownP - PreUandDP);
+
+            Point zPoint = new Point(NowZPoint[0].X + LeftandRightP - PreLandRP,
+                NowZPoint[0].Y + UpandDownP - PreUandDP);
+            Point ZPoint = new Point(NowZPoint[1].X + LeftandRightP - PreLandRP,
+                NowZPoint[1].Y + UpandDownP - PreUandDP);
+
+            PreUandDP = UpandDownP;
+            PreLandRP = LeftandRightP;
+            updateXPoints(xPoint, XPoint);
+            updateZPoints(zPoint, ZPoint);
+
             paintXandZ(graphics, midPoint);
 
-            paintTandE(graphics);
+            paintTandE1(graphics);
         }
 
         public void paintXandY(Graphics graphics,Point standardPoint)
         {
             //画X轴和+X
             Pen pen = new Pen(Brushes.Blue, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X + ThreeDLength, standardPoint.Y));
+            graphics.DrawLine(pen, standardPoint, NowXPoint[0]);
             graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Blue), new Point(standardPoint.X + ThreeDLength, standardPoint.Y + 10));
+                new SolidBrush(Color.Blue), NowXPoint[1]);
 
             //画Y轴和+Y
             pen = new Pen(Brushes.Red, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X, standardPoint.Y - ThreeDLength));
+            graphics.DrawLine(pen, standardPoint, NowYPoint[0]);
             graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Red), new Point(standardPoint.X - 10, standardPoint.Y - ThreeDLength - 10));
+                new SolidBrush(Color.Red), NowYPoint[1]);
 
             XandY = true;
             XandZ = false;
@@ -865,15 +1122,15 @@ namespace Csharp_Plot
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), rectangle);
 
             //画Y轴和+Y
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X + ThreeDLength, standardPoint.Y));
+            graphics.DrawLine(pen, standardPoint, NowYPoint[0]);
             graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Red), new Point(standardPoint.X + ThreeDLength, standardPoint.Y + 10));
+                new SolidBrush(Color.Red), NowYPoint[1]);
 
             //画Z轴和+Z
             pen = new Pen(Brushes.Green, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X, standardPoint.Y - ThreeDLength));
+            graphics.DrawLine(pen, standardPoint, NowZPoint[0]);
             graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Green), new Point(standardPoint.X - 10, standardPoint.Y - ThreeDLength - 10));
+                new SolidBrush(Color.Green),NowZPoint[1]);
 
             YandZ = true;
             XandY = false;
@@ -889,15 +1146,15 @@ namespace Csharp_Plot
 
             //画X轴和+X
             Pen pen = new Pen(Brushes.Blue, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X + ThreeDLength, standardPoint.Y));
+            graphics.DrawLine(pen, standardPoint, NowXPoint[0]);
             graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Blue), new Point(standardPoint.X + ThreeDLength, standardPoint.Y + 10));
+                new SolidBrush(Color.Blue), NowXPoint[1]);
 
             //画Z轴和+Z
             pen = new Pen(Brushes.Green, 1);
-            graphics.DrawLine(pen, standardPoint, new Point(standardPoint.X, standardPoint.Y - ThreeDLength));
+            graphics.DrawLine(pen, standardPoint, NowZPoint[0]);
             graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                new SolidBrush(Color.Green), new Point(standardPoint.X - 10, standardPoint.Y - ThreeDLength - 10));
+                new SolidBrush(Color.Green),NowZPoint[1]);
 
             XandZ = true;
             XandY = false;
@@ -905,42 +1162,171 @@ namespace Csharp_Plot
             XandYandZ = false;
         }
 
+        public void updateXPoints(Point xPoint, Point XPoint)
+        {
+            NowXPoint.Clear();
+            NowXPoint.Add(xPoint);
+            NowXPoint.Add(XPoint);
+        }
+
+        public void updateYPoints(Point yPoint, Point YPoint)
+        {         
+            NowYPoint.Clear();
+            NowYPoint.Add(yPoint);
+            NowYPoint.Add(YPoint);
+        }
+
+        public void updateZPoints(Point zPoint, Point ZPoint)
+        {
+            NowZPoint.Clear();
+            NowZPoint.Add(zPoint);
+            NowZPoint.Add(ZPoint);
+        }
+
+        public void paintG17()
+        {
+            /*
+            //画虚线平行四边形
+            Point x1 = new Point(triPoints[1].X - ParallelogramLength, triPoints[1].Y);
+            Point x2 = new Point(triPoints[1].X + ParallelogramLength, triPoints[1].Y);
+            Point y1 = new Point(triPoints[1].X, triPoints[1].Y - ParallelogramHeight);
+            Point y2 = new Point(triPoints[1].X, triPoints[1].Y + ParallelogramHeight);
+
+            Graphics graphics = panel1.CreateGraphics();
+            Pen pen = new Pen(Color.CornflowerBlue, 1);
+            pen.DashStyle = System.Drawing.Drawing2D.DashStyle.DashDotDot;
+
+            graphics.DrawLine(pen, x1, y1);
+            graphics.DrawLine(pen, x1, y2);
+            graphics.DrawLine(pen, x2, y1);
+            graphics.DrawLine(pen, x2, y2);
+            */
+
+            //平行四边形不是重点,重点是二维坐标系和三维的转换
+            List<Point> list = CalPoint(midPoint);
+
+            Point xPoint = list[0];
+            Point XPoint = list[1];
+            Point yPoint = list[2];
+            Point YPoint = list[3];
+            Point zPoint = list[4];
+            Point ZPoint = list[5];
+
+            if(needXReverse == -1)
+            {
+                xPoint = list[6];
+                XPoint = list[7];
+            }
+            if(needYReverse == -1)
+            {
+                yPoint = list[8];
+                YPoint = list[9];
+            }
+            if(needZReverse == -1)
+            {
+                zPoint = list[10];
+                ZPoint = list[11];
+            }
+            list.Clear();
+            list.Add(xPoint);
+            list.Add(XPoint);
+            list.Add(yPoint);
+            list.Add(YPoint);
+            list.Add(zPoint);
+            list.Add(ZPoint);
+
+            update3D(list);
+            paintTandE(panel1.CreateGraphics());
+
+            XandYandZ = true;
+            XandY = false;
+            XandZ = false;
+            YandZ = false;
+            updateXPoints(xPoint, XPoint);
+            updateYPoints(yPoint, YPoint);
+            updateZPoints(zPoint, ZPoint);
+        }
+
         private void BTN_X_and_Y_Click(object sender, EventArgs e)
         {
+            #region 更新XY坐标绘制XY坐标轴
             //偏移量置零和校准midPoint
-            UpandDownP = 0;
-            LeftandRightP = 0;
-            midPoint = TrianglepointList[1];
+//             UpandDownP = 0;
+//             LeftandRightP = 0;
+//             PreLandRP = 0;
+//             PreUandDP = 0;
 
             Graphics graphics = this.panel1.CreateGraphics();
             Rectangle rectangle = new Rectangle(0, 0, panel1.Width, panel1.Height);
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), rectangle);
 
-            paintXandY(graphics, TrianglepointList[1]);
+            Point xPoint = new Point(midPoint.X + ThreeDLength, midPoint.Y);
+            Point XPoint = new Point(midPoint.X + ThreeDLength, midPoint.Y + 10);
+            Point yPoint = new Point(midPoint.X, midPoint.Y - ThreeDLength);
+            Point YPoint = new Point(midPoint.X - 10, midPoint.Y - ThreeDLength - 10);
 
-            Point[] points = { TrianglepointList[0], TrianglepointList[1], TrianglepointList[2] };
+            if(needXReverse == -1)
+            {
+                xPoint = new Point(midPoint.X + needXReverse*ThreeDLength, midPoint.Y); 
+                XPoint = new Point(midPoint.X + needXReverse*ThreeDLength, midPoint.Y + needXReverse*10);
+            }
+            if(needYReverse == -1)
+            {
+                yPoint = new Point(midPoint.X, midPoint.Y - needYReverse*ThreeDLength);
+                YPoint = new Point(midPoint.X - needYReverse*10, midPoint.Y - needYReverse*ThreeDLength - needYReverse*10);
+            }
+            updateXPoints(xPoint, XPoint);
+            updateYPoints(yPoint, YPoint);
+
+            paintXandY(graphics, midPoint);
+
+            Point[] points = { triPoints[0], triPoints[1], triPoints[2] };
             graphics.FillPolygon(Brushes.Red, points);
 
-            graphics.FillEllipse(new SolidBrush(Color.Yellow), EllispepointList[0], EllispepointList[1], EllispepointList[2], EllispepointList[3]);
+            graphics.FillEllipse(new SolidBrush(Color.Yellow), eliPoints[0].X, 
+                eliPoints[0].Y, EllispepointList[2], EllispepointList[3]);
             graphics.Dispose();
+
+            XandYandZ = false;
+            XandY = true;
+            XandZ = false;
+            YandZ = false;
+            #endregion
         }
 
         private void BTN_X_and_Z_Click(object sender, EventArgs e)
         {
+            #region 更新XY坐标绘制XY坐标轴
             //偏移量置零和校准midPoint
             UpandDownP = 0;
             LeftandRightP = 0;
+            PreLandRP = 0;
+            PreUandDP = 0;
             midPoint = TrianglepointList[1];
 
             Graphics graphics = this.panel1.CreateGraphics();
 
+            Point xPoint = new Point(TrianglepointList[1].X + ThreeDLength, TrianglepointList[1].Y);
+            Point XPoint = new Point(TrianglepointList[1].X + ThreeDLength, TrianglepointList[1].Y + 10);
+            Point zPoint = new Point(TrianglepointList[1].X, TrianglepointList[1].Y - ThreeDLength);
+            Point ZPoint = new Point(TrianglepointList[1].X - 10, TrianglepointList[1].Y - ThreeDLength - 10);
+
+            updateXPoints(xPoint, XPoint);
+            updateZPoints(zPoint, ZPoint);
+           
             paintXandZ(graphics, TrianglepointList[1]);
 
             Point[] points = { TrianglepointList[0], TrianglepointList[1], TrianglepointList[2] };
             graphics.FillPolygon(Brushes.Red, points);
 
             graphics.FillEllipse(new SolidBrush(Color.Yellow), EllispepointList[0], EllispepointList[1], EllispepointList[2], EllispepointList[3]);
+
+            XandYandZ = false;
+            XandY = false;
+            XandZ = true;
+            YandZ = false;
             graphics.Dispose();
+            #endregion
         }
 
         private void BTN_Y_and_Z_Click(object sender, EventArgs e)
@@ -948,6 +1334,8 @@ namespace Csharp_Plot
             //偏移量置零和校准midPoint
             UpandDownP = 0;
             LeftandRightP = 0;
+            PreLandRP = 0;
+            PreUandDP = 0;
             midPoint = TrianglepointList[1];
 
             Graphics graphics = this.panel1.CreateGraphics();
@@ -956,12 +1344,26 @@ namespace Csharp_Plot
             Rectangle rectangle = new Rectangle(0, 0, panel1.Width, panel1.Height);
             graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), rectangle);
 
+            Point yPoint = new Point(TrianglepointList[1].X + ThreeDLength, TrianglepointList[1].Y);
+            Point YPoint = new Point(TrianglepointList[1].X + ThreeDLength, TrianglepointList[1].Y + 10);
+            Point zPoint = new Point(TrianglepointList[1].X, TrianglepointList[1].Y - ThreeDLength);
+            Point ZPoint = new Point(TrianglepointList[1].X - 10, TrianglepointList[1].Y - ThreeDLength - 10);
+
+            updateYPoints(yPoint, YPoint);
+            updateZPoints(zPoint, ZPoint);
+
             paintYandZ(graphics, TrianglepointList[1]);
 
             Point[] points = { TrianglepointList[0], TrianglepointList[1], TrianglepointList[2] };
             graphics.FillPolygon(Brushes.Red, points);
 
             graphics.FillEllipse(new SolidBrush(Color.Yellow), EllispepointList[0], EllispepointList[1], EllispepointList[2], EllispepointList[3]);
+
+            XandYandZ = false;
+            XandY = false;
+            XandZ = false;
+            YandZ = true;
+
             graphics.Dispose();
         }
 
@@ -985,11 +1387,16 @@ namespace Csharp_Plot
                 rectangle = new Rectangle(midPoint.X - ThreeDLength, midPoint.Y, 25, 25);
                 graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), rectangle);
 
-                //画X轴和+X
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X + (needXReverse * ThreeDLength), midPoint.Y));
-                graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Blue), new Point(midPoint.X + (needXReverse * ThreeDLength), midPoint.Y + 10));
+                //画X轴和+X   
+                Point xPoint = new Point(midPoint.X + (needXReverse * ThreeDLength), midPoint.Y);
+                Point XPoint = new Point(midPoint.X + (needXReverse * ThreeDLength), midPoint.Y + 10);
 
+                updateXPoints(xPoint, XPoint);
+
+                graphics.DrawLine(pen, midPoint, xPoint);
+                graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular),
+                    new SolidBrush(Color.Blue), XPoint);
+            
                 Point[] points = { new Point(TrianglepointList[0].X+LeftandRightP, TrianglepointList[0].Y+UpandDownP),
                     midPoint, new Point(TrianglepointList[2].X+LeftandRightP,TrianglepointList[2].Y+UpandDownP) };
                 graphics.FillPolygon(Brushes.Red, points);
@@ -1009,8 +1416,10 @@ namespace Csharp_Plot
                 double xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
                 double yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
 
-                Point xPoint = new Point(midPoint.X + (int)xWidth, midPoint.Y + (int)yHeight);
-                Point xReversePoint = new Point(midPoint.X - (int)xWidth, midPoint.Y - (int)yHeight);
+                //Point xPoint = new Point(midPoint.X + (int)xWidth, midPoint.Y + (int)yHeight);
+                //Point xReversePoint = new Point(midPoint.X - (int)xWidth, midPoint.Y - (int)yHeight);
+                Point xPoint = NowXPoint[0];
+                Point xReversePoint = NowXPoint[1];
                 graphics.DrawLine(pen, xPoint, midPoint);
                 graphics.DrawLine(pen, xReversePoint, midPoint);
 
@@ -1026,6 +1435,8 @@ namespace Csharp_Plot
                 Point newXPoint = new Point(midPoint.X + (needXReverse * (int)xWidth), midPoint.Y + (needXReverse * (int)yHeight - (needXReverse * 15)));
                 graphics.DrawString("+X", new Font("宋体", 10, FontStyle.Regular), Brushes.Blue, newXPoint);
 
+                updateXPoints(newxPoint, newXPoint);
+
                 graphics.Dispose();
             }
             else
@@ -1036,7 +1447,6 @@ namespace Csharp_Plot
 
         private void BTN_Y_reverse_Click(object sender, EventArgs e)
         {
-
             Graphics graphics = panel1.CreateGraphics();
 
             if (XandY == true)
@@ -1055,9 +1465,14 @@ namespace Csharp_Plot
                 //画反向的Y轴和+Y
                 needYReverse = -1 * needYReverse;
                 Pen pen = new Pen(Brushes.Red, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - (needYReverse * ThreeDLength)));
+
+                Point yPoint = new Point(midPoint.X, midPoint.Y - (needYReverse * ThreeDLength));
+                Point YPoint = new Point(midPoint.X - 10, midPoint.Y - (needYReverse * ThreeDLength) - (needYReverse * 10));
+
+                updateYPoints(yPoint, YPoint);
+                graphics.DrawLine(pen, midPoint, yPoint);
                 graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Red), new Point(midPoint.X - 10, midPoint.Y - (needYReverse * ThreeDLength) - (needYReverse * 10)));
+                    new SolidBrush(Color.Red), YPoint);
 
                 Point[] points = { new Point(TrianglepointList[0].X+LeftandRightP, TrianglepointList[0].Y+UpandDownP),
                     midPoint, new Point(TrianglepointList[2].X+LeftandRightP,TrianglepointList[2].Y+UpandDownP) };
@@ -1086,9 +1501,13 @@ namespace Csharp_Plot
 
                 //重新画Y轴和+Y
                 Pen pen = new Pen(Color.Red, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X + (needZReverse * ThreeDLength), midPoint.Y));
+                Point yPoint = new Point(midPoint.X + (needZReverse * ThreeDLength), midPoint.Y);
+                Point YPoint = new Point(midPoint.X + (needZReverse * ThreeDLength), midPoint.Y + 10);
+                graphics.DrawLine(pen, midPoint, yPoint);
                 graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Red), new Point(midPoint.X + (needZReverse * ThreeDLength), midPoint.Y + 10));
+                    new SolidBrush(Color.Red), YPoint);
+
+                updateYPoints(yPoint, YPoint);
 
                 graphics.Dispose();
             }
@@ -1099,8 +1518,10 @@ namespace Csharp_Plot
                 double xWidth = ThreeDLength * Math.Cos(Math.PI / 6);
                 double yHeight = ThreeDLength * Math.Sin(Math.PI / 6);
                 Pen pen = new Pen(new SolidBrush(Panel.DefaultBackColor), 1);
-                Point ypoint = new Point(midPoint.X + (int)xWidth, midPoint.Y - (int)yHeight);
-                Point yReversePoint = new Point(midPoint.X - (int)xWidth, midPoint.Y + (int)yHeight);
+                //Point ypoint = new Point(midPoint.X + (int)xWidth, midPoint.Y - (int)yHeight);
+                Point ypoint = NowYPoint[0];
+                Point yReversePoint = NowYPoint[1];
+                //Point yReversePoint = new Point(midPoint.X - (int)xWidth, midPoint.Y + (int)yHeight);
                 graphics.DrawLine(pen, ypoint, midPoint);
                 graphics.DrawLine(pen, yReversePoint, midPoint);
 
@@ -1113,10 +1534,12 @@ namespace Csharp_Plot
 
                 //重新画Y轴和+Y
                 pen = new Pen(Color.Red, 1);
-                Point newxPoint = new Point(midPoint.X + (needYReverse * (int)xWidth), midPoint.Y - (needYReverse * (int)yHeight));
-                graphics.DrawLine(pen, newxPoint, midPoint);
-                Point newXPoint = new Point(midPoint.X + (needYReverse * (int)xWidth) - (needYReverse * 15), midPoint.Y - (needYReverse * (int)yHeight) - (needYReverse * 15));
-                graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular), Brushes.Red, newXPoint);
+                Point newyPoint = new Point(midPoint.X + (needYReverse * (int)xWidth), midPoint.Y - (needYReverse * (int)yHeight));
+                graphics.DrawLine(pen, newyPoint, midPoint);
+                Point newYPoint = new Point(midPoint.X + (needYReverse * (int)xWidth) - (needYReverse * 15), midPoint.Y - (needYReverse * (int)yHeight) - (needYReverse * 15));
+                graphics.DrawString("+Y", new Font("宋体", 10, FontStyle.Regular), Brushes.Red, newYPoint);
+
+                updateYPoints(newyPoint, newyPoint);
 
                 graphics.Dispose();
             }
@@ -1146,9 +1569,13 @@ namespace Csharp_Plot
 
                 //重新画Z轴和+Z
                 Pen pen = new Pen(Brushes.Green, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength)));
+                Point zPoint = new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength));
+                Point ZPoint = new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - 10);
+                graphics.DrawLine(pen, midPoint, zPoint);
                 graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Green), new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - 10));
+                    new SolidBrush(Color.Green), ZPoint);
+
+                updateZPoints(zPoint, ZPoint);
 
                 Point[] points = { new Point(TrianglepointList[0].X+LeftandRightP, TrianglepointList[0].Y+UpandDownP),
                     midPoint, new Point(TrianglepointList[2].X+LeftandRightP,TrianglepointList[2].Y+UpandDownP) };
@@ -1174,9 +1601,13 @@ namespace Csharp_Plot
 
                 //重新画Z轴和+Z
                 Pen pen = new Pen(Brushes.Green, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength)));
+                Point zPoint = new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength));
+                Point ZPoint = new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - 10);
+                graphics.DrawLine(pen, midPoint, zPoint);
                 graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Green), new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - 10));
+                    new SolidBrush(Color.Green), ZPoint);
+
+                updateZPoints(zPoint, ZPoint);
 
                 Point[] points = { new Point(TrianglepointList[0].X+LeftandRightP, TrianglepointList[0].Y+UpandDownP),
                     midPoint, new Point(TrianglepointList[2].X+LeftandRightP,TrianglepointList[2].Y+UpandDownP) };
@@ -1228,8 +1659,11 @@ namespace Csharp_Plot
 
                 //消除Z轴和+Z
                 Pen pen = new Pen(Panel.DefaultBackColor, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - ThreeDLength));
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y + ThreeDLength));
+                //graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - ThreeDLength));
+                //graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y + ThreeDLength));
+
+                graphics.DrawLine(pen, midPoint, NowZPoint[0]);
+                graphics.DrawLine(pen, midPoint, NowZPoint[1]);
                 //受限于panel高度,+Z的Y高度只能+13
                 graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
                     new SolidBrush(Panel.DefaultBackColor), new Point(midPoint.X - 10, midPoint.Y - ThreeDLength - 13));
@@ -1243,6 +1677,11 @@ namespace Csharp_Plot
                 pointLeft = new Point((int)x + 1, pointMid.Y + (needZReverse * triangleHeight));
                 pointRight = new Point((int)(x + ellipseWidth - 1), pointMid.Y + (needZReverse * triangleHeight));
 
+                triPoints.Clear();
+                triPoints.Add(pointLeft);
+                triPoints.Add(pointMid);
+                triPoints.Add(pointRight);
+
                 graphics.DrawLine(pen, pointLeft, pointMid);
                 graphics.DrawLine(pen, pointMid, pointRight);
                 graphics.DrawLine(pen, pointLeft, pointRight);
@@ -1251,9 +1690,13 @@ namespace Csharp_Plot
 
                 //重新画Z轴和+Z
                 pen = new Pen(Brushes.Green, 1);
-                graphics.DrawLine(pen, midPoint, new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength)));
+                Point newzPoint = new Point(midPoint.X, midPoint.Y - (needZReverse * ThreeDLength));
+                Point newZPoint = new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - (needZReverse * 13));
+                graphics.DrawLine(pen, midPoint, newzPoint);
                 graphics.DrawString("+Z", new Font("宋体", 10, FontStyle.Regular),
-                    new SolidBrush(Color.Green), new Point(midPoint.X - 10, midPoint.Y - (needZReverse * ThreeDLength) - (needZReverse * 13)));
+                    new SolidBrush(Color.Green), newZPoint);
+
+                updateZPoints(newzPoint, newZPoint);
 
                 //重新画椭圆(219,mid.Y-椭圆高/2---319)
                 y = pointLeft.Y - ellipseHeight / 2;
@@ -1262,6 +1705,11 @@ namespace Csharp_Plot
                 Point[] newPoint = { pointLeft, pointMid, pointRight };
                 graphics.FillPolygon(Brushes.Red, newPoint);
                 graphics.FillEllipse(new SolidBrush(Color.Yellow), x, y, ellipseWidth, ellipseHeight);
+
+                eliPoints.Clear();
+                eliPoints.Add(new Point((int)x, (int)y));
+
+                graphics.Dispose();
             }
             else
             {
@@ -1271,7 +1719,15 @@ namespace Csharp_Plot
 
         private void BTN_G17_Click(object sender, EventArgs e)
         {
-            //画虚线平行四边形
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.FillRectangle(new SolidBrush(Panel.DefaultBackColor), 0, 0, panel1.Width, panel1.Height);
+
+            paintG17();
+            graphics.Dispose();
+        }
+
+        private void BTN_G18_Click(object sender, EventArgs e)
+        {
 
         }
     }
