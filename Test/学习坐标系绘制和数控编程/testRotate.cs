@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Threading;
 using System.Runtime.InteropServices;
+using System.IO;
 
 namespace testRotate
 {
@@ -29,7 +31,7 @@ namespace testRotate
         public int ROLL_X = 0;
         public int ROLL_Y = 1;
         public int ROLL_Z = 2;
-
+       
         public bool m_flagSave;
         public int m_clearPoint;
         public bool m_flagClear;
@@ -84,7 +86,6 @@ namespace testRotate
         Thread m_pThread;
         public Point moveto = new Point();
 
-        public static Panel panel = new Panel();
         public Form1()
         {
             InitializeComponent();
@@ -92,7 +93,7 @@ namespace testRotate
 
         public void initVar()
         {
-            m_originPoint.X = 500;
+            m_originPoint.X = 300;
             m_originPoint.Y = 300;
             m_xyangle = 150;
             m_rad = 0.017453;
@@ -166,7 +167,11 @@ namespace testRotate
 
             m_flagSave = true;
 
-            //m_coneBackDC.CreateCompatibleDC(GetDC());
+            Bitmap bitmap = new Bitmap(panel1.Width, panel1.Height);
+            Graphics graphics = Graphics.FromImage(bitmap);
+            graphics.Clear(panel1.BackColor);
+
+            m_coneBackDC = bitmap;
             //m_coneBackBitmap.CreateCompatibleBitmap(GetDC(), 300, 300);
             //m_coneBackDC.SelectObject(&m_coneBackBitmap);
 
@@ -231,8 +236,8 @@ namespace testRotate
             double xTox2 = 0, yTox2 = 0, zTox2 = 0;
             double width = 80 * m_unit, height = 80 * m_unit, zLen = 80 * m_unit;
 
-            Graphics pDC = panel.CreateGraphics();
-            Pen newPen = new Pen(m_drawColor,1);
+            Graphics pDC = panel1.CreateGraphics();
+            Pen newPen = new Pen(Color.Orange,1);
             newPen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dot;
 
             if (ShowMode.ModeG17 == m_showMode)  //XOY
@@ -285,8 +290,8 @@ namespace testRotate
             xx2 = -1 * xTox2 * m_xycosangle - yTox2 * m_xycosangle;
             yy2 = xTox2 * m_xysinangle - yTox2 * m_xysinangle - zTox2;
 
-            p2 = new Point((int)(m_originPoint.X + xx2), (int)(m_originPoint.Y + yy2));
-            pDC.DrawLine(newPen, p1, p2);
+            Point p3 = new Point((int)(m_originPoint.X + xx2), (int)(m_originPoint.Y + yy2));
+            pDC.DrawLine(newPen, p2, p3);
 
             if (ShowMode.ModeG17 == m_showMode || ShowMode.ModeG18 == m_showMode)
                 x2 = -1 * x2;
@@ -297,8 +302,8 @@ namespace testRotate
             zTox2 = (m_arrVector[6] * x2 + m_arrVector[7] * y2 + m_arrVector[8] * z2);
             xx2 = -1 * xTox2 * m_xycosangle - yTox2 * m_xycosangle;
             yy2 = xTox2 * m_xysinangle - yTox2 * m_xysinangle - zTox2;
-            p1 = new Point((int)(m_originPoint.X + xx2), (int)(m_originPoint.Y + yy2));
-            pDC.DrawLine(newPen, p1, p2);
+            Point p4 = new Point((int)(m_originPoint.X + xx2), (int)(m_originPoint.Y + yy2));
+            pDC.DrawLine(newPen, p3, p4);
 
             if (ShowMode.ModeG18 == m_showMode || ShowMode.ModeG19 == m_showMode)
                 z2 = -1 * z2;
@@ -310,7 +315,7 @@ namespace testRotate
             xx2 = -1 * xTox2 * m_xycosangle - yTox2 * m_xycosangle;
             yy2 = xTox2 * m_xysinangle - yTox2 * m_xysinangle - zTox2;
             p1 = new Point((int)(m_originPoint.X + xx2), (int)(m_originPoint.Y + yy2));
-            pDC.DrawLine(newPen, p1, p2);
+            pDC.DrawLine(newPen, p4, p1);
 
             pDC.Dispose();
         }
@@ -365,7 +370,7 @@ namespace testRotate
                 y = iy * m_unit * m_axisZInver;
             }
 
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
 
             Pen oldPen = new Pen(m_drawColor, 1);
 
@@ -424,10 +429,11 @@ namespace testRotate
             xTox = (m_arrVector[0] * x + m_arrVector[1] * y + m_arrVector[2] * z) * m_axisXInver;
             yTox = (m_arrVector[3] * x + m_arrVector[4] * y + m_arrVector[5] * z) * m_axisYInver;
             zTox = (m_arrVector[6] * x + m_arrVector[7] * y + m_arrVector[8] * z) * m_axisZInver;
+
             xx = -1 * xTox * m_xycosangle - yTox * m_xycosangle;
             yy = xTox * m_xysinangle - yTox * m_xysinangle - zTox;
 
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
 
             Pen newPen = new Pen(m_drawColor, 1);
 
@@ -567,7 +573,7 @@ namespace testRotate
 
         public void DrawRoute(int point)
         {
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
 
             Pen newPen = new Pen(m_drawColor, 1);
 
@@ -587,7 +593,7 @@ namespace testRotate
             Pen cirPen = new Pen(Color.FromArgb(192, 192, 192), 2);
             Pen conePen = new Pen(Color.FromArgb(224, 224, 224), 1);
 
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
             Pen oldPen = conePen;
             float a = 0;
             float b = 0;
@@ -894,9 +900,9 @@ namespace testRotate
 
         public void DrawCurPoint(int i)
         {
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
 
-            m_prgText.SetSelected(0, true);
+            //m_prgText.SetSelected(0, true);
 
             if (0 == m_pNCRouteData[m_curPoint].GCode || 1 == m_pNCRouteData[m_curPoint].GCode)
             {
@@ -943,13 +949,14 @@ namespace testRotate
             m_lastBackPoint.X = Convert.ToInt32(m_nextX - 33 * m_unit);
             m_lastBackPoint.Y = Convert.ToInt32(m_nextY - 33 * m_unit);
 
-            Graphics graphics = panel.CreateGraphics();
+            Graphics graphics = panel1.CreateGraphics();
             IntPtr hDsrc = graphics.GetHdc();
             Graphics graphics1 = Graphics.FromImage(m_coneBackDC);
             IntPtr hDdst = graphics1.GetHdc();
             BitBlt(hDdst, 0, 0, (int)m_coneBackWidth, (int)m_coneBackHeight, hDsrc,
                 Convert.ToInt32(m_nextX - 33 * m_unit), Convert.ToInt32(m_nextY - 33 * m_unit), ROP_SrcCopy);
 
+            pictureBox1.Image = m_coneBackDC;
             graphics.Dispose();
             graphics1.Dispose();
 
@@ -958,13 +965,16 @@ namespace testRotate
 
         public void RestoreBackground()
         {
-            Graphics pDC = panel.CreateGraphics();
+            Graphics pDC = panel1.CreateGraphics();
             IntPtr hDdst = pDC.GetHdc();
-            Graphics graphics = Graphics.FromImage(m_coneBackDC);
+            //Graphics graphics = Graphics.FromImage(m_coneBackDC);
+            Graphics graphics = Graphics.FromImage(pictureBox1.Image);
             IntPtr hDsrc = graphics.GetHdc();
-
+           
             BitBlt(hDdst,m_lastBackPoint.X, m_lastBackPoint.Y,
                 (int)m_coneBackWidth, (int)m_coneBackHeight, hDsrc, 0, 0, ROP_SrcCopy);
+
+            pictureBox1.Image = m_coneBackDC;
 
             pDC.Dispose();
             graphics.Dispose();
@@ -1011,7 +1021,7 @@ namespace testRotate
                         Thread.Sleep(p.m_drawRate);
                     }
                     if (p.m_curPoint == p.m_NCDataNum)    //完成
-                        p.m_flagState = 2;
+                            p.m_flagState = 2;
 
                 }
                 else            //其他 
@@ -1035,16 +1045,11 @@ namespace testRotate
             p.m_drawColor = oldColor;
         }
 
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            paint();   
-        }
-
         #region 控制图形移动
         private void BTN_Left_Click(object sender, EventArgs e)
         {
-            Graphics graphics = panel.CreateGraphics();
-            graphics.Clear(panel.BackColor);
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.Clear(panel1.BackColor);
 
             m_originPoint.X -= 20;
             if (m_flagState == -1)
@@ -1057,8 +1062,8 @@ namespace testRotate
 
         private void BTN_Right_Click(object sender, EventArgs e)
         {
-            Graphics graphics = panel.CreateGraphics();
-            graphics.Clear(panel.BackColor);
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.Clear(panel1.BackColor);
 
             m_originPoint.X += 20;
             if (m_flagState == -1)
@@ -1071,8 +1076,8 @@ namespace testRotate
 
         private void BTN_Up_Click(object sender, EventArgs e)
         {
-            Graphics graphics = panel.CreateGraphics();
-            graphics.Clear(panel.BackColor);
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.Clear(panel1.BackColor);
 
             m_originPoint.Y -= 20;
             if (m_flagState == -1)
@@ -1085,8 +1090,8 @@ namespace testRotate
 
         private void BTN_Down_Click(object sender, EventArgs e)
         {
-            Graphics graphics = panel.CreateGraphics();
-            graphics.Clear(panel.BackColor);
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.Clear(panel1.BackColor);
 
             m_originPoint.Y += 20;
             if (m_flagState == -1)
@@ -1299,14 +1304,14 @@ namespace testRotate
 
         public void paint()
         {
-            Graphics graphics = panel.CreateGraphics();
-            graphics.Clear(panel.BackColor);
+            Graphics graphics = panel1.CreateGraphics();
+            graphics.Clear(panel1.BackColor);
 
             DrawAxis();
             RedrawRoute();
             if (m_flagSave)
-                //SaveBackground();
-                DrawCone();
+                SaveBackground();
+            DrawCone();
             m_flagRedrawDone = true;
 
             graphics.Dispose();
@@ -1315,18 +1320,13 @@ namespace testRotate
         private void Form1_Load(object sender, EventArgs e)
         {
             initVar();
-            panel.Name = "panel1";
-            panel.Size = new Size(this.Width,this.Height);
-            this.Controls.Add(panel);
+            panel1.Paint += Panel1_Paint;
+            panel1.Refresh();
+        }
 
-            foreach(Control a in this.Controls)
-            {
-                if (a.Name != "panel1")
-                {
-                    panel.Controls.Add(a);
-                }
-            }
-            //panel.BringToFront();
+        private void Panel1_Paint(object sender, PaintEventArgs e)
+        {
+            paint();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
@@ -1356,6 +1356,432 @@ namespace testRotate
         {
             m_showMode = ShowMode.ModeG17;
             m_flagRedraw = true;
+        }
+
+        private void BTN_Start_Click(object sender, EventArgs e)
+        {
+            if(m_NCDataNum == 0)
+            {
+                return;
+            }
+            m_flagState = 0;
+        }
+
+        private void BTN_Open_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            openFileDialog.Filter = "(*.txt)|*.txt|(*.*)|*.*";
+
+
+            if (openFileDialog.ShowDialog() == DialogResult.OK)
+            {
+                DrawAxis();
+                DrawCone();
+
+                m_prgText.Items.Clear();
+                EDI_FilePath.Text = openFileDialog.FileName.Trim();
+
+                //对读取的文件进行操作
+                int indexCount = 0;
+                try
+                {
+                    string[] lines = File.ReadAllLines(EDI_FilePath.Text, Encoding.UTF8);
+                    m_NCDataNum = 0;
+                    indexCount = lines.Count();
+
+                    for (int i = 0; i < lines.Count(); ++i)
+                    {
+                        m_prgText.Items.Add(lines[i].ToUpper());
+                    }
+                }
+                catch (Exception error)
+                {
+                    MessageBox.Show("打开文件失败...");
+                }
+
+                if (m_pNCRouteData == null)
+                {
+                    //C#有垃圾回收机制,不需要释放空间
+                }
+
+                m_pNCRouteData = new POINT3D[indexCount];
+                for (int i = 0; i < indexCount; ++i)
+                {
+                    m_pNCRouteData[i].x = 0.0;
+                    m_pNCRouteData[i].y = 0.0;
+                    m_pNCRouteData[i].z = 0.0;
+                    m_pNCRouteData[i].a = 0.0;
+                    m_pNCRouteData[i].b = 0.0;
+                    m_pNCRouteData[i].c = 0.0;
+                    m_pNCRouteData[i].GCode = -1;
+                }
+
+                for (int i = 0; i < indexCount; i++)
+                {
+                    DecodeAndSave(i);
+                    m_NCDataNum++;
+                }
+
+                m_NCDataNum = indexCount;
+                m_curPoint = 0;
+                m_lastX = m_originPoint.X;
+                m_lastY = m_originPoint.Y;
+            }
+        }
+
+        unsafe public bool DecodeAndSave(int curentIndex)
+        {
+            #region 识别G代码
+            string str;
+            int strLen = 0;
+            str = m_prgText.Items[curentIndex].ToString();
+
+            strLen = str.Length;
+            if (-1 == str.IndexOf("X") && -1 == str.IndexOf("Y") && -1 == str.IndexOf("Z") &&
+                -1 == str.IndexOf("A") && -1 == str.IndexOf("B") && -1 == str.IndexOf("C") && -1 == str.IndexOf("G"))
+            {
+                return false;
+            }
+            else
+            {
+                int offsetLen = 0;
+                string strX = "", strY = "", strZ = "", strA = "", strB = "", strC = "", strG = "";
+                bool flagX = false, flagY = false, flagZ = false, flagA = false, flagB = false, flagC = false, flagG = false;
+                for (int i = 0; i < str.Length; i++)
+                {
+                    if (str[i] == ';')
+                    {
+                        break;
+                    }
+                    if (str[i] == 'X')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //x后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strX = str.Substring(k, i + j - k + 1);
+                                    flagX = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strX = str.Substring(k, i + j - k);
+                                flagX = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'Y')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //y后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strY = str.Substring(k, i + j - k + 1);
+                                    flagY = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strY = str.Substring(k, i + j - k);
+                                flagY = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'Z')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //z后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strZ = str.Substring(k, i + j - k + 1);
+                                    flagZ = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strZ = str.Substring(k, i + j - k);
+                                flagZ = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'A')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //a后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strA = str.Substring(k, i + j - k + 1);
+                                    flagA = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strA = str.Substring(k, i + j - k);
+                                flagA = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'B')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //b后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strB = str.Substring(k, i + j - k + 1);
+                                    flagB = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strB = str.Substring(k, i + j - k);
+                                flagB = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'C')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //c后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if ((str[i + j] >= '0' && str[i + j] <= '9') || str[i + j] == '-' || str[i + j] == '.')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strC = str.Substring(k, i + j - k + 1);
+                                    flagC = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strC = str.Substring(k, i + j - k);
+                                flagC = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                    if (str[i] == 'G')
+                    {
+                        if (i == strLen - 1)
+                            break;
+                        int j = 1;
+                        int k = i + 1;          //g后一个字符位置
+                        offsetLen = 0;
+                        while (true)
+                        {
+                            if (str[i + j] >= '0' && str[i + j] <= '9')
+                            {
+                                if ((i + j) >= strLen - 1)//末尾
+                                {
+                                    strG = str.Substring(k, i + j - k + 1);
+                                    flagG = true;
+                                    break;
+                                }
+                                else            //没到末尾
+                                {
+                                    j++;
+                                    offsetLen++;
+                                }
+                            }
+                            else                        //str[i+j]为其他字符 
+                            {
+                                strG = str.Substring(k, i + j - k);
+                                flagG = true;
+                                break;
+                            }
+                        }
+                        i = i + offsetLen;
+                    }
+                }           //end of for 
+                #endregion
+
+                #region 数据操作
+                try
+                {
+                    if (flagX && (strX != ""))
+                    {
+                        flagX = false;
+                        m_pNCRouteData[m_NCDataNum].x = Convert.ToDouble(strX);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].x = m_pNCRouteData[m_NCDataNum - 1].x;
+                        else
+                            m_pNCRouteData[m_NCDataNum].x = m_NCLastData.x;
+                    }
+
+                    if (flagY && (strY != ""))
+                    {
+                        flagY = false;
+                        m_pNCRouteData[m_NCDataNum].y = Convert.ToDouble(strY);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].y = m_pNCRouteData[m_NCDataNum - 1].y;
+                        else
+                            m_pNCRouteData[m_NCDataNum].y = m_NCLastData.y;
+                    }
+
+                    if (flagZ && (strZ != ""))
+                    {
+                        flagZ = false;
+                        m_pNCRouteData[m_NCDataNum].z = Convert.ToDouble(strZ);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].z = m_pNCRouteData[m_NCDataNum - 1].z;
+                        else
+                            m_pNCRouteData[m_NCDataNum].z = m_NCLastData.z;
+                    }
+
+                    if (flagA && (strA != ""))
+                    {
+                        flagA = false;
+                        m_pNCRouteData[m_NCDataNum].a = Convert.ToDouble(strA);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].a = m_pNCRouteData[m_NCDataNum - 1].a;
+                        else
+                            m_pNCRouteData[m_NCDataNum].a = m_NCLastData.a;
+                    }
+
+                    if (flagB && (strB != ""))
+                    {
+                        flagB = false;
+                        m_pNCRouteData[m_NCDataNum].b = Convert.ToDouble(strB);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].b = m_pNCRouteData[m_NCDataNum - 1].b;
+                        else
+                            m_pNCRouteData[m_NCDataNum].b = m_NCLastData.b;
+                    }
+
+                    if (flagC && (strC != ""))
+                    {
+                        flagC = false;
+                        m_pNCRouteData[m_NCDataNum].c = Convert.ToDouble(strC);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].c = m_pNCRouteData[m_NCDataNum - 1].c;
+                        else
+                            m_pNCRouteData[m_NCDataNum].c = m_NCLastData.c;
+                    }
+
+                    if (flagG && (strG != ""))
+                    {
+                        flagG = false;
+                        m_pNCRouteData[m_NCDataNum].GCode = (int)Convert.ToInt32(strG);
+                    }
+                    else
+                    {
+                        if (m_NCDataNum != 0)
+                            m_pNCRouteData[m_NCDataNum].GCode = m_pNCRouteData[m_NCDataNum - 1].GCode;
+                        else
+                            m_pNCRouteData[m_NCDataNum].GCode = m_NCLastData.GCode;
+                    }
+                    return true;
+                }
+                catch (FormatException error)
+                {
+                    MessageBox.Show("字符串格式错误...");
+                    return false;
+                }
+                #endregion
+            }
         }
     }
 }
