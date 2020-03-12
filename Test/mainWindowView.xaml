@@ -1,0 +1,131 @@
+<Window x:Class="studyWPF_1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:local="clr-namespace:studyWPF_1"
+        mc:Ignorable="d"    
+        WindowStartupLocation="CenterScreen"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Title="studyWPF" Height="600" Width="890">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="42*" />
+            <RowDefinition Height="363*" />
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <materialDesign:ColorZone x:Name="title" MouseLeftButtonDown="Title_MouseLeftButtonDown"
+                                      materialDesign:ShadowAssist.ShadowDepth="Depth3"
+                                      Mode="PrimaryMid">
+                <Grid>
+                    <Polygon Points="780,0 1100,0 1100,65 723,65 "
+                             StrokeThickness="1">
+                        <Polygon.Fill>
+                            <SolidColorBrush Color="#3448A1" />
+                        </Polygon.Fill>
+                    </Polygon>
+                    <Polygon Points="0,0 900,0 0,65 0,30"
+                             StrokeThickness="1">
+                        <Polygon.Fill>
+                            <SolidColorBrush Color="#FF13F0C8"/>
+                        </Polygon.Fill>
+                    </Polygon>
+                    <Polygon Points="37,63 726,63 771,10"
+                             StrokeThickness="1">
+                        <Polygon.Fill>
+                            <SolidColorBrush Color="#FF13F013"/>
+                        </Polygon.Fill>
+                    </Polygon>
+                    <Ellipse Cursor="Hand"
+                             HorizontalAlignment="Left"
+                             Margin="10 5"
+                             Width="50"
+                             Height="50">
+                        <Ellipse.Fill>
+                            <ImageBrush  ImageSource="Resources/github.png"/>
+                        </Ellipse.Fill>
+                    </Ellipse>
+                    <Grid HorizontalAlignment="Right" Width="150">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <Grid Grid.Column="2">
+                            <Button Height="60"
+                                Background="Transparent"
+                                BorderBrush="Transparent"
+                                materialDesign:ShadowAssist.ShadowDepth="Depth1"  
+                                    BorderThickness="0"
+                                Padding="0" 
+                                Command="{Binding closeCommand}"
+                                    Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}">
+                                <Viewbox Width="25"
+                                         Height="25">
+                                    <Canvas Width="24" Height="24">
+                                        <Path Data="M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z"
+                                              Fill="White"/>
+                                    </Canvas>
+                                </Viewbox>
+                            </Button>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </materialDesign:ColorZone>
+        </Grid>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
+                <ColumnDefinition Width="100*"/>
+            </Grid.ColumnDefinitions>
+            <Grid Background="#FAFAFA" Grid.Column="0">
+                <ListView x:Name="FriendList" Cursor="Hand" ItemsSource="{Binding Friends}" 
+                          ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                          ScrollViewer.VerticalScrollBarVisibility="Hidden">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal"
+                                        Height="50"
+                                        >
+                                <Ellipse Cursor="Hand"
+                                         Width="50"
+                                         Height="50">
+                                    <Ellipse.Fill>
+                                        <ImageBrush  ImageSource="{Binding Head}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <StackPanel Orientation="Vertical"
+                                            VerticalAlignment="Center"
+                                            Margin="5 0">
+                                    <TextBlock FontSize="17"
+                                               Foreground="Black"
+                                               Text="{Binding NickName}" />
+                                    <TextBlock Margin="0 2 0 0"
+                                               FontSize="15"
+                                               Text="这家伙很懒,什么也没留下" />
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <materialDesign:PopupBox 
+                                         Style ="{StaticResource MaterialDesignMultiFloatingActionPopupBox}" 
+                                         PlacementMode="TopAndAlignCentres"
+                                         Margin="10,20"                                        
+                                         HorizontalAlignment="Right"
+                                         VerticalAlignment="Bottom">
+
+                </materialDesign:PopupBox>
+            </Grid>
+            <Grid Grid.Column="1">
+                <Image x:Name="IMAGE_BG" Source="Resources/1.jpg"  HorizontalAlignment="Stretch"  Stretch="Fill"></Image>
+                <!--<Button x:Name="BTN_1" Background="Transparent" Content="按钮" HorizontalAlignment="Left" Height="44" Margin="54,54,0,0" VerticalAlignment="Top" Width="108" Click="BTN_1_Click" FontSize="18" BorderThickness="0"/>-->
+                <!--<CheckBox x:Name="CHECK_1" Content="点一点试试看" HorizontalAlignment="Left" Margin="40,20,0,0" VerticalAlignment="Top" FontSize="18" Click="CheckBox_Click"/>-->
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
