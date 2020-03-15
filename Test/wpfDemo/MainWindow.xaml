@@ -117,8 +117,28 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Image x:Name="IMAGE_BG" Source="Resources/1.jpg"  HorizontalAlignment="Stretch"  Stretch="Fill"></Image>
-                <!--<Button x:Name="BTN_1" Background="Transparent" Content="按钮" HorizontalAlignment="Left" Height="44" Margin="54,54,0,0" VerticalAlignment="Top" Width="108" Click="BTN_1_Click" FontSize="18" BorderThickness="0"/>-->
-                <!--<CheckBox x:Name="CHECK_1" Content="点一点试试看" HorizontalAlignment="Left" Margin="40,20,0,0" VerticalAlignment="Top" FontSize="18" Click="CheckBox_Click"/>-->
+                <Button x:Name="BTN_1"  Content="按钮1" HorizontalAlignment="Left"
+                        Height="44" Margin="54,54,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
+                        Style="{StaticResource MaterialDesignIconForegroundButton}"/>
+                <Button x:Name="BTN_2"  Content="按钮2" HorizontalAlignment="Left"
+                        Height="44" Margin="180,54,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
+                        Style="{StaticResource MaterialDesignRaisedButton}"/>
+                <Button x:Name="BTN_3"  Content="按钮3" HorizontalAlignment="Left"
+                        Height="44" Margin="54,154,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
+                        Style="{StaticResource MaterialDesignFlatButton}"/>
+                <Button x:Name="BTN_4"  Content="按钮4" HorizontalAlignment="Left"
+                        Height="44" Margin="180,154,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
+                        Style="{StaticResource MaterialDesignFloatingActionMiniButton}"/>
+
+                <ComboBox x:Name="COMBOX_1" Width="108" Height="44" HorizontalAlignment="Left" 
+                          Margin="54,254,0,0" VerticalAlignment="Top"   
+                          ItemsSource="{Binding itemvalues}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Value}"></TextBlock>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </Grid>
         </Grid>
     </Grid>
