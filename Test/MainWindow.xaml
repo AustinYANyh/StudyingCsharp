@@ -1,0 +1,39 @@
+﻿<Window x:Class="testTextBox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:testTextBox"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="100" Width="1000">
+    
+    <Window.Resources>
+        <Style x:Key="CommonLogWarningInfo" TargetType="TextBox">
+            <Setter Property="Background" Value="Red"></Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Grid Background="Red">
+                            <DockPanel>
+                                <Polygon Points="43,15.5 25,51.5 61,51.5" Fill="#FFE2E214"></Polygon>
+                                <TextBlock Text="!" Width="25" Height="25" FontSize="25" Foreground="White" HorizontalAlignment="Left" Margin="-22.5,0,0,0"></TextBlock>
+                                <TextBlock x:Name="ll" Width="Auto" Height="24.5" FontSize="18" Foreground="White"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,5,0,0"
+                                       Text="{Binding ElementName=warning_info,Path=Text}"></TextBlock>
+                            </DockPanel>
+                        </Grid>
+                    </ControlTemplate>
+                    
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+            <ColumnDefinition Width="*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <TextBox Grid.Column="0" x:Name="warning_info" Text="X轴负向软限位有效,Y轴负向软限位有效,第3轴负向软限位有效" Style="{StaticResource CommonLogWarningInfo}"></TextBox>
+    </Grid>
+</Window>
