@@ -10,24 +10,52 @@
         <Style x:Key="ButtonStyle" TargetType="Button">
             <Setter Property="Width" Value="160"></Setter>
             <Setter Property="Height" Value="96"></Setter>
-            <Setter Property="BorderThickness" Value="2"></Setter>
+            <Setter Property="BorderThickness" Value="1"></Setter>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Grid>
-                            <Rectangle Width="55" Height="55" Margin="0,-25,0,0"
+                            <Rectangle x:Name="Rec_Image" Width="55" Height="55" Margin="0,-25,0,0"
                                        Fill="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Tag}"
                                        HorizontalAlignment="Center" VerticalAlignment="Center">
                             </Rectangle>
-                            <TextBlock Margin="0,25,0,0"
+                            <Ellipse x:Name="Ellipse_Image" Width="16" Height="16" Margin="10,10,0,0" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Ellipse.Fill>
+                                    <RadialGradientBrush GradientOrigin="0.3,0.2" RadiusX="1" RadiusY="1">
+                                        <GradientStop Color="White" Offset="0"></GradientStop>
+                                        <GradientStop Color="Green" Offset="0.6"></GradientStop>
+                                    </RadialGradientBrush>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <TextBlock Margin="63,70,0,0" FontSize="18"
                                 Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Content}"></TextBlock>
                         </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Rec_Image" Property="Rectangle.Fill">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Uid}"></ImageBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode=Self},Path=IsEnabled}" Value="False">
+                                <Setter TargetName="Ellipse_Image" Property="Ellipse.Fill">
+                                    <Setter.Value>
+                                        <RadialGradientBrush GradientOrigin="0.3,0.2" RadiusX="1" RadiusY="1" >
+                                            <GradientStop Color="White" Offset="0"></GradientStop>
+                                            <GradientStop Color="Black" Offset="0.65"></GradientStop>
+                                        </RadialGradientBrush>
+                                    </Setter.Value>
+                                </Setter>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
         </Style>
     </Window.Resources>
     <Grid>
-        <Button x:Name="button" Tag="{StaticResource image}" Content="123" Style="{StaticResource ButtonStyle}"></Button>
+        <Button x:Name="button" Uid="Resources/登录界面.bmp" Tag="{StaticResource image}" Content="123" Style="{StaticResource ButtonStyle}" IsEnabled="False"/>
+        <Button Width="70" Height="35" VerticalAlignment="Bottom" Margin="0,0,0,50" Click="Button_Click"/>
     </Grid>
 </Window>
