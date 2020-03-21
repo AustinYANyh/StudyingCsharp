@@ -1,0 +1,54 @@
+﻿<Window x:Class="testScale.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:testScale"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1000">
+    <Grid x:Name="this" Width="800" Height="1000">
+        <Border Background="Black" x:Name="outside" ClipToBounds="True" PreviewMouseWheel="Outside_PreviewMouseWheel">
+            <Canvas x:Name="inside">
+                <Line X1="17" Y1="17" X2="17" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeThickness="1"></Line>
+                <Line X1="17" Y1="17" X2="{Binding ActualWidth,ElementName=this}" Y2="17" Stroke="Gray" StrokeThickness="1"></Line>
+
+                <Line X1="67" Y1="17" X2="67" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="117" Y1="17" X2="117" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="167" Y1="17" X2="167" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="217" Y1="17" X2="217" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="267" Y1="17" X2="267" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="317" Y1="17" X2="317" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="367" Y1="17" X2="367" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="417" Y1="17" X2="417" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="467" Y1="17" X2="467" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="517" Y1="17" X2="517" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="567" Y1="17" X2="567" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="617" Y1="17" X2="617" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="667" Y1="17" X2="667" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="717" Y1="17" X2="717" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="767" Y1="17" X2="767" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="817" Y1="17" X2="817" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="867" Y1="17" X2="867" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="917" Y1="17" X2="917" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="967" Y1="17" X2="967" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="1017" Y1="17" X2="1017" Y2="{Binding ActualHeight,ElementName=this}" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+
+                <Line X1="17" Y1="67" X2="{Binding ActualWidth,ElementName=this}" Y2="67" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="117" X2="{Binding ActualWidth,ElementName=this}" Y2="117" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="167" X2="{Binding ActualWidth,ElementName=this}" Y2="167" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="217" X2="{Binding ActualWidth,ElementName=this}" Y2="217" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="267" X2="{Binding ActualWidth,ElementName=this}" Y2="267" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="317" X2="{Binding ActualWidth,ElementName=this}" Y2="317" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="367" X2="{Binding ActualWidth,ElementName=this}" Y2="367" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="417" X2="{Binding ActualWidth,ElementName=this}" Y2="417" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="467" X2="{Binding ActualWidth,ElementName=this}" Y2="467" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="517" X2="{Binding ActualWidth,ElementName=this}" Y2="517" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="567" X2="{Binding ActualWidth,ElementName=this}" Y2="567" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="617" X2="{Binding ActualWidth,ElementName=this}" Y2="617" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="667" X2="{Binding ActualWidth,ElementName=this}" Y2="667" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="717" X2="{Binding ActualWidth,ElementName=this}" Y2="717" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+                <Line X1="17" Y1="767" X2="{Binding ActualWidth,ElementName=this}" Y2="767" Stroke="Gray" StrokeDashArray="6"  StrokeThickness="1"></Line>
+            </Canvas>
+        </Border>
+    </Grid>
+</Window>
