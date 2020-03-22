@@ -1,0 +1,15 @@
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\bin\Debug\testListBox.exe.config
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\bin\Debug\testListBox.exe
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\bin\Debug\testListBox.pdb
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.csprojAssemblyReference.cache
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\MainWindow.g.cs
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\App.g.cs
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox_MarkupCompile.cache
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox_MarkupCompile.lref
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\MainWindow.baml
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.g.resources
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.Properties.Resources.resources
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.csproj.GenerateResource.cache
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.csproj.CoreCompileInputs.cache
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.exe
+C:\Users\Austin_Yan\source\repos\testListBox\testListBox\obj\Debug\testListBox.pdb
