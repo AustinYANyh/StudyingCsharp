@@ -43,7 +43,7 @@ namespace studyWPF_1
             }
             else
             {
-                loginInfo.Content = "密码错误...";
+                loginInfo.Content = "密码错误...";   
             }
         }
 
@@ -67,6 +67,7 @@ namespace studyWPF_1
             {
                 DialogHost.CloseDialogCommand.Execute(null, null);
             }));
+            timer.Enabled = false;
         }
     }
 }
