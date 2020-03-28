@@ -115,9 +115,35 @@
 
                 </materialDesign:PopupBox>
             </Grid>
-            <Grid Grid.Column="1">
-                <Image x:Name="IMAGE_BG" Source="Resources/1.jpg"  HorizontalAlignment="Stretch"  Stretch="Fill"></Image>
-                <Button x:Name="BTN_1"  Content="按钮1" HorizontalAlignment="Left"
+            <Grid Grid.Column="1" Background="{StaticResource MessageBackGround}">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"></RowDefinition>
+                    <RowDefinition Height="150"></RowDefinition>
+                </Grid.RowDefinitions>
+                <Line X1="0" Y1="0" X2="640" Y2="0" Grid.Row="1" StrokeThickness="1" Stroke="Black"></Line>
+                <RichTextBox x:Name="messageBox" Grid.Row="1"></RichTextBox>
+                <Button x:Name="send" Content="发送" Grid.Row="1" Width="100" Height="35" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
+                        Command="{Binding send_Click}" CommandParameter="{Binding ElementName=messageBox}"></Button>
+
+                <Grid Grid.Row="0">
+                    <ListView x:Name="messageShow" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                              ItemsSource="{Binding Messages}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal" Height="auto" Width="auto">
+                                    <Ellipse Cursor="Hand" HorizontalAlignment="Left"
+                                            Margin="10 5" Width="50" Height="50">
+                                        <Ellipse.Fill>
+                                            <ImageBrush  ImageSource="Resources/github.png"/>
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <TextBlock Text="{Binding SendMessage}" FontSize="18" Foreground="Black" TextAlignment="Center" Margin="0,20,0,0"></TextBlock>
+                                </StackPanel>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+                <!--<Button x:Name="BTN_1"  Content="按钮1" HorizontalAlignment="Left"
                         Height="44" Margin="54,54,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
                         Style="{StaticResource MaterialDesignIconForegroundButton}"/>
                 <Button x:Name="BTN_2"  Content="按钮2" HorizontalAlignment="Left"
@@ -131,14 +157,139 @@
                         Style="{StaticResource MaterialDesignFloatingActionMiniButton}"/>
 
                 <ComboBox x:Name="COMBOX_1" Width="108" Height="44" HorizontalAlignment="Left" 
-                          Margin="54,254,0,0" VerticalAlignment="Top"   
-                          ItemsSource="{Binding itemvalues}">
+                          Margin="-182,-57,0,0" VerticalAlignment="Top"   
+                          ItemsSource="{Binding itemValues}" RenderTransformOrigin="0.496,0.536">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Value}"></TextBlock>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+
+                <ProgressBar Margin="54 354 0 0" HorizontalAlignment="Left" VerticalAlignment="Top"
+                             Style="{StaticResource MaterialDesignCircularProgressBar}"
+                             Value="0"
+                             IsIndeterminate="True"/>
+
+                <materialDesign:DialogHost x:Name="list123" HorizontalAlignment="Left"
+  VerticalAlignment="Top" Margin="180 254 0 0" DialogClosing="Sample1_DialogHost_OnDialogClosing">
+                    <materialDesign:DialogHost.DialogContent>
+                        <StackPanel
+      Margin="16">
+                            <TextBlock>
+      添加
+                            </TextBlock>
+                            <TextBox
+        Margin="0 8 0 0"
+        HorizontalAlignment="Stretch"
+        x:Name="FruitTextBox" />
+                            <StackPanel
+        Orientation="Horizontal"
+        HorizontalAlignment="Right">
+                                <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsDefault="True"
+          Margin="0 8 8 0"
+          Command="materialDesign:DialogHost.CloseDialogCommand">
+                                    <Button.CommandParameter>
+                                        <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                            True
+                                        </system:Boolean>
+                                    </Button.CommandParameter>
+                                    确认
+                                </Button>
+                                <Button
+          Style="{StaticResource MaterialDesignFlatButton}"
+          IsCancel="True"
+          Margin="0 8 8 0"
+          Command="materialDesign:DialogHost.CloseDialogCommand">
+                                    <Button.CommandParameter>
+                                        <system:Boolean xmlns:system="clr-namespace:System;assembly=mscorlib">
+                                            False
+                                        </system:Boolean>
+                                    </Button.CommandParameter>
+                                    取消
+                                </Button>
+                            </StackPanel>
+                        </StackPanel>
+                    </materialDesign:DialogHost.DialogContent>
+                    <Border
+    BorderThickness="1"
+    BorderBrush="{DynamicResource PrimaryHueMidBrush}"
+    MinWidth="256"
+    MinHeight="256"
+    ClipToBounds="True">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition
+          Height="*" />
+                                <RowDefinition
+          Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <ListBox
+        x:Name="FruitListBox">
+                                <ListBoxItem>
+                                    Apple
+                                </ListBoxItem>
+                                <ListBoxItem>
+                                    Banana
+                                </ListBoxItem>
+                                <ListBoxItem>
+                                    Pear
+                                </ListBoxItem>
+                            </ListBox>
+                            <materialDesign:ColorZone
+        Mode="PrimaryMid"
+        Grid.Row="1"
+        Effect="{DynamicResource MaterialDesignShadowDepth5}">
+                                <TextBlock
+          Margin="16">
+        水果栏
+                                </TextBlock>
+                            </materialDesign:ColorZone>
+                            <Button
+        Style="{StaticResource MaterialDesignFloatingActionMiniAccentButton}"
+        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}"
+        VerticalAlignment="Bottom"
+        HorizontalAlignment="Right"
+        Grid.Row="0"
+        Margin="0 0 28 -20">
+                                <materialDesign:PackIcon
+          Kind="Plus"
+          Height="22"
+          Width="22" />
+                            </Button>
+                        </Grid>
+                    </Border>
+                </materialDesign:DialogHost>
+
+                <materialDesign:DialogHost>
+                    <Button x:Name="BTN_login"  Content="登录" HorizontalAlignment="Left"
+                        
+                        Height="44" Margin="480,252,0,0"  FontSize="18" VerticalAlignment="Top" Width="108" 
+                        Style="{StaticResource MaterialDesignRaisedButton}"
+                        materialDesign:ButtonProgressAssist.Value="-1"
+                        materialDesign:ButtonProgressAssist.IsIndeterminate="True"
+                        materialDesign:ButtonProgressAssist.IsIndicatorVisible="True"
+                        Command="{x:Static materialDesign:DialogHost.OpenDialogCommand}">
+                        <Button.CommandParameter>
+                            <StackPanel Margin="16">
+                                <ProgressBar Style="{StaticResource MaterialDesignCircularProgressBar}"
+                                             Value="0" Margin="16" IsIndeterminate="True"/>
+                                <Button Style="{StaticResource MaterialDesignFlatButton}" 
+                                    HorizontalAlignment="Center" IsCancel="True"
+                                    Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                    CommandParameter="cancel">
+                                    登录中
+                                </Button>
+                            </StackPanel>
+                        </Button.CommandParameter>
+                    </Button>
+                </materialDesign:DialogHost>-->
+
+                <StackPanel CanVerticallyScroll="True">
+                    
+                </StackPanel>
             </Grid>
         </Grid>
     </Grid>
