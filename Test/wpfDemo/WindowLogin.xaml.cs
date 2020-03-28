@@ -31,6 +31,7 @@ namespace studyWPF_1
         public WindowLogin()
         {
             InitializeComponent();
+            
         }
 
         private void BTN_login_Click(object sender, RoutedEventArgs e)
