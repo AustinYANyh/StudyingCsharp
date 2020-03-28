@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -22,13 +23,19 @@ namespace studyWPF_1.viewMode
             public BitmapImage Head { get; set; }
         }
 
-        public class itemValues
+        public class itemValue
         {
             public string Value { get; set; }
+        }
+        
+        public class Message
+        {
+            public string SendMessage { get; set; }
         }
 
         public DelegateCommand<object> SelectItemChangedCommand { get; set; }
         public DelegateCommand<object> closeCommand { get; set; }
+        public DelegateCommand<object> send_Click { get; set; }
 
         public MainWindowViewMode()
         {
@@ -37,10 +44,10 @@ namespace studyWPF_1.viewMode
             friends.Add(new Friend() { NickName = "执笔灬绘浮沉", Head = new BitmapImage(new Uri("pack://application:,,,/Resources/head2.jpg")) });
             friends.Add(new Friend() { NickName = "素手灬挽秋风", Head = new BitmapImage(new Uri("pack://application:,,,/Resources/github.png")) });
 
-            values = new ObservableCollection<itemValues>();
-            values.Add(new itemValues() { Value = "Orange" });
-            values.Add(new itemValues() { Value = "Apple" });
-            values.Add(new itemValues() { Value = "Pear" });
+            values = new ObservableCollection<itemValue>();
+            values.Add(new itemValue() { Value = "Orange" });
+            values.Add(new itemValue() { Value = "Apple" });
+            values.Add(new itemValue() { Value = "Pear" });
 
             SelectItemChangedCommand = new DelegateCommand<object>((p) =>
             {
@@ -54,10 +61,21 @@ namespace studyWPF_1.viewMode
             {
                 Application.Current.Shutdown();
             });
+
+            messages = new ObservableCollection<Message>();
+
+            send_Click = new DelegateCommand<object>((p) =>
+            {
+                RichTextBox messageBox = p as RichTextBox;
+                string message = new TextRange(messageBox.Document.ContentStart, messageBox.Document.ContentEnd).Text;
+                messageBox.Document.Blocks.Clear();
+
+                messages.Add(new Message() { SendMessage = message });
+            });
         }
 
         private ObservableCollection<Friend> friends;
-        private ObservableCollection<itemValues> values;
+        private ObservableCollection<itemValue> values;
 
         public ObservableCollection<Friend> Friends
         {
@@ -71,7 +89,19 @@ namespace studyWPF_1.viewMode
             }
         }
 
-        public ObservableCollection<itemValues> itemvalues
+        private ObservableCollection<Message> messages;
+        public ObservableCollection<Message> Messages
+        {
+            get
+            {
+                return messages;
+            }
+            set
+            {
+                messages = value;
+            }
+        }
+        public ObservableCollection<itemValue> itemValues
         {
             get
             {
@@ -108,6 +138,20 @@ namespace studyWPF_1.viewMode
             set
             {
                 SetProperty(ref nickname, value);
+            }
+        }
+
+        private string sendMessage;
+
+        public string SendMessage
+        {
+            get
+            {
+                return sendMessage;
+            }
+            set
+            {
+                sendMessage = value;
             }
         }
 
