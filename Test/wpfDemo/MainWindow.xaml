@@ -20,7 +20,7 @@
                                       materialDesign:ShadowAssist.ShadowDepth="Depth3"
                                       Mode="PrimaryMid">
                 <Grid>
-                    <Polygon Points="780,0 890,0 890,65 723,65 "
+                    <Polygon Points="780,0 890,0 890,65 723,65"
                              StrokeThickness="1">
                         <Polygon.Fill>
                             <SolidColorBrush Color="#3448A1" />
@@ -121,7 +121,7 @@
                     <RowDefinition Height="150"></RowDefinition>
                 </Grid.RowDefinitions>
                 <Line X1="0" Y1="0" X2="640" Y2="0" Grid.Row="1" StrokeThickness="1" Stroke="Black"></Line>
-                <RichTextBox x:Name="messageBox" Grid.Row="1"></RichTextBox>
+                <RichTextBox x:Name="messageBox" Grid.Row="1" FontSize="18"></RichTextBox>
                 <Button x:Name="send" Content="发送" Grid.Row="1" Width="100" Height="35" HorizontalAlignment="Right" VerticalAlignment="Bottom" 
                         Command="{Binding send_Click}" CommandParameter="{Binding ElementName=messageBox}"></Button>
 
@@ -130,14 +130,17 @@
                               ItemsSource="{Binding Messages}">
                         <ListView.ItemTemplate>
                             <DataTemplate>
+
                                 <StackPanel Orientation="Horizontal" Height="auto" Width="auto">
-                                    <Ellipse Cursor="Hand" HorizontalAlignment="Left"
-                                            Margin="10 5" Width="50" Height="50">
+                                    <Ellipse Cursor="Hand" HorizontalAlignment="Left" VerticalAlignment="Top"
+                                                Margin="10 5" Width="50" Height="50">
                                         <Ellipse.Fill>
                                             <ImageBrush  ImageSource="Resources/github.png"/>
                                         </Ellipse.Fill>
                                     </Ellipse>
-                                    <TextBlock Text="{Binding SendMessage}" FontSize="18" Foreground="Black" TextAlignment="Center" Margin="0,20,0,0"></TextBlock>
+                                    <TextBlock Text="{Binding SendMessage}" FontSize="18" Foreground="Black" TextAlignment="Left" 
+                                               HorizontalAlignment="Left" VerticalAlignment="Top" Margin="15,20,0,0"
+                                               Width="150" TextWrapping="Wrap"></TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </ListView.ItemTemplate>
