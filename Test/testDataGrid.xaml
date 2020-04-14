@@ -1,0 +1,22 @@
+<!-->学习DataGrid的列中如何放置图片,此处用按钮是因为需要点击事件<-->
+<DataGridTemplateColumn Width="52" CanUserSort="False">
+    <DataGridTemplateColumn.CellTemplate>
+        <DataTemplate>
+            <Button x:Name="TechCollect" Style="{StaticResource TechButton}" Tag="/BodorLaserWPF.Technics;component/Images/Tech_BTN_Collect.png" Click="TechCollect_Click"></Button>
+        </DataTemplate>
+    </DataGridTemplateColumn.CellTemplate>
+</DataGridTemplateColumn>
+<DataGridTemplateColumn Width="52" CanUserSort="False">
+    <DataGridTemplateColumn.CellTemplate>
+        <DataTemplate>
+            <Button x:Name="TechEdit" Style="{StaticResource TechButton}" Tag="/BodorLaserWPF.Technics;component/Images/Tech_BTN_TechEdit.png" Click="TechEdit_Click"></Button>
+        </DataTemplate>
+    </DataGridTemplateColumn.CellTemplate>
+</DataGridTemplateColumn>
+<DataGridTemplateColumn Width="52" CanUserSort="False">
+    <DataGridTemplateColumn.CellTemplate>
+        <DataTemplate>
+            <Button x:Name="TechLock" Style="{StaticResource TechButton}" Tag="/BodorLaserWPF.Technics;component/Images/Tech_BTN_Lock.png" Click="TechLock_Click"></Button>
+        </DataTemplate>
+    </DataGridTemplateColumn.CellTemplate>
+</DataGridTemplateColumn>
