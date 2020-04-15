@@ -1,0 +1,41 @@
+<i:Interaction.Triggers>
+                        <ei:DataTrigger Binding="{Binding ElementName=continue,Path=IsEnabled}" Value="true">
+                            <!--继续按钮启用,展现高低速滑动条和LMH文本-->
+                            <ei:ChangePropertyAction TargetName="RateSlider" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="slider" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="LText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="MText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="HText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                        </ei:DataTrigger>
+                        <ei:DataTrigger Binding="{Binding ElementName=suspend,Path=IsEnabled}" Value="true">
+                            <!--暂停按钮启用,展现倍率滑动条和隐藏LMH文本-->
+                            <ei:ChangePropertyAction TargetName="RateSlider" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="slider" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="LText" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="MText" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="HText" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                        </ei:DataTrigger>
+                        <ei:DataTrigger Binding="{Binding ElementName=start,Path=IsEnabled}" Value="true">
+                            <!--开始按钮启用(加工完毕或者点击停止),展现高低速滑动条和LMH文本-->
+                            <ei:ChangePropertyAction TargetName="RateSlider" PropertyName="Visibility" Value="Collapsed"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="slider" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="LText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="MText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                            <ei:ChangePropertyAction TargetName="HText" PropertyName="Visibility" Value="Visible"></ei:ChangePropertyAction>
+                        </ei:DataTrigger>
+</i:Interaction.Triggers>
+
+<!--多路绑定和转换器-->
+<Button x:Name="sub" Width="27" Height="27" Background="Transparent"
+                            HorizontalAlignment="Left" VerticalAlignment="Center" Margin="15,0,0,0"
+                            BorderThickness="0" Style="{StaticResource CommonCtrolSliderButtonStyle}" 
+                            Tag="{StaticResource CommonCtrolNormalSub}" 
+                            Uid="/BodorLaserWPFStyle;component/Images/BTN_Disabled_Sub.png"
+                            Command="{Binding SubClickCommand}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource YourConverter}">
+                                <Binding ElementName="slider"></Binding>
+                                <Binding ElementName="RateSlider"></Binding>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
