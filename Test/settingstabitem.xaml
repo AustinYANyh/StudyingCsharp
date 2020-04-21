@@ -1,0 +1,69 @@
+﻿<Window x:Class="settingstabitem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:settingstabitem"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <Style x:Key="TabitemStyle" TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Grid>
+                            <Polygon x:Name="bg" Points="0,30 0,0 70,0 100,30" Fill="Transparent" Panel.ZIndex="1"></Polygon>
+                            <Path x:Name="InnerBorder" StrokeThickness="1" Stroke="#FFF0F0F0" Width="100" Height="30" Fill="Transparent">
+                                <Path.Data>
+                                    <PathGeometry>
+                                        <PathFigure StartPoint="0,30" IsClosed="True">
+                                            <LineSegment Point="0,0"></LineSegment>
+                                            <LineSegment Point="70,0"></LineSegment>
+                                            <LineSegment Point="100,30"></LineSegment>
+                                        </PathFigure>
+                                    </PathGeometry>
+                                </Path.Data>
+                            </Path>
+                            <TextBlock Width="30" Height="30" Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Header}" TextAlignment="Center"  Margin="-10,7,0,0" Panel.ZIndex="1"></TextBlock>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter TargetName="InnerBorder" Property="Panel.ZIndex" Value="1"></Setter>
+                                <Setter TargetName="bg" Property="Polygon.Fill">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="#FFF0F0F0"/>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="InnerBorder" Property="Path.Fill">
+                                    <Setter.Value>
+                                        <SolidColorBrush Color="#FFF0F0F0"></SolidColorBrush>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter TargetName="InnerBorder" Property="Path.Data">
+                                    <Setter.Value>
+                                        <PathGeometry>
+                                            <PathFigure StartPoint="0,30" IsClosed="False">
+                                                <LineSegment Point="0,0"></LineSegment>
+                                                <LineSegment Point="70,0"></LineSegment>
+                                                <LineSegment Point="100,30"></LineSegment>
+                                            </PathFigure>
+                                        </PathGeometry>
+                                    </Setter.Value>
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+    <Grid>
+        <TabControl Width="800" Height="400">
+            <TabItem Width="100" Height="30" Header="123" Style="{StaticResource TabitemStyle}">
+                <Button></Button>
+            </TabItem>
+            <TabItem Width="100" Height="30" Header="456" Style="{DynamicResource TabitemStyle}" Margin="-40,0,00,0"/>
+            <TabItem Width="100" Height="30" Header="789" Style="{DynamicResource TabitemStyle}" Margin="-80,0,0,0"/>
+        </TabControl>
+    </Grid>
+</Window>
