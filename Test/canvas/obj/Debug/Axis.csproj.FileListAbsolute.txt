@@ -1,0 +1,15 @@
+C:\Users\29572\source\repos\Axis\Axis\bin\Debug\Axis.exe.config
+C:\Users\29572\source\repos\Axis\Axis\bin\Debug\Axis.exe
+C:\Users\29572\source\repos\Axis\Axis\bin\Debug\Axis.pdb
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.csprojAssemblyReference.cache
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\MainWindow.g.cs
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\App.g.cs
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis_MarkupCompile.cache
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis_MarkupCompile.lref
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\MainWindow.baml
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.g.resources
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.Properties.Resources.resources
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.csproj.GenerateResource.cache
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.csproj.CoreCompileInputs.cache
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.exe
+C:\Users\29572\source\repos\Axis\Axis\obj\Debug\Axis.pdb
