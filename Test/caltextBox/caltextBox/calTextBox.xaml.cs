@@ -21,11 +21,19 @@ namespace caltextBox
     /// <summary>
     /// calTextBox.xaml 的交互逻辑
     /// </summary>
-    public partial class calTextBox : UserControl
+    public partial class CalTextBox : UserControl
     {
-        public calTextBox()
+        public CalTextBox()
         {
             InitializeComponent();
+        }
+
+        public void SetWidthAndHeight(int width, int height)
+        {
+            this.Width = width;
+            ResultBox.Width = width - StayTimebtn.Width;
+            ResultBox.Height = height;
+            StayTimebtn.Margin = new Thickness(ResultBox.Width, 0, 0, 0);
         }
 
         private void StayTimebtn_Click(object sender, RoutedEventArgs e)
@@ -36,6 +44,8 @@ namespace caltextBox
                 myPop.Placement = PlacementMode.Bottom;
                 myPop.HorizontalOffset = StayTimebtn.Width - myPop.Width;
                 myPop.IsOpen = true;
+
+                txtShowNum.Text = ResultBox.Text + ".";
             }
             else
             {
@@ -45,13 +55,14 @@ namespace caltextBox
         }
 
         private bool bRadixPointFlag = false; //小数点标志
+
         private int ClickCount = 1;
 
         private void btnNumerButtonClick(object sender, RoutedEventArgs e)
         {
             Button button = sender as Button;
 
-            if(ClickCount == 1)
+            if (ClickCount == 1)
             {
                 this.txtShowNum.Text = "";
             }
@@ -101,11 +112,11 @@ namespace caltextBox
         {
             if (this.txtShowNum.Text.Contains("-"))
             {
-                this.txtShowNum.Text.Remove(0, 1); //负号总在最前面
+                this.txtShowNum.Text = txtShowNum.Text.Remove(0, 1); //负号总在最前面
             }
             else
             {
-                this.txtShowNum.Text.Insert(0, "-");
+                this.txtShowNum.Text = txtShowNum.Text.Insert(0, "-");
             }
         }
 
@@ -121,13 +132,17 @@ namespace caltextBox
             else
             {
                 //RecvData(sender, this.txtShowNum.Text.Trim());
-                ResultBox.Text = this.txtShowNum.Text.Trim().Replace(".","");
+                ResultBox.Text = this.txtShowNum.Text.Trim().Replace(".", "");
                 myPop.IsOpen = false;
             }
             ClickCount = 1;
+
+            //获得焦点然后失去焦点,是为了使ViewModel的值通过双向绑定改变,小键盘改变了ResultBox的值不触发双向绑定
+            ResultBox.Focus();
+            FocusTextBox.Focus();
         }
 
-        public static readonly DependencyProperty MyPropertyText = DependencyProperty.Register("MyProperty", typeof(string), typeof(calTextBox),
+        public static readonly DependencyProperty MyPropertyText = DependencyProperty.Register("MyProperty", typeof(string), typeof(CalTextBox),
                                                                 new PropertyMetadata(defaultValue: "0."));
 
         public string MyProperty
@@ -152,14 +167,26 @@ namespace caltextBox
         }
     }
 
+    public partial class MyTextBox : TextBox
+    {
+        public string MyUnit
+        {
+            get { return GetValue(MyUnitProperty).ToString(); }
+            set { SetValue(MyUnitProperty, value); }
+        }
+
+        public static readonly DependencyProperty MyUnitProperty =
+    DependencyProperty.Register("MyUnit", typeof(string), typeof(CalTextBox), new PropertyMetadata(defaultValue: ""));
+    }
+
     public class YourConverter : IMultiValueConverter
     {
-        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        object IMultiValueConverter.Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
             return values.Clone();
         }
 
-        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        object[] IMultiValueConverter.ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
         {
             throw new NotImplementedException();
         }

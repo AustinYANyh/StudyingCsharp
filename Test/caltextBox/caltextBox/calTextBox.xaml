@@ -8,7 +8,8 @@
              d:DesignHeight="35" d:DesignWidth="95">
     <UserControl.Resources>
         <local:YourConverter x:Key="YourConverter"></local:YourConverter>
-
+        <SolidColorBrush x:Key="TextBox.Static.Border" Color="#FFABAdB3"/>
+        <ImageBrush x:Key="ButtonAsComboxBrush" ImageSource="/BodorLaserWPF.Settings;component/Images/Settings_BTN_Combobox.png" Stretch="Uniform"></ImageBrush>
         <Style x:Key="MyButtonStyle" TargetType="{x:Type Button}">
             <Setter Property="BorderBrush" Value="#919191"></Setter>
             <Setter Property="BorderThickness" Value="1.0"></Setter>
@@ -34,10 +35,32 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="SettingsTextBoxStyle" TargetType="TextBox">
+            <Setter Property="BorderThickness" Value="1"></Setter>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBox.Static.Border}"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border Width="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Width}" Height="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=Height}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"></ColumnDefinition>
+                                    <ColumnDefinition Width="25"></ColumnDefinition>
+                                </Grid.ColumnDefinitions>
+                                <ScrollViewer Grid.Column="0" x:Name="PART_ContentHost" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden"/>
+                                <TextBox x:Name="Unit" Grid.Column="1" FontSize="18" Text="{Binding RelativeSource={RelativeSource Mode=TemplatedParent},Path=MyUnit}" TextAlignment="Center" VerticalContentAlignment="Center" IsReadOnly="True" BorderThickness="0" Background="Transparent"></TextBox>
+                            </Grid>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
-    <Grid>
-        <TextBox x:Name="ResultBox" Width="75" Height="35"  Tag="s"  HorizontalContentAlignment="Right" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="1,1,0,1"></TextBox>
-        <Button x:Name="StayTimebtn" Width="20" Height="35" HorizontalAlignment="Left" Margin="75,0,0,0" Click="StayTimebtn_Click"></Button>
+
+    <Grid Background="Transparent">
+        <local:MyTextBox x:Name="ResultBox" Width="75" Height="25" MyUnit="" Style="{StaticResource SettingsTextBoxStyle}" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" HorizontalAlignment="Left" BorderThickness="1,1,0,1"></local:MyTextBox>
+        <Button x:Name="StayTimebtn" Width="20" Height="25" HorizontalAlignment="Left" Margin="75,0,0,0" Click="StayTimebtn_Click" Background="{StaticResource ButtonAsComboxBrush}"></Button>
         <Popup x:Name="myPop" Width="150" Height="190" StaysOpen="True" HorizontalAlignment="Left" VerticalAlignment="Bottom">
             <Grid>
                 <Border Background="Transparent" BorderBrush="#BECEED" BorderThickness="2.0">
@@ -81,5 +104,8 @@
                 </Border>
             </Grid>
         </Popup>
+
+        <TextBox x:Name="FocusTextBox" Width="0" Height="0" HorizontalAlignment="Right" VerticalAlignment="Bottom"></TextBox>
     </Grid>
 </UserControl>
+
