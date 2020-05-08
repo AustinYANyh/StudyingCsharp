@@ -1,0 +1,12 @@
+<Line X1="0" Y1="200" X2="230" Y2="200" StrokeThickness="2">
+            <Line.Stroke>
+                <LinearGradientBrush StartPoint="0.1,1" EndPoint="1,0.1">
+                    <GradientStop Color="#006699" Offset="0.5"/>
+                    <GradientStop Color="#FFDFEDF0" Offset="0.1"/>
+                    <GradientStop Color="#00000000" Offset="0"/>
+                    <GradientStop Color="White" Offset="0.25"/>
+                    <GradientStop Color="White" Offset="0.75"/>
+                    <GradientStop Color="#00000000" Offset="1"/>
+                </LinearGradientBrush>
+            </Line.Stroke>
+        </Line>
