@@ -1,0 +1,25 @@
+<Style x:Key="NormalComboBoxItemStyle" TargetType="ComboBoxItem">
+        <Setter Property="Height" Value="33" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="HorizontalContentAlignment" Value="Center" />
+        <Setter Property="Foreground" Value="{StaticResource NormalForeground}" />
+        <Setter Property="Background" Value="{StaticResource NormalBackground}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ComboBoxItem">
+                    <StackPanel Name="stackpanel" Orientation="Horizontal" Background="{TemplateBinding Background}">
+                        <Path Name="selected" Width="14" Height="9.186" Margin="3" HorizontalAlignment="Left" Data="M46.440625,400.86668 L50.4125,404.40082 57.652053,395.67812" Stretch="Fill" Stroke="{TemplateBinding Foreground}" StrokeThickness="2" Visibility="Hidden" />
+                        <ContentPresenter Name="content" Margin="3" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                    </StackPanel>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Visibility" TargetName="selected" Value="Visible" />
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="stackpanel" Value="{StaticResource ListViewMouseOverBackground}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
