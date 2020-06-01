@@ -1,0 +1,29 @@
+<Style TargetType="PasswordBox">
+        <Setter Property="Foreground" Value="{StaticResource NormalForeground}" />
+        <Setter Property="Background" Value="{StaticResource TabControlRulerBackground}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="BorderBrush" Value="{StaticResource InputBoxBorderBrush}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="HorizontalContentAlignment" Value="Left" />
+        <Setter Property="VerticalContentAlignment" Value="Center" />
+        <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+        <Setter Property="Width" Value="200" />
+        <Setter Property="Height" Value="26" />
+        <Setter Property="FontFamily" Value="Microsoft YaHei" />
+        <Style.Triggers>
+            <Trigger Property="IsMouseOver" Value="true">
+                <Setter Property="Background" Value="{StaticResource TabControlRulerBackground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource NormalButtonFocusBorderBrush}" />
+            </Trigger>
+            <Trigger Property="IsKeyboardFocused" Value="true">
+                <Setter Property="BorderBrush" Value="{StaticResource NormalButtonFocusBorderBrush}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Background" Value="{StaticResource TabControlRulerBackground}" />
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{StaticResource InputBoxDisableForeground}" />
+                <Setter Property="BorderBrush" Value="{StaticResource InputBoxDisableBorderBrush}" />
+                <Setter Property="Background" Value="{StaticResource InputBoxDisableBackground}" />
+            </Trigger>
+        </Style.Triggers>
+    </Style>
