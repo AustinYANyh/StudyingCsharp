@@ -1,0 +1,16 @@
+C:\Users\29572\source\repos\testDllImport\testResources\bin\Debug\testResources.exe.config
+C:\Users\29572\source\repos\testDllImport\testResources\bin\Debug\testResources.exe
+C:\Users\29572\source\repos\testDllImport\testResources\bin\Debug\testResources.pdb
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.csprojAssemblyReference.cache
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\Dictionary1.baml
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\MainWindow.g.cs
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\App.g.cs
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources_MarkupCompile.cache
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources_MarkupCompile.lref
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\MainWindow.baml
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.g.resources
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.Properties.Resources.resources
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.csproj.GenerateResource.cache
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.csproj.CoreCompileInputs.cache
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.exe
+C:\Users\29572\source\repos\testDllImport\testResources\obj\Debug\testResources.pdb
