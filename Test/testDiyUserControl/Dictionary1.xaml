@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:testLineAttritube">
+    <ImageBrush x:Key="ProcessBarMessageBox" ImageSource="/testLineAttritube;component/Resources/ProcessBarMessageBox.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Logo1" ImageSource="/testLineAttritube;component/Resources/Logo1.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Logo2" ImageSource="/testLineAttritube;component/Resources/Logo2.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Minimal" ImageSource="/testLineAttritube;component/Resources/Minimal.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Maxmal" ImageSource="/testLineAttritube;component/Resources/Maxmal.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Close" ImageSource="/testLineAttritube;component/Resources/Close.png" Stretch="Uniform"></ImageBrush>
+    <ImageBrush x:Key="Minimal_Press" ImageSource="/testLineAttritube;component/Resources/Minimal_Check.png" Stretch="Uniform"></ImageBrush>
+</ResourceDictionary>
