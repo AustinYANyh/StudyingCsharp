@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ using System.Windows.Media.Animation;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Windows.Documents;
 
 namespace testLineAttritube
 {
@@ -116,6 +118,50 @@ namespace testLineAttritube
             HotKey.RegisterHotKey(wih.Handle, alts, HotKey.KeyModifiers.Alt, (int)Keys.S);
             HotKey.RegisterHotKey(wih.Handle, altd, HotKey.KeyModifiers.Alt, (int)Keys.D);
         }
+
+        void HighLight()
+        {
+            TextRange textrange = new TextRange(OrderShow.Document.ContentStart, OrderShow.Document.ContentEnd);
+            string[] str = textrange.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            int index = 0;
+            for (int i = 0; i < str.Count(); ++i)
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    textrange = new TextRange(OrderShow.Document.ContentStart, OrderShow.Document.ContentEnd);
+                    textrange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Black);
+                    textrange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Regular);
+                }));
+                TextPointer p1 = OrderShow.Selection.Start;
+                p1 = p1.GetPositionAtOffset(index);
+                index += str[i].Length;
+                TextPointer p2 = OrderShow.Selection.Start;
+                p2 = p2.GetPositionAtOffset(index);
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    textrange = new TextRange(p1, p2);
+                    textrange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Blue);
+                    textrange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Bold);
+                }));
+                index += 4;
+                Thread.Sleep(1000);
+            }
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                textrange = new TextRange(OrderShow.Document.ContentStart, OrderShow.Document.ContentEnd);
+                textrange.ApplyPropertyValue(TextElement.ForegroundProperty, System.Windows.Media.Brushes.Black);
+                textrange.ApplyPropertyValue(TextElement.FontWeightProperty, FontWeights.Regular);
+            }));
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            OrderShow.CaretPosition = OrderShow.CaretPosition.DocumentStart;
+            Thread thread = new Thread(HighLight);
+            thread.IsBackground = true;
+            thread.Start();
+        }
+
         private IntPtr MainWindowProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             switch (msg)
