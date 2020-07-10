@@ -243,37 +243,20 @@
                         <local:AutoCompleteTextBox  x:Name="OrderInput" Grid.Column="0" HorizontalAlignment="Stretch"></local:AutoCompleteTextBox>
                         <!--<Button Width="80" Content="Excute" FontSize="18" HorizontalAlignment="Right"></Button>-->
                         <Button Grid.Column="1" Width="80" FontSize="18" Content="Ecxute" Foreground="#000000" HorizontalAlignment="Right" Click="Button_Click_1">
-                            <i:Interaction.Triggers>
+                            <!--<i:Interaction.Triggers>
                                 <i:EventTrigger EventName="PreviewMouseDown">
                                     <i:InvokeCommandAction Command="{Binding ccc}"></i:InvokeCommandAction>
                                 </i:EventTrigger>
-                            </i:Interaction.Triggers>
+                            </i:Interaction.Triggers>-->
                         </Button>
                     </Grid>
                     <Grid Grid.Row="1">
-                        <RichTextBox x:Name="OrderShow" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="18" Foreground="#000000" IsReadOnly="True" Margin="0,5,0,0">
-                            <FlowDocument>
-                                <Paragraph>
-                                    <Run Text="请在上方命令行输入命令,按'Excute'执行!"></Run>
-                                </Paragraph>
-                                <Paragraph>
-                                    <Run Text="你在开玩笑吗"></Run>
-                                </Paragraph>
-                                <Paragraph>
-                                    <Run Text="G00 x100 y100
-G00 x0 y0
-G00 x100 y100
-G00 x0 y0
-G00 x100 y100
-G00 x0 y0
-G00 x100 y100
-G00 x0 y0"></Run>
-                                </Paragraph>
-                            </FlowDocument>
-                        </RichTextBox>
+                        <TextBox x:Name="OrderShow" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="18" Foreground="#000000"  Margin="0,5,0,0"
+                                  Text="请在上方命令行输入命令,按'Excute'执行!"
+                                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
                     </Grid>
                     <Grid Grid.Row="3">
-
+                        <Button x:Name="Importbtn" Content="Import" Width="85" Height="30" HorizontalAlignment="Left" VerticalAlignment="Top" Click="Importbtn_Click"></Button>
                     </Grid>
                 </Grid>
             </Grid>
