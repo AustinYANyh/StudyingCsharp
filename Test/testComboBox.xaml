@@ -1,0 +1,70 @@
+﻿<Window x:Class="testCombox.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:testCombox" 
+        mc:Ignorable="d" Loaded="Window_Loaded"
+        Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <local:YourConverter x:Key="YourConverter"></local:YourConverter>
+        <!--<Style TargetType="{x:Type ComboBox}">
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="ItemTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Path=Index}">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding isEnabled}" Value="True">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Foreground" Value="blue"/>
+                                                --><!--<Setter Property="IsEnabled" Value="{Binding isEnabled}" />-->
+                                                <!-- 经测试，在样式中写无效，改到在前台写 --><!--
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding isEnabled}" Value="False">
+                                            <DataTrigger.Setters>
+                                                <Setter Property="Foreground" Value="Pink"/>
+                                                --><!--<Setter Property="IsEnabled" Value="{Binding isEnabled}" />-->
+                                                <!-- 经测试，在样式中写无效，改到在前台写 --><!--
+                                            </DataTrigger.Setters>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>-->
+    </Window.Resources>
+    <Grid>
+        <ComboBox x:Name="combox1" Width="150" Height="35" ItemsSource="{Binding NowIOList}" DisplayMemberPath="Index"  >
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="IsEnabled" Value="{Binding CanSelected}"></Setter>
+                    <Setter Property="Visibility" Value="{Binding CanSelected,Converter={StaticResource YourConverter}}"></Setter>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+        </ComboBox>
+        <ComboBox x:Name="combox2" Width="150" Height="35" Margin="450,0,0,0" ItemsSource="{Binding NowIOList}" DisplayMemberPath="Index" >
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="IsEnabled" Value="{Binding CanSelected}"></Setter>
+                    <Setter Property="Visibility" Value="{Binding CanSelected,Converter={StaticResource YourConverter}}"></Setter>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+        </ComboBox>
+        <ComboBox x:Name="combox3" Width="150" Height="35" Margin="-450,0,0,0"  ItemsSource="{Binding NowIOList}" DisplayMemberPath="Index"  >
+            <ComboBox.ItemContainerStyle>
+                <Style TargetType="ComboBoxItem">
+                    <Setter Property="IsEnabled" Value="{Binding CanSelected}"></Setter>
+                    <Setter Property="Visibility" Value="{Binding CanSelected,Converter={StaticResource YourConverter}}"></Setter>
+                </Style>
+            </ComboBox.ItemContainerStyle>
+        </ComboBox>
+    </Grid>
+</Window>
