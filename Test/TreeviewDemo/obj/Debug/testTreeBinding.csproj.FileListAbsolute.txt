@@ -1,0 +1,15 @@
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\bin\Debug\testTreeBinding.exe.config
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\bin\Debug\testTreeBinding.exe
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\bin\Debug\testTreeBinding.pdb
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.csprojAssemblyReference.cache
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\MainWindow.g.cs
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\App.g.cs
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding_MarkupCompile.cache
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding_MarkupCompile.lref
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\MainWindow.baml
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.g.resources
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.Properties.Resources.resources
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.csproj.GenerateResource.cache
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.csproj.CoreCompileInputs.cache
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.exe
+C:\Users\29572\source\repos\testTreeBinding\testTreeBinding\obj\Debug\testTreeBinding.pdb
