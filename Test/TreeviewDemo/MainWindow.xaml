@@ -5,16 +5,76 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:testTreeBinding"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <TreeView x:Name="tree" >
-            <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
-                    <StackPanel>
-                        <Label Content="{Binding Path=NodeName}"/>
-                    </StackPanel>
-                </HierarchicalDataTemplate>
-            </TreeView.ItemTemplate>
-        </TreeView>
+        Title="MainWindow" Height="800" Width="1000">
+    <Grid Background="White">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="275"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Column="0" >
+            <TreeView x:Name="tree" Background="White" BorderThickness="0,0,1,0" SelectedItemChanged="tree_SelectedItemChanged">
+                <TreeView.ItemTemplate>
+                    <HierarchicalDataTemplate ItemsSource="{Binding Path=ChildNodes}">
+                        <StackPanel>
+                            <Label Content="{Binding Path=NodeName}" Foreground="Black"/>
+                        </StackPanel>
+                    </HierarchicalDataTemplate>
+                </TreeView.ItemTemplate>
+                <TreeView.ItemContainerStyle>
+                    <Style TargetType="{x:Type TreeViewItem}">
+                        <Style.Resources>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="DodgerBlue"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="White"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="DodgerBlue"/>
+                            <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="White"/>
+                        </Style.Resources>
+                    </Style>
+                </TreeView.ItemContainerStyle>
+            </TreeView>
+        </Grid>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="29"></RowDefinition>
+                <RowDefinition Height="*"></RowDefinition>
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Polygon Points="15,15 20,15 17,20" StrokeThickness="1" Margin="35,-2,0,0" Panel.ZIndex="1">
+                    <Polygon.Fill>
+                        <SolidColorBrush Color="Black"></SolidColorBrush>
+                    </Polygon.Fill>
+                </Polygon>
+                <Polygon Points="15,15 20,15 17,20" StrokeThickness="1" Margin="98,-2,0,0" Panel.ZIndex="1">
+                    <Polygon.Fill>
+                        <SolidColorBrush Color="Black"></SolidColorBrush>
+                    </Polygon.Fill>
+                </Polygon>
+                <Polygon Points="15,15 20,15 17,20" StrokeThickness="1" Margin="161,-2,0,0" Panel.ZIndex="1">
+                    <Polygon.Fill>
+                        <SolidColorBrush Color="Black"></SolidColorBrush>
+                    </Polygon.Fill>
+                </Polygon>
+                <Menu x:Name="fileMenu" Width="61" Height="30" HorizontalAlignment="Left" Background="White">
+                    <MenuItem Header="文件" FontSize="14" Width="61" Height="30">
+                        <MenuItem Header="另存为(Z)" FontSize="14" Margin="10,5,0,0" Command="{Binding FileSaveMenu_MenuItem_Click}" CommandParameter="{Binding ElementName=LogInfo}"/>
+                    </MenuItem>
+                </Menu>
+                <Menu x:Name="historyMenu" Width="61" Height="30" HorizontalAlignment="Left" Background="White" Margin="62,0,0,0" ItemsSource="{Binding HistoryList}">
+                    <MenuItem x:Name="historyMenuItem" Header="历史" FontSize="14" Width="61" Height="30">
+                        <MenuItem x:Name="ShowCurrent" Header="显示当前(U)" FontSize="14" Margin="10,5,0,0"></MenuItem>
+                    </MenuItem>
+                </Menu>
+                <Menu x:Name="flushMenu" Width="61" Height="30" HorizontalAlignment="Left" Background="White" Margin="124,0,0,0">
+                    <MenuItem Header="刷新" FontSize="14" Width="61" Height="30">
+                        <MenuItem x:Name="nowfrush" Header="立即刷新(Y)" FontSize="14" Margin="10,5,0,0" />
+                        <MenuItem x:Name="autofrush" Header="自动刷新(Z)" FontSize="14" Margin="10,5,0,0" IsCheckable="True" IsChecked="True" />
+                    </MenuItem>
+                </Menu>
+            </Grid>
+            <Grid Grid.Row="1">
+                <ScrollViewer VerticalScrollBarVisibility="Hidden" x:Name="LogScroviewer">
+                    <RichTextBox x:Name="LogInfo" IsReadOnly="True" Background="White" BorderThickness="0"></RichTextBox>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
