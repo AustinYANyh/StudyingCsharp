@@ -39,6 +39,7 @@ namespace testTreeBinding
         }
 
         private List<TreeNode> nodes;
+        public static int min_third_level_nodeID = 0;
         private void InputData()
         {
             List<string> logFileList = GetLogFileList();
@@ -55,6 +56,7 @@ namespace testTreeBinding
             }
             date = date.Distinct().ToList();
             NormalDate = NormalDate.Distinct().ToList();
+            min_third_level_nodeID = date.Count + logFileList.Count + 1;
 
             List<string> timeList = new List<string>();
             List<string> dateList = new List<string>();
@@ -69,7 +71,7 @@ namespace testTreeBinding
                 List<string> fileList = logFileList.FindAll((p) => p.IndexOf(NormalDate[i]) != -1);
                 for (int j = fileList.Count - 1; j >= 0; j--)
                 {
-                    string logText = GetLogText(System.IO.Path.Combine("D:\\bdData\\logs", fileList[j]));
+                    string logText = GetLogText(System.IO.Path.Combine(@"C:\Users\29572\Desktop\llll", fileList[j]));
 
                     string pattern = @"\S\d{1,2}\/\d{1,2} \d{1,2}\:\d{2}\:\d{2}\S\s\w{2,4}\s------Logger Start------";
 
@@ -89,7 +91,7 @@ namespace testTreeBinding
                     for (int l = 0; l < lauchTimeList.Count; ++l)
                     {
                         System.Windows.Controls.MenuItem thirdLevelItem = new System.Windows.Controls.MenuItem();
-                        node = new TreeNode() { ParentID = date.Count + fileList.Count - j, NodeID = date.Count + logFileList.Count + l + 1, NodeName = lauchTimeList[l].ToString() + "   BodorCut.exe" };
+                        node = new TreeNode() { ParentID = date.Count + fileList.Count - j, NodeID = date.Count + logFileList.Count + l + 1, NodeName = lauchTimeList[l].ToString() + "   Test.exe" };
                         nodes.Add(node);
                     }
                 }
@@ -125,7 +127,7 @@ namespace testTreeBinding
 
             try
             {
-                DirectoryInfo TheFolder = new DirectoryInfo("D:\\bdData\\logs");
+                DirectoryInfo TheFolder = new DirectoryInfo(@"C:\Users\29572\Desktop\llll");
 
                 foreach (FileInfo NextFile in TheFolder.GetFiles())
                 {
@@ -194,5 +196,201 @@ namespace testTreeBinding
             }
             dateList = dateList.Distinct().ToList();
         }
+
+        private void tree_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+            TreeNode node = tree.SelectedItem as TreeNode;
+            if (node == null)
+                return;
+            if (node.NodeID >= min_third_level_nodeID)
+            {
+
+                StringBuilder stringBuilder = new StringBuilder();
+                string Date = nodes.Find((p) => p.NodeID == node.ParentID).NodeName;
+
+                string normalLogDir = @"C:\Users\29572\Desktop\llll";
+                string date = Date.Replace("-", "");
+                stringBuilder = new StringBuilder();
+                stringBuilder.Append(date);
+                stringBuilder.Append(".Normal.txt");
+                string normalLogFileName = stringBuilder.ToString();
+
+                using (StreamReader sr = new StreamReader(System.IO.Path.Combine(normalLogDir, normalLogFileName), Encoding.UTF8))
+                {
+                    string text = sr.ReadToEnd();
+                    string Time = node.NodeName.Substring(0, node.NodeName.IndexOf(" "));
+                    date = date.Substring(4);
+                    string start = string.Format("({0} {1}) 普通 ------Logger Start------", date.Insert(2, "/"), Time);
+                    string newText = text.Substring(text.IndexOf(start));
+
+                    if (newText.IndexOf("Logger End") == -1)
+                    {
+                        string[] ContentLines = newText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        List<string> dataList = new List<string>();
+
+                        for (int i = 0; i < ContentLines.Count(); ++i)
+                        {
+                            dataList.Add(ContentLines[i]);
+                        }
+                        List<Paragraph> list = GetParagraphOfLogData(dataList);
+
+                        LogInfo.Document.Blocks.Clear();
+
+                        for (int i = 0; i < list.Count; ++i)
+                        {
+                            LogInfo.Document.Blocks.Add(list[i]);
+                        }
+                    }
+                    else
+                    {
+                        string content = newText.Substring(0, newText.IndexOf("Logger End") + 17);
+
+                        string[] ContentLines = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+                        List<string> dataList = new List<string>();
+
+                        for (int i = 0; i < ContentLines.Count(); ++i)
+                        {
+                            dataList.Add(ContentLines[i]);
+                        }
+                        List<Paragraph> list = GetParagraphOfLogData(dataList);
+
+                        LogInfo.Document.Blocks.Clear();
+
+                        for (int i = 0; i < list.Count; ++i)
+                        {
+                            LogInfo.Document.Blocks.Add(list[i]);
+                        }
+                    }
+                    sr.Close();
+                }
+            }
+        }
+
+        public static List<Paragraph> GetParagraphOfLogData(List<string> dataList)
+        {
+            List<Paragraph> LogList = new List<Paragraph>();
+
+            foreach (var each in dataList)
+            {
+                LogMessage logMessage = GetDetial(each);
+
+                Paragraph paragraph = new Paragraph();
+                paragraph.LineHeight = 5;
+
+                Run run = new Run();
+
+                if (logMessage.Time != "")
+                {
+                    run = new Run(logMessage.Time);
+                    run.FontSize = 14;
+                    run.Foreground = new SolidColorBrush(Colors.Black);
+                    paragraph.Inlines.Add(run);
+                }
+
+                int Type = ConvertMessageType(logMessage.MessageType);
+
+                switch (Type)
+                {
+                    case (int)LogMessageType.Normal:
+                        run = new Run(logMessage.Message);
+                        run.FontSize = 14;
+                        run.Foreground = new SolidColorBrush(Colors.Black);
+                        paragraph.Inlines.Add(run);
+                        break;
+                    case (int)LogMessageType.EnterModule:
+                        run = new Run(logMessage.Message);
+                        run.FontSize = 14;
+                        run.Foreground = new SolidColorBrush(Colors.Green);
+                        paragraph.Inlines.Add(run);
+                        break;
+                    case (int)LogMessageType.WarningInfo:
+                        run = new Run(logMessage.Message);
+                        run.FontSize = 14;
+                        run.Foreground = new SolidColorBrush(Colors.Red);
+                        paragraph.Inlines.Add(run);
+                        break;
+                    case (int)LogMessageType.AboutAxis:
+                        run = new Run(logMessage.Message);
+                        run.FontSize = 14;
+                        run.Foreground = new SolidColorBrush(Colors.Aqua);
+                        paragraph.Inlines.Add(run);
+                        break;
+                    default:
+                        break;
+                }
+                LogList.Add(paragraph);
+            }
+            return LogList;
+        }
+
+        public static LogMessage GetDetial(string Line)
+        {
+            LogMessage logMessage = new LogMessage();
+            try
+            {
+                if (Line.IndexOf(" ") != -1)
+                {
+                    var sArray = Line.Split(' ');
+                    logMessage.Time = string.Format("{0} {1} ", sArray[0], sArray[1]);
+                    logMessage.MessageType = sArray[2];
+
+                    StringBuilder builder = new StringBuilder(sArray[3]);
+                    for (int i = 4; i < sArray.Count(); ++i)
+                    {
+                        builder = builder.Append(sArray[i]);
+                    }
+                    logMessage.Message = builder.ToString();
+                }
+                else
+                {
+                    logMessage.MessageType = "普通";
+                    logMessage.Message = Line;
+                }
+
+                return logMessage;
+            }
+            catch (Exception error)
+            {
+                //图形类的信息,类型后直接换行,不存在空格,indexof出错,直接返回
+                return logMessage;
+            }
+        }
+
+        public static int ConvertMessageType(string messageType)
+        {
+            if (messageType == "普通")
+            {
+                return (int)LogMessageType.Normal;
+            }
+            else if (messageType == "进入模块")
+            {
+                return (int)LogMessageType.EnterModule;
+            }
+            else if (messageType == "坐标相关")
+            {
+                return (int)LogMessageType.AboutAxis;
+            }
+            else
+            {
+                return (int)LogMessageType.WarningInfo;
+            }
+        }
+    }
+
+    public class LogMessage
+    {
+        public string Time { get; set; }
+        public string Message { get; set; }
+        public string MessageType { get; set; }
+    }
+
+    public enum LogMessageType
+    {
+        Normal,
+        EnterModule,
+        AboutAxis,
+        WarningInfo
     }
 }
