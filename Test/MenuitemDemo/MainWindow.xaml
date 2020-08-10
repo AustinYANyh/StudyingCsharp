@@ -1,0 +1,20 @@
+﻿<Window x:Class="MenuItem.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MenuItem"
+        mc:Ignorable="d" Loaded="Window_Loaded"
+        Title="MainWindow" Height="800" Width="1000">
+    <Window.Resources>
+        <XmlDataProvider x:Key="menudata" XPath="/Menu/MenuItem"></XmlDataProvider>
+        <HierarchicalDataTemplate DataType="MenuItem" ItemsSource="{Binding XPath=MenuItem}">
+            <StackPanel Orientation="Vertical" >
+                <TextBlock Width="150" Height="35" Foreground="Black" Text="{Binding XPath=@Data}" HorizontalAlignment="Left"></TextBlock>
+            </StackPanel>
+        </HierarchicalDataTemplate>
+    </Window.Resources>
+    <Grid>
+        <Menu x:Name="item" Width="150" Height="35" Background="White" ItemsSource="{Binding Source={StaticResource menudata}}" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
