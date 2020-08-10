@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Menu>
+  <MenuItem Data="2020-08">
+    <MenuItem Data="2020-08-08">
+      <MenuItem Data="08:59:37" />
+    </MenuItem>
+    <MenuItem Data="2020-08-07">
+      <MenuItem Data="09:22:14" />
+      <MenuItem Data="09:24:23" />
+      <MenuItem Data="09:47:44" />
+      <MenuItem Data="09:49:23" />
+      <MenuItem Data="09:54:09" />
+      <MenuItem Data="10:00:53" />
+      <MenuItem Data="10:23:38" />
+      <MenuItem Data="10:43:55" />
+      <MenuItem Data="10:50:06" />
+      <MenuItem Data="11:25:52" />
+      <MenuItem Data="11:28:18" />
+      <MenuItem Data="13:10:11" />
+      <MenuItem Data="13:28:06" />
+      <MenuItem Data="13:46:26" />
+      <MenuItem Data="13:52:14" />
+      <MenuItem Data="13:54:22" />
+      <MenuItem Data="14:43:07" />
+      <MenuItem Data="14:44:06" />
+    </MenuItem>
+  </MenuItem>
+</Menu>

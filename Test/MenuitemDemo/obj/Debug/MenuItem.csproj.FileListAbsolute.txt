@@ -1,0 +1,14 @@
+C:\Users\29572\source\repos\MenuItem\MenuItem\bin\Debug\MenuItem.exe.config
+C:\Users\29572\source\repos\MenuItem\MenuItem\bin\Debug\MenuItem.exe
+C:\Users\29572\source\repos\MenuItem\MenuItem\bin\Debug\MenuItem.pdb
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MainWindow.g.cs
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\App.g.cs
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem_MarkupCompile.cache
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem_MarkupCompile.lref
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MainWindow.baml
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.g.resources
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.Properties.Resources.resources
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.csproj.GenerateResource.cache
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.csproj.CoreCompileInputs.cache
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.exe
+C:\Users\29572\source\repos\MenuItem\MenuItem\obj\Debug\MenuItem.pdb
