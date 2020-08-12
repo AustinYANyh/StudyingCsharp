@@ -63,6 +63,8 @@ namespace testTreeBinding
             List<string> lauchTimeList = new List<string>();
             nodes = new List<TreeNode>();
             int nodecount = nodes.Count;
+            int seconditemID = date.Count + 1;
+            int thirditemID = date.Count + logFileList.Count + 1;
             for (int i = 0; i < date.Count; ++i)
             {
                 TreeNode node = new TreeNode { ParentID = 0, NodeID = i + 1, NodeName = date[i] };
@@ -84,14 +86,13 @@ namespace testTreeBinding
                     stringBuilder.Append("-");
                     stringBuilder.Append(day);
 
-                    node = new TreeNode() { ParentID = i + 1, NodeID = date.Count + fileList.Count - j, NodeName = stringBuilder.ToString() };
+                    node = new TreeNode() { ParentID = i + 1, NodeID = seconditemID++, NodeName = stringBuilder.ToString() };
                     nodes.Add(node);
 
                     //添加三级菜单
                     for (int l = 0; l < lauchTimeList.Count; ++l)
                     {
-                        System.Windows.Controls.MenuItem thirdLevelItem = new System.Windows.Controls.MenuItem();
-                        node = new TreeNode() { ParentID = date.Count + fileList.Count - j, NodeID = date.Count + logFileList.Count + l + 1, NodeName = lauchTimeList[l].ToString() + "   Test.exe" };
+                        node = new TreeNode() { ParentID = seconditemID - 1, NodeID = thirditemID++, NodeName = lauchTimeList[l].ToString() + "   BodorCut.exe" };
                         nodes.Add(node);
                     }
                 }
@@ -217,52 +218,28 @@ namespace testTreeBinding
 
                 using (StreamReader sr = new StreamReader(System.IO.Path.Combine(normalLogDir, normalLogFileName), Encoding.UTF8))
                 {
-                    string text = sr.ReadToEnd();
+                    bool exit = false;
+                    bool canadd = false;
+                    List<string> dataList = new List<string>();
                     string Time = node.NodeName.Substring(0, node.NodeName.IndexOf(" "));
                     date = date.Substring(4);
                     string start = string.Format("({0} {1}) 普通 ------Logger Start------", date.Insert(2, "/"), Time);
-                    string newText = text.Substring(text.IndexOf(start));
-
-                    if (newText.IndexOf("Logger End") == -1)
+                    while (!sr.EndOfStream)
                     {
-                        string[] ContentLines = newText.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                        List<string> dataList = new List<string>();
-
-                        for (int i = 0; i < ContentLines.Count(); ++i)
-                        {
-                            dataList.Add(ContentLines[i]);
-                        }
-                        List<Paragraph> list = GetParagraphOfLogData(dataList);
-
-                        LogInfo.Document.Blocks.Clear();
-
-                        for (int i = 0; i < list.Count; ++i)
-                        {
-                            LogInfo.Document.Blocks.Add(list[i]);
-                        }
+                        if (exit == true)
+                            break;
+                        string text = sr.ReadLine();
+                        if (text == start)
+                            canadd = true;
+                        if (text.IndexOf("Logger End") != -1 && canadd)
+                            exit = true;
+                        if (canadd)
+                            dataList.Add(text);
                     }
-                    else
-                    {
-                        string content = newText.Substring(0, newText.IndexOf("Logger End") + 17);
-
-                        string[] ContentLines = content.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
-
-                        List<string> dataList = new List<string>();
-
-                        for (int i = 0; i < ContentLines.Count(); ++i)
-                        {
-                            dataList.Add(ContentLines[i]);
-                        }
-                        List<Paragraph> list = GetParagraphOfLogData(dataList);
-
-                        LogInfo.Document.Blocks.Clear();
-
-                        for (int i = 0; i < list.Count; ++i)
-                        {
-                            LogInfo.Document.Blocks.Add(list[i]);
-                        }
-                    }
+                    List<Paragraph> list = GetParagraphOfLogData(dataList);
+                    LogInfo.Document.Blocks.Clear();
+                    for (int i = 0; i < list.Count; ++i)
+                        LogInfo.Document.Blocks.Add(list[i]);
                     sr.Close();
                 }
             }
