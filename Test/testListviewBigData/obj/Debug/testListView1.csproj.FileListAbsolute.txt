@@ -1,0 +1,15 @@
+C:\Users\29572\source\repos\testListView1\testListView1\bin\Debug\testListView1.exe.config
+C:\Users\29572\source\repos\testListView1\testListView1\bin\Debug\testListView1.exe
+C:\Users\29572\source\repos\testListView1\testListView1\bin\Debug\testListView1.pdb
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\MainWindow.g.cs
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\App.g.cs
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1_MarkupCompile.cache
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1_MarkupCompile.lref
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\MainWindow.baml
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.g.resources
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.Properties.Resources.resources
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.csproj.GenerateResource.cache
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.csproj.CoreCompileInputs.cache
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.exe
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.pdb
+C:\Users\29572\source\repos\testListView1\testListView1\obj\Debug\testListView1.csprojAssemblyReference.cache
