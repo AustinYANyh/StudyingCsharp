@@ -6,7 +6,49 @@
         xmlns:local="clr-namespace:testListView1"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
+    <Window.Resources>
+        <local:ColorConvert x:Key="ColorConvert"/>
+        <Style x:Key="myHeaderStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="Visibility" Value="Collapsed" />
+        </Style>
+        <Style x:Key="myListitemStyle" TargetType="{x:Type ListViewItem}">
+            <Style.Setters>
+                <Setter Property="SnapsToDevicePixels" Value="True" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type ListViewItem}">
+                            <Border
+                                x:Name="bd"
+                                Padding="{TemplateBinding Padding}"
+                                SnapsToDevicePixels="True">
+                                <GridViewRowPresenter
+                                    Margin="3"
+                                    Columns="{TemplateBinding GridView.ColumnCollection}"
+                                    Content="{TemplateBinding Content}" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsSelected" Value="True">
+                                    <Trigger.Setters>
+                                        <Setter TargetName="bd" Property="Background" Value="transparent"/>
+                                    </Trigger.Setters>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style.Setters>
+        </Style>
+        <DataTemplate x:Key="myTimeCellStyle">
+            <TextBlock Text="{Binding Time}" Foreground="Black"></TextBlock>
+        </DataTemplate>
+        <DataTemplate x:Key="myTypeCellStyle">
+            <TextBlock Text="{Binding Type}" Foreground="Black" Visibility="Collapsed"></TextBlock>
+        </DataTemplate>
+        <DataTemplate x:Key="myMesgCellStyle">
+            <TextBlock Text="{Binding Mesg}" Foreground="{Binding Type,Converter={StaticResource ColorConvert}}"></TextBlock>
+        </DataTemplate>
+    </Window.Resources>
     <Grid>
-        <ListView x:Name="Loginfo" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
+        <ListView x:Name="Loginfo" ItemContainerStyle="{StaticResource myListitemStyle}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.CanContentScroll="True"/>
     </Grid>
 </Window>
