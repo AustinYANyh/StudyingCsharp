@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -30,45 +31,92 @@ namespace testListView1
 
             List<string> dataList = new List<string>();
             List<Paragraph> list = new List<Paragraph>();
+            //插入数据
             DataTable table = new DataTable();
-            table.Columns.Add("rizhi");
+            //时间、种类、信息列
+            DataColumn timeCol = new DataColumn("Time", typeof(string));
+            DataColumn typeCol = new DataColumn("Type", typeof(string));
+            DataColumn mesgCol = new DataColumn("Mesg", typeof(string));
+            table.Columns.Add(timeCol);
+            table.Columns.Add(typeCol);
+            table.Columns.Add(mesgCol);
             using (StreamReader sr = new StreamReader(System.IO.Path.Combine(LogFilePath, normalLogFileName), Encoding.UTF8))
             {
+                string time = string.Empty;
+                string type = string.Empty;
+                string mesg = string.Empty;
+
                 while (!sr.EndOfStream)
                 {
-                    string text = sr.ReadLine();
-                    dataList.Add(text);
-                    DataRow row = table.NewRow();
-                    row[0] = text;
-                    //if (!table.Rows.Contains(text))
-                    table.Rows.Add(row);
+                    try
+                    {
+                        string text = sr.ReadLine();
+                        string[] str = text.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                        if (str.Count() > 4)
+                        {
+                            time = string.Format("{0} {1}", str[0], str[1]);
+                            type = str[2];
+                            mesg = string.Format("{0} {1}", str[3], str[4]);
+                        }
+                        else
+                        {
+                            time = string.Format("{0} {1}", str[0], str[1]);
+                            type = str[2];
+                            mesg = str[3];
+                        }
+                        //dataList.Add(text);
+                        DataRow row = table.NewRow();
+                        row[0] = time;
+                        row[1] = type;
+                        row[2] = mesg;
+                        //if (!table.Rows.Contains(text))
+                        table.Rows.Add(row);
+                    }
+                    catch { }
                 }
                 sr.Close();
             }
             GridView gv = new GridView();
-            //插入数据
-            DataTable dtRowNumber = new DataTable();
-            DataColumn dcRowNum = new DataColumn("RowNum", typeof(string));
-            dtRowNumber.Columns.Add(dcRowNum);
-
-            for (int i = 0; i < table.Rows.Count; i++)
+            gv.ColumnHeaderContainerStyle = (Style)this.FindResource("myHeaderStyle");
+            foreach (DataColumn dc in table.Columns)
             {
-                DataRow dr = dtRowNumber.NewRow();
-                dr[0] = dataList[i].ToString();
-                dtRowNumber.Rows.Add(dr);
-            }
-
-            GridViewColumn columnRowNum = new GridViewColumn();
-            foreach (DataColumn dc in dtRowNumber.Columns)
-            {
-                columnRowNum.DisplayMemberBinding = new Binding(dc.ColumnName);
+                GridViewColumn columnRowNum = new GridViewColumn();
+                //columnRowNum.DisplayMemberBinding = new Binding(dc.ColumnName);
                 columnRowNum.Header = dc.ColumnName;
-                gv.Columns.Insert(0, columnRowNum);
+                if (dc.ColumnName == "Time")
+                    columnRowNum.CellTemplate = (DataTemplate)this.FindResource("myTimeCellStyle");
+                else if (dc.ColumnName == "Type")
+                    columnRowNum.CellTemplate = (DataTemplate)this.FindResource("myTypeCellStyle");
+                else
+                    columnRowNum.CellTemplate = (DataTemplate)this.FindResource("myMesgCellStyle");
+                gv.Columns.Add(columnRowNum);
             }
             Loginfo.View = gv;
-            Loginfo.DataContext = dtRowNumber;
+            Loginfo.DataContext = table;
             Loginfo.SetBinding(ListView.ItemsSourceProperty, new Binding());
         }
         public string LogFilePath { get { return @"D:\bdData\logs"; } }
+    }
+
+    public class ColorConvert : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value.ToString() == "普通")
+                return Brushes.Black;
+            else if (value.ToString() == "流程")
+                return Brushes.Orange;
+            else if (value.ToString() == "报警信息")
+                return Brushes.Red;
+            else if (value.ToString() == "坐标相关")
+                return Brushes.Aqua;
+            else
+                return Brushes.Transparent;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
