@@ -25,11 +25,8 @@ namespace testAnimation
         {
             InitializeComponent();
 
-            ObjectAnimationUsingKeyFrames animate = new ObjectAnimationUsingKeyFrames();
-            animate.Duration = new TimeSpan(0, 0, 1);
-            DiscreteObjectKeyFrame kf1 = new DiscreteObjectKeyFrame(Visibility.Visible, new TimeSpan(0, 0, 1));
-            animate.KeyFrames.Add(kf1);
-            line.BeginAnimation(Line.VisibilityProperty, animate);
+            //Storyboard storyboard = (Storyboard)this.Resources["Storyboard1"];
+            //storyboard.Begin();
         }
     }
 }
