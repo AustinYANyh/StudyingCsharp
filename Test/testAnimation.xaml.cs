@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,12 +22,23 @@ namespace testAnimation
     /// </summary>
     public partial class MainWindow : Window
     {
+        Storyboard closeStoryboard;
         public MainWindow()
         {
             InitializeComponent();
-
-            //Storyboard storyboard = (Storyboard)this.Resources["Storyboard1"];
-            //storyboard.Begin();
+            closeStoryboard = (Storyboard)this.FindResource("closeStoryboard");
+            closeStoryboard.Completed += (c, d) => Application.Current.Shutdown(); ;
         }
-    }
-}
+
+        private void window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            closeStoryboard.Begin();
+            e.Cancel = true;
+        }
+
+        private void row1_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+    }// end for class
+}// end for namespace
