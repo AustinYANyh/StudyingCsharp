@@ -1,0 +1,88 @@
+﻿<Window x:Class="testUnit.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:testUnit"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions" 
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="650" Width="800">
+    <Grid>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="70" Margin="0,0,0,450">
+            <ComboBox x:Name="SpeedUnitCombox" Width="150" Height="35" Margin="15" SelectedIndex="{Binding Model.CurSpeedMode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SpeedUnitCombox_SelectionChanged}"
+                                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ComboBox}}}"></i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ComboBoxItem Content="mm/s"/>
+                <ComboBoxItem Content="mm/min" />
+                <ComboBoxItem Content="m/s" />
+                <ComboBoxItem Content="m/min" />
+                <ComboBoxItem Content="in/s" />
+                <ComboBoxItem Content="in/min" />
+            </ComboBox>
+            <ComboBox x:Name="TimeUnitCombox" Width="150" Height="35" Margin="15" SelectedIndex="{Binding Model.CurTimeMode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding TimeUnitCombox_SelectionChanged}"
+                                                               CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ComboBox}}}"></i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ComboBoxItem Content="ms" />
+                <ComboBoxItem Content="s"/>
+                <ComboBoxItem Content="us" />
+                <ComboBoxItem Content="min" />
+            </ComboBox>
+            <ComboBox x:Name="DistanceUnitCombox" Width="150" Height="35" Margin="15" SelectedIndex="{Binding Model.CurDistanceMode,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay}">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding DistanceUnitCombox_SelectionChanged}"
+                                                                CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ComboBox}}}"></i:InvokeCommandAction>
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ComboBoxItem Content="mm"/>
+                <ComboBoxItem Content="m" />
+            </ComboBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="70" Margin="0,0,0,300">
+            <TextBox x:Name="SpeedInput1" Text="{Binding Model.Speed1,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="SpeedInput2" Text="{Binding Model.Speed2,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="SpeedInput3" Text="{Binding Model.Speed3,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="SpeedInput4" Text="{Binding Model.Speed4,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="65" HorizontalAlignment="Center" Margin="0,0,0,150">
+            <Label x:Name="SpeedUnit1" Content="{Binding Model.SpeedUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="SpeedUnit2" Content="{Binding Model.SpeedUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="SpeedUnit3" Content="{Binding Model.SpeedUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="SpeedUnit4" Content="{Binding Model.SpeedUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="70">
+            <TextBox x:Name="TimeInput1" Text="{Binding Model.Time1,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="TimeInput2" Text="{Binding Model.Time2,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="TimeInput3" Text="{Binding Model.Time3,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="TimeInput4" Text="{Binding Model.Time4,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="65" HorizontalAlignment="Center" Margin="0,150,0,0">
+            <Label x:Name="TimeUnit1" Content="{Binding Model.TimeUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="TimeUnit2" Content="{Binding Model.TimeUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="TimeUnit3" Content="{Binding Model.TimeUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="TimeUnit4" Content="{Binding Model.TimeUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="70" Margin="0,275,0,0">
+            <TextBox x:Name="DistanceInput1" Text="{Binding Model.Distance1,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="DistanceInput2" Text="{Binding Model.Distance2,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="DistanceInput3" Text="{Binding Model.Distance3,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+            <TextBox x:Name="DistanceInput4" Text="{Binding Model.Distance4,UpdateSourceTrigger=PropertyChanged,Mode=TwoWay,StringFormat={}{0:F3}}" Width="150" Height="35" Background="Black" Foreground="White" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></TextBox>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" Height="65" HorizontalAlignment="Center" Margin="0,405,0,0">
+            <Label x:Name="DistanceUnit1" Content="{Binding Model.DistanceUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="DistanceUnit2" Content="{Binding Model.DistanceUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="DistanceUnit3" Content="{Binding Model.DistanceUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+            <Label x:Name="DistanceUnit4" Content="{Binding Model.DistanceUnit}" Width="150" Height="35" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Margin="15"></Label>
+        </StackPanel>
+    </Grid>
+</Window>
