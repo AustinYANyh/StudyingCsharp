@@ -1,0 +1,21 @@
+﻿<Window x:Class="TestZIndex.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TestZIndex"
+        xmlns:airspace="clr-namespace:Microsoft.DwayneNeed.Interop;assembly=Microsoft.DwayneNeed"
+        xmlns:winform="clr-namespace:TestDemo;assembly=TestDemo"
+        xmlns:tao="clr-namespace:Tao.Platform.Windows;assembly=Tao.Platform.Windows"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <airspace:AirspaceDecorator AirspaceMode="Redirect" IsInputRedirectionEnabled="True" IsOutputRedirectionEnabled="True">
+            <WindowsFormsHost Name="FormsHost">
+               <!--<tao:SimpleOpenGlControl></tao:SimpleOpenGlControl>-->
+                <winform:Form1 TopLevel="False"></winform:Form1>
+            </WindowsFormsHost>
+        </airspace:AirspaceDecorator>
+        <TextBlock Text="123123" Foreground="Black" HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
+    </Grid>
+</Window>
