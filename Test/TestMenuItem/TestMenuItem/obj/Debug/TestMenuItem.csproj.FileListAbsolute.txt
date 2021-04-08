@@ -1,0 +1,15 @@
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\bin\Debug\TestMenuItem.exe.config
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\bin\Debug\TestMenuItem.exe
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\bin\Debug\TestMenuItem.pdb
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.csprojAssemblyReference.cache
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\MainWindow.g.cs
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\App.g.cs
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem_MarkupCompile.cache
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem_MarkupCompile.lref
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\MainWindow.baml
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.g.resources
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.Properties.Resources.resources
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.csproj.GenerateResource.cache
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.csproj.CoreCompileInputs.cache
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.exe
+C:\Users\len\source\repos\TestMenuItem\TestMenuItem\obj\Debug\TestMenuItem.pdb
